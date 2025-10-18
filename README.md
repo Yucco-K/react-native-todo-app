@@ -21,6 +21,12 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 - OpenAI API (GPT-3.5-turbo)
 - NativeWind, Zod, expo-notifications
 
+## デモ動画
+
+[![デモ動画](https://img.youtube.com/vi/B8Is5ECk8S4/0.jpg)](https://youtu.be/B8Is5ECk8S4)
+
+アプリの使い方や機能の詳細は[こちらのデモ動画](https://youtu.be/B8Is5ECk8S4)をご覧ください。
+
 ## 動作確認環境
 
 - **iOS**: iOS 18.6.2（iPhone実機）
