@@ -42,12 +42,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
 		}
 
 		try {
-			const projectId = "88fd0fba-e39c-4fc5-ae06-a69fe43a1dc7"; // Expoプロジェクトから取得
-			token = (
-				await Notifications.getExpoPushTokenAsync({
-					projectId,
-				})
-			).data;
+			token = (await Notifications.getExpoPushTokenAsync()).data;
 			console.log("Push token:", token);
 		} catch (e) {
 			console.error("Error getting push token:", e);
