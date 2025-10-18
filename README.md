@@ -6,14 +6,19 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 
 - Todo作成・編集・削除・完了切り替え
 - My List（個人用）/ Shared（共有用）のタブ切り替え
-- 検索・フィルタリング（モーダル）
-- プッシュ通知（共有Todoの変更時）
+- 検索・フィルタリング（モーダル、カテゴリ対応）
+- プッシュ通知（共有Todoの変更時、完了通知）
 - Firebase認証（メール/パスワード）
+- **ニックネーム登録**：ユーザー名を設定可能
+- **カテゴリ管理**：仕事、買い物、家事などのカテゴリ分類
+- **AI カテゴリ推測**：OpenAI APIで自動カテゴリ分類
+- **褒め言葉トースト**：タスク完了時にパーソナライズされた褒め言葉を表示
 
 ## 技術スタック
 
 - React Native + Expo Router
 - Firebase (Authentication, Firestore)
+- OpenAI API (GPT-3.5-turbo)
 - NativeWind, Zod, expo-notifications
 
 ## 動作確認環境

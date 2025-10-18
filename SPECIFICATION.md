@@ -9,8 +9,11 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 - Firebase認証による安全なユーザー管理
 - Firestore による永続化とリアルタイム同期
 - タブナビゲーションによる直感的なUI
-- モーダル検索・フィルタリング機能
+- モーダル検索・フィルタリング機能（カテゴリ対応）
 - 共有Todo変更時の自動プッシュ通知
+- **ニックネーム機能**：ユーザーの表示名をカスタマイズ
+- **AIカテゴリ推測**：OpenAI APIによる自動カテゴリ分類
+- **褒め言葉システム**：完了時にパーソナライズされた応援メッセージ
 
 ---
 
@@ -28,6 +31,7 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 - **Firebase Authentication**: ユーザー認証（Email/Password）
 - **Cloud Firestore**: NoSQLデータベース
 - **Expo Notifications**: プッシュ通知
+- **OpenAI API**: AI カテゴリ推測（GPT-3.5-turbo）
 
 ### バリデーション・状態管理
 
@@ -44,14 +48,17 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 - **サインアップ**: 新規ユーザー登録
 - **認証永続化**: AsyncStorageで認証状態を保持
 - **自動リダイレクト**: 未ログイン時はログイン画面へ
+- **ニックネーム登録**: ユーザー名を設定（最大20文字）、通知・UIに反映
 
 ### 2. Todo管理（CRUD操作）
 
-- **作成**: タイトル（1〜50文字）、内容（1〜200文字）
+- **作成**: タイトル（1〜50文字）、内容（任意、最大200文字）
 - **編集**: 作成者のみ編集可能（3点メニュー）
 - **削除**: 作成者のみ削除可能（3点メニュー）
 - **完了切り替え**: チェックボックスで即座に反映
 - **共有切り替え**: 作成者がMy List⇄Shared間を移動可能
+- **カテゴリ設定**: 仕事、買い物、家事、勉強、健康、趣味、その他から選択
+- **AIカテゴリ推測**: タイトル・内容からOpenAI APIで自動分類
 
 ### 3. タブナビゲーション
 
@@ -63,14 +70,26 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 
 - **モーダル検索**: タイトル・内容で部分一致検索
 - **状態フィルター**: すべて / 未完了 / 完了済み
+- **カテゴリフィルター**: 全カテゴリ、仕事、買い物、家事、勉強、健康、趣味、その他
 - **リアルタイム検索**: 入力中に即座に結果更新
 
 ### 5. プッシュ通知
 
-- **通知タイミング**: 共有Todo追加・編集・削除時
-- **通知対象**: 全登録ユーザー（送信者を除く）
-- **通知内容**: 操作者のEmailとTodoタイトル
+- **通知タイミング**: 共有Todo追加・編集・削除・完了時
+- **通知対象**: 全登録ユーザー（完了通知のみ送信者を除く）
+- **通知内容**: 操作者のニックネーム（未設定時はEmail）とTodoタイトル
+- **完了通知**: 「〇〇さん が共有TODO「タイトル」を完了しました。完了時刻：MM月DD日HH時MM分」
 - **Expo Push API使用**: トークン管理とFirestoreに保存
+
+### 6. 褒め言葉システム
+
+- **トースト表示**: タスク完了時に画面の1/3サイズの大きなトースト表示（2秒間）
+- **パーソナライズ**: ユーザー統計とタスク内容に基づいてメッセージを選択
+  - 初回完了、長期放置タスク、頻繁な完了などに応じた褒め言葉
+  - キーワードマッチング（「ジム」「勉強」「買い物」など）
+  - カテゴリ別メッセージ（仕事、買い物、家事など）
+- **ランダムテーマ**: 25種類の背景色・絵文字でバリエーション豊か
+- **統計トラッキング**: 完了回数と最終完了日時をFirestoreに保存
 
 ---
 
@@ -85,10 +104,13 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 	id: string; // 自動生成されるドキュメントID
 	userId: string; // Todo作成者のUID（Firebase Auth）
 	title: string; // タイトル（1〜50文字）
-	content: string; // 内容（1〜200文字）
+	content: string; // 内容（任意、最大200文字）
 	completed: boolean; // 完了状態
 	shared: boolean; // 共有状態（false=個人用, true=共有）
+	category: TodoCategory; // カテゴリ（work, shopping, housework, study, health, hobby, other）
 	createdAt: Date; // 作成日時
+	completedAt?: Date; // 完了日時（完了時のみ）
+	completedBy?: string; // 完了者のUID（完了時のみ）
 }
 ```
 
@@ -98,7 +120,18 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 {
 	id: string; // ユーザーUID（Firebase Auth）
 	pushToken: string; // Expo Push通知トークン
+	nickname?: string; // ニックネーム（最大20文字、任意）
 	updatedAt: Date; // トークン更新日時
+}
+```
+
+#### `userStats` コレクション
+
+```typescript
+{
+	id: string; // ユーザーUID（Firebase Auth）
+	totalCompletedTasks: number; // 累計完了タスク数
+	lastCompletedAt?: Date; // 最終完了日時
 }
 ```
 
@@ -108,7 +141,12 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 // Todoスキーマ
 {
   title: z.string().min(1).max(50),
-  content: z.string().min(1).max(200)
+  content: z.string().optional().or(z.literal("")).max(200) // 任意
+}
+
+// ニックネームスキーマ
+{
+  nickname: z.string().min(1).max(20)
 }
 ```
 
@@ -130,11 +168,13 @@ app/
 
 ### UI/UXコンポーネント
 
-- **TodoForm**: Todo作成フォーム
+- **TodoForm**: Todo作成フォーム（カテゴリ選択、AI推測ボタン付き）
 - **TodoTable**: Todoリスト表示・管理
-- **TodoItem**: 個別Todoカード（アコーディオン表示）
-- **EditTodoModal**: Todo編集モーダル
-- **SearchModal**: 検索・フィルターモーダル
+- **TodoItem**: 個別Todoカード（アコーディオン表示、カテゴリバッジ表示）
+- **EditTodoModal**: Todo編集モーダル（カテゴリ選択、AI推測ボタン付き）
+- **SearchModal**: 検索・フィルターモーダル（カテゴリフィルター対応）
+- **NicknameModal**: ニックネーム登録・編集モーダル
+- **PraiseToast**: 褒め言葉トースト（カスタムデザイン）
 
 ### ナビゲーション
 
@@ -164,11 +204,17 @@ service cloud.firestore {
       allow update, delete: if request.auth.uid == resource.data.userId;
     }
 
-    // usersコレクション（プッシュトークン）
+    // usersコレクション（プッシュトークン、ニックネーム）
     match /users/{userId} {
       // 自分のトークンのみ書き込み可能、全員が読み込み可能
       allow read: if request.auth != null;
       allow write: if request.auth.uid == userId;
+    }
+
+    // userStatsコレクション（ユーザー統計）
+    match /userStats/{userId} {
+      // 自分の統計のみ読み書き可能
+      allow read, write: if request.auth.uid == userId;
     }
   }
 }
@@ -200,9 +246,11 @@ https://console.firebase.google.com/project/[PROJECT_ID]/firestore/indexes
 {
 	user: User | null;
 	loading: boolean;
+	nickname: string | null;
 	signIn: (email, password) => Promise<void>;
 	signUp: (email, password) => Promise<void>;
 	signOut: () => Promise<void>;
+	updateNickname: (nickname: string) => Promise<void>;
 }
 ```
 
@@ -254,17 +302,24 @@ react-native-todo-app/
 │   ├── EditTodoModal.tsx    # 編集モーダル
 │   ├── SearchModal.tsx      # 検索モーダル
 │   ├── TodoForm.tsx         # 作成フォーム
-│   └── TodoTable.tsx        # リスト表示
+│   ├── TodoTable.tsx        # リスト表示
+│   ├── NicknameModal.tsx    # ニックネーム設定モーダル
+│   └── PraiseToast.tsx      # 褒め言葉トースト
 ├── contexts/                # Context API
 │   ├── AuthContext.tsx      # 認証コンテキスト
 │   └── TodoRefreshContext.tsx
 ├── services/                # ビジネスロジック
 │   ├── notificationService.ts  # プッシュ通知
-│   └── todoService.ts       # Todo CRUD操作
+│   ├── todoService.ts       # Todo CRUD操作
+│   ├── userService.ts       # ユーザー情報管理（ニックネーム）
+│   ├── userStatsService.ts  # ユーザー統計管理
+│   ├── praiseService.ts     # 褒め言葉生成ロジック
+│   └── aiCategoryService.ts # AIカテゴリ推測（OpenAI）
 ├── config/                  # 設定ファイル
 │   └── firebase.ts          # Firebase初期化
 ├── types/                   # 型定義
-│   └── Todo.ts
+│   ├── Todo.ts
+│   └── Category.ts          # カテゴリ定義
 ├── .env                     # 環境変数（Git除外）
 ├── app.json                 # Expo設定
 └── package.json
@@ -290,7 +345,7 @@ react-native-todo-app/
    ```
 
 2. **環境変数の設定**
-   `.env`ファイルを作成し、Firebase設定を追加：
+   `.env`ファイルを作成し、Firebase設定とOpenAI APIキーを追加：
 
    ```
    EXPO_PUBLIC_FIREBASE_API_KEY=your-api-key
@@ -300,6 +355,7 @@ react-native-todo-app/
    EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
    EXPO_PUBLIC_FIREBASE_APP_ID=your-app-id
    EXPO_PUBLIC_EAS_PROJECT_ID=your-eas-project-id
+   EXPO_PUBLIC_OPENAI_API_KEY=your-openai-api-key  # AIカテゴリ推測用
    ```
 
 3. **Firebaseの設定**
