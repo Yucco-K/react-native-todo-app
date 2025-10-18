@@ -1,4 +1,5 @@
 import { updateTodo } from "@/services/todoService";
+import { notifyTodoUpdated } from "@/services/notificationService";
 import type { Todo } from "@/types/Todo";
 import React, { useState } from "react";
 import { Modal, Text, TextInput, TouchableHighlight, View } from "react-native";
@@ -77,6 +78,15 @@ export default function EditTodoModal({
 				completed: todo.completed,
 				shared: todo.shared,
 			});
+
+			// 共有Todoの場合は通知を送信
+			if (todo.shared) {
+				try {
+					await notifyTodoUpdated(title);
+				} catch (error) {
+					console.error("通知送信エラー:", error);
+				}
+			}
 
 			Toast.show({
 				type: "success",

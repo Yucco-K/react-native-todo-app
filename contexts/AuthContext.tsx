@@ -7,6 +7,10 @@ import {
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
+import {
+	registerForPushNotificationsAsync,
+	savePushToken,
+} from "../services/notificationService";
 
 type AuthContextType = {
 	user: User | null;
@@ -24,13 +28,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		console.log("🔐 AuthContext: 認証状態の監視を開始");
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			console.log("🔐 AuthContext: 認証状態変更", {
 				isLoggedIn: !!user,
 				email: user?.email,
 			});
 			setUser(user);
 			setLoading(false);
+
+			// ユーザーがログインしたらプッシュ通知を登録
+			if (user) {
+				try {
+					const token = await registerForPushNotificationsAsync();
+					if (token) {
+						await savePushToken(token);
+						console.log("✅ プッシュ通知トークンを登録しました");
+					}
+				} catch (error) {
+					console.error("❌ プッシュ通知の登録に失敗:", error);
+				}
+			}
 		});
 
 		return unsubscribe;

@@ -5,10 +5,17 @@ import {
 	toggleTodoComplete,
 	toggleTodoShared,
 } from "@/services/todoService";
+import { notifyTodoDeleted } from "@/services/notificationService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+	ActivityIndicator,
+	FlatList,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
 import SearchModal from "./SearchModal";
@@ -137,7 +144,19 @@ export default function TodoTable({
 
 	const deleteTodo = async (id: string) => {
 		try {
+			// 削除前にTodoの情報を取得（通知用）
+			const todo = data.find((item) => item.id === id);
+			
 			await deleteTodoService(id);
+
+			// 共有Todoの場合は通知を送信
+			if (todo?.shared) {
+				try {
+					await notifyTodoDeleted(todo.title);
+				} catch (error) {
+					console.error("通知送信エラー:", error);
+				}
+			}
 
 			Toast.show({
 				type: "success",

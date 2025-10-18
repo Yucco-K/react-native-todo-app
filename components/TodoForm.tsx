@@ -1,4 +1,5 @@
 import { createTodo } from "@/services/todoService";
+import { notifyTodoAdded } from "@/services/notificationService";
 import { useState } from "react";
 import { Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -56,6 +57,15 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 		setIsLoading(true);
 		try {
 			await createTodo(title, content, isShared);
+
+			// 共有Todoの場合は通知を送信
+			if (isShared) {
+				try {
+					await notifyTodoAdded(title);
+				} catch (error) {
+					console.error("通知送信エラー:", error);
+				}
+			}
 
 			// フォームをクリア
 			setTitle("");
