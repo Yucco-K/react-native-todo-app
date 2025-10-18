@@ -1,4 +1,4 @@
-import { API_URL } from "@/constants/urls";
+import { createTodo } from "@/services/todoService";
 import { useState } from "react";
 import { Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -30,16 +30,9 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 
 	const createTodos = async () => {
 		// バリデーション
-		console.log("=== バリデーション開始 ===");
-		console.log("タイトル文字数:", title.length);
-		console.log("タイトル内容:", title);
-		console.log("内容文字数:", content.length);
-
 		const result = todoSchema.safeParse({ title, content });
-		console.log("バリデーション結果:", result.success);
 
 		if (!result.success) {
-			console.log("バリデーションエラー:", result.error.errors);
 			const fieldErrors: { title?: string; content?: string } = {};
 			result.error.errors.forEach((err) => {
 				if (err.path[0] === "title" || err.path[0] === "content") {
@@ -61,17 +54,7 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 		setErrors({});
 		setIsLoading(true);
 		try {
-			const response = await fetch(`${API_URL}/api/todos`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ title, content, completed: false }),
-			});
-
-			if (!response.ok) {
-				throw new Error("保存に失敗しました");
-			}
+			await createTodo(title, content);
 
 			// フォームをクリア
 			setTitle("");

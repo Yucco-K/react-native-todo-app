@@ -1,5 +1,5 @@
-import { API_URL } from "@/constants/urls";
 import type { Todo } from "@/types/Todo";
+import { updateTodo } from "@/services/todoService";
 import React, { useState } from "react";
 import { Modal, Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -71,21 +71,11 @@ export default function EditTodoModal({
 		setIsLoading(true);
 
 		try {
-			const response = await fetch(`${API_URL}/api/todos/${todo.id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					title,
-					content,
-					completed: todo.completed,
-				}),
+			await updateTodo(todo.id, {
+				title,
+				content,
+				completed: todo.completed,
 			});
-
-			if (!response.ok) {
-				throw new Error("更新に失敗しました");
-			}
 
 			Toast.show({
 				type: "success",

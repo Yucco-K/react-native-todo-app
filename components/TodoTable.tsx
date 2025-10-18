@@ -1,5 +1,9 @@
-import { API_URL } from "@/constants/urls";
 import type { Todo } from "@/types/Todo";
+import {
+	deleteTodo as deleteTodoService,
+	getTodos as getTodosService,
+	toggleTodoComplete,
+} from "@/services/todoService";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -19,11 +23,15 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 	const getTodos = useCallback(async () => {
 		setLoading(true);
 		try {
-			const response = await fetch(`${API_URL}/api/todos`);
-			const json = await response.json();
-			setData(json);
+			const todos = await getTodosService();
+			setData(todos);
 		} catch (error) {
 			console.error(error);
+			Toast.show({
+				type: "error",
+				text1: "読み込み失敗",
+				text2: "Todoの読み込みに失敗しました",
+			});
 		} finally {
 			setLoading(false);
 		}
@@ -43,26 +51,13 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		getTodos();
 	};
 
-	const toggleComplete = async (id: number) => {
+	const toggleComplete = async (id: string) => {
 		try {
 			// 現在のTodoを取得
 			const todo = data.find((item) => item.id === id);
 			if (!todo) return;
 
-			const response = await fetch(`${API_URL}/api/todos/${id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...todo,
-					completed: !todo.completed,
-				}),
-			});
-
-			if (!response.ok) {
-				throw new Error("更新に失敗しました");
-			}
+			await toggleTodoComplete(id, todo.completed);
 
 			// リストを再取得
 			getTodos();
@@ -76,15 +71,9 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		}
 	};
 
-	const deleteTodo = async (id: number) => {
+	const deleteTodo = async (id: string) => {
 		try {
-			const response = await fetch(`${API_URL}/api/todos/${id}`, {
-				method: "DELETE",
-			});
-
-			if (!response.ok) {
-				throw new Error("削除に失敗しました");
-			}
+			await deleteTodoService(id);
 
 			Toast.show({
 				type: "success",

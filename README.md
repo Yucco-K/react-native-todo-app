@@ -30,6 +30,7 @@ React NativeとExpo Routerを使用したTodoアプリです。CRUD機能（作�
 | NativeWind                 | ^4.2       | Tailwindベースのスタイリング |
 | Zod                        | ^3.25      | バリデーション               |
 | react-native-toast-message | latest     | トースト通知                 |
+| Firebase                   | latest     | バックエンド・データベース   |
 
 ### スタイリング
 
@@ -59,12 +60,52 @@ cd react-native-todo-app
 npm install
 ```
 
-3. **開発サーバーを起動**
+3. **Firebaseプロジェクトをセットアップ**
+
+#### 3-1. Firebaseプロジェクトを作成
+
+1. [Firebase Console](https://console.firebase.google.com/)にアクセス
+2. 「プロジェクトを追加」をクリック
+3. プロジェクト名を入力（例: `my-todo-app`）
+4. Google Analyticsの設定（任意）
+
+#### 3-2. Firestoreを有効化
+
+1. Firebase Consoleで「Firestore Database」を選択
+2. 「データベースの作成」をクリック
+3. **テストモード**を選択（開発用）
+4. リージョンを選択（例: `asia-northeast1`）
+
+#### 3-3. Firebase設定を取得
+
+1. Firebase Consoleのプロジェクト設定（⚙️アイコン）を開く
+2. 「全般」タブで下にスクロール
+3. 「アプリを追加」→「ウェブアプリ」を選択
+4. アプリのニックネームを入力
+5. 表示される設定情報（`firebaseConfig`）をコピー
+
+#### 3-4. 環境変数を設定
+
+プロジェクトルートに`.env`ファイルを作成し、Firebase設定を入力：
+
+```bash
+# .env
+EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+**注意**: `.env`ファイルは`.gitignore`に含まれています。本番環境では環境変数を適切に管理してください。
+
+4. **開発サーバーを起動**
 
 ```bash
 npm start
 # または
-npx expo start
+npx expo start --clear
 ```
 
 ## 🚀 実行方法
@@ -139,84 +180,73 @@ react-native-todo-app/
 │   ├── EditTodoModal.tsx    # Todo編集モーダル
 │   └── ui/
 │       └── TodoItem.tsx     # Todo個別アイテム
+├── config/                  # 設定
+│   └── firebase.ts          # Firebase設定
+├── services/                # サービス層
+│   └── todoService.ts       # Firestore操作
 ├── constants/               # 定数
-│   ├── data.ts             # ダミーデータ
-│   └── urls.ts             # API URL
+│   └── data.ts              # ダミーデータ
 ├── types/                   # 型定義
-│   └── Todo.ts             # Todo型
+│   └── Todo.ts              # Todo型
 ├── assets/                  # 静的ファイル
-├── global.css              # グローバルスタイル
-├── tailwind.config.js      # Tailwind設定
-├── metro.config.js         # Metro bundler設定
-├── babel.config.js         # Babel設定
-└── package.json            # 依存関係
+├── global.css               # グローバルスタイル
+├── tailwind.config.js       # Tailwind設定
+├── metro.config.js          # Metro bundler設定
+├── babel.config.js          # Babel設定
+├── .env                     # 環境変数（gitignore）
+└── package.json             # 依存関係
 ```
 
-## 🔌 API仕様
+## 🔥 Firebase / Firestore
 
-### ベースURL
+### データベース構造
 
-```
-http://localhost:3000
-```
+このアプリは**Firebase Firestore**を使用しています。
 
-### エンドポイント
+#### コレクション: `todos`
 
-#### 1. Todo一覧取得
+各ドキュメントの構造：
 
-```
-GET /api/todos
-```
-
-**レスポンス:**
-
-```json
-[
-	{
-		"id": 1,
-		"title": "タスク1",
-		"content": "タスク1です。"
-	}
-]
-```
-
-#### 2. Todo作成
-
-```
-POST /api/todos
-Content-Type: application/json
-```
-
-**リクエストボディ:**
-
-```json
+```typescript
 {
-	"title": "新しいタスク",
-	"content": "タスクの内容"
+  id: string;           // FirestoreのドキュメントID（自動生成）
+  title: string;        // Todoのタイトル（1〜50文字）
+  content: string;      // Todoの内容（1〜200文字）
+  completed: boolean;   // 完了状態（true/false）
+  createdAt: Date;      // 作成日時
 }
 ```
 
-#### 3. Todo更新
+### Firestoreの操作
 
-```
-PUT /api/todos/:id
-Content-Type: application/json
-```
+アプリは`services/todoService.ts`を通じてFirestoreと通信します：
 
-**リクエストボディ:**
+- **`getTodos()`**: すべてのTodoを取得（`createdAt`の降順）
+- **`createTodo(title, content)`**: 新しいTodoを作成
+- **`updateTodo(id, updates)`**: Todoを更新
+- **`deleteTodo(id)`**: Todoを削除
+- **`toggleTodoComplete(id, currentCompleted)`**: 完了状態をトグル
 
-```json
-{
-	"title": "更新後のタイトル",
-	"content": "更新後の内容"
+### セキュリティルール（開発用）
+
+Firebase Consoleで以下のルールを設定してください：
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /todos/{todoId} {
+      // 開発環境: すべての読み書きを許可
+      allow read, write: if true;
+      
+      // 本番環境の例（認証が必要）:
+      // allow read, write: if request.auth != null;
+    }
+  }
 }
 ```
 
-#### 4. Todo削除
-
-```
-DELETE /api/todos/:id
-```
+**注意**: 上記は開発用のルールです。本番環境では適切な認証とセキュリティルールを設定してください。
 
 ## 🎨 デザイン仕様
 

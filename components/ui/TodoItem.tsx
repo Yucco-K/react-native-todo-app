@@ -2,9 +2,9 @@ import type { Todo } from "@/types/Todo";
 import { Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 
 type TodoItemProps = Todo & {
-	onToggleComplete?: (id: number) => void;
+	onToggleComplete?: (id: string) => void;
 	onEdit?: (todo: Todo) => void;
-	onDelete?: (id: number) => void;
+	onDelete?: (id: string) => void;
 };
 
 export default function TodoItem({
