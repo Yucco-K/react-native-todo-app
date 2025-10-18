@@ -87,12 +87,14 @@ npx expo start
 #### 1. 環境を選択
 
 **開発環境（テスト用Firebase）:**
+
 ```bash
 cp .env.development .env
 npx expo start
 ```
 
 **本番環境:**
+
 ```bash
 cp .env.production .env
 npx expo start
@@ -104,17 +106,6 @@ npx expo start
 - **Android**: Expo Goアプリでスキャン
 
 > **注意**: 開発サーバーと同じWiFiネットワークに接続している必要があります
-
-#### 3. テストユーザーでログイン
-
-初回はサインアップが必要です：
-
-```
-Email: test@example.com
-Password: password123
-```
-
-> **注意**: このテストアカウントは開発・検証用です。本番環境では別のアカウントを使用してください。
 
 ## プロジェクト構造
 
