@@ -112,30 +112,32 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 	return (
 		<View className="flex-1">
 			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400 items-center">
-				<Text className="w-1/12 text-center font-noto-bold"></Text>
-				<Text className="w-2/6 text-center font-noto-bold">タイトル</Text>
-				<Text className="w-2/6 text-center font-noto-bold">内容</Text>
-				<Text className="w-2/6 text-center font-noto-bold">操作</Text>
+				<View style={{ width: 40 }} />
+				<Text className="flex-1 text-center font-noto-bold">タイトル</Text>
+				<Text className="flex-1 text-center font-noto-bold">内容</Text>
+				<Text style={{ width: 110 }} className="text-center font-noto-bold">
+					操作
+				</Text>
 			</View>
 			{isLoading ? (
 				<View className="py-4">
 					<ActivityIndicator />
 				</View>
 			) : (
-			<FlatList
-				data={data}
-				renderItem={({ item }) => (
-					<TodoItem
-						{...item}
-						onToggleComplete={toggleComplete}
-						onEdit={handleEdit}
-						onDelete={deleteTodo}
-					/>
-				)}
-				keyExtractor={(item) => item.id.toString()}
-				contentContainerStyle={{ paddingBottom: 20 }}
-				showsVerticalScrollIndicator={true}
-			/>
+				<FlatList
+					data={data}
+					renderItem={({ item }) => (
+						<TodoItem
+							{...item}
+							onToggleComplete={toggleComplete}
+							onEdit={handleEdit}
+							onDelete={deleteTodo}
+						/>
+					)}
+					keyExtractor={(item) => item.id.toString()}
+					contentContainerStyle={{ paddingBottom: 20 }}
+					showsVerticalScrollIndicator={true}
+				/>
 			)}
 			<EditTodoModal
 				visible={isModalVisible}

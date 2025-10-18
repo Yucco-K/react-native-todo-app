@@ -18,7 +18,7 @@ export default function TodoItem({
 }: TodoItemProps) {
 	return (
 		<View className="flex flex-row py-2 items-center">
-			<View className="w-1/12 items-center">
+			<View style={{ width: 40 }} className="items-center">
 				<TouchableOpacity onPress={() => onToggleComplete?.(id)}>
 					<View
 						className={`w-6 h-6 rounded border-2 items-center justify-center ${
@@ -32,20 +32,22 @@ export default function TodoItem({
 				</TouchableOpacity>
 			</View>
 			<Text
-				className={`w-2/6 text-center font-noto-regular ${
+				className={`flex-1 text-center font-noto-regular ${
 					completed ? "line-through text-gray-400" : ""
 				}`}
+				numberOfLines={2}
 			>
 				{title}
 			</Text>
 			<Text
-				className={`w-2/6 text-center font-noto-regular ${
+				className={`flex-1 text-center font-noto-regular ${
 					completed ? "line-through text-gray-400" : ""
 				}`}
+				numberOfLines={2}
 			>
 				{content}
 			</Text>
-			<View className="w-2/6 flex-row justify-center gap-1">
+			<View style={{ width: 110 }} className="flex-row justify-center gap-1">
 				<TouchableHighlight
 					onPress={() => onEdit?.({ id, title, content, completed })}
 					activeOpacity={0.5}
