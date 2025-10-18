@@ -109,7 +109,8 @@ export default function SignupScreen() {
 								"メール/パスワード認証が有効化されていません。Firebase Consoleで有効にしてください。";
 							break;
 						case "auth/network-request-failed":
-							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							errorMessage =
+								"ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `登録エラー: ${error.code}`;

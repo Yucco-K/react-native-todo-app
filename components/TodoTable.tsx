@@ -26,11 +26,42 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 			const todos = await getTodosService();
 			setData(todos);
 		} catch (error) {
-			console.error(error);
+			console.error("Todo取得エラー:", error);
+			let errorMessage = "Todoの読み込みに失敗しました";
+
+			if (error && typeof error === "object") {
+				if ("code" in error) {
+					switch (error.code) {
+						case "permission-denied":
+							errorMessage =
+								"アクセス権限がありません。Firestoreのセキュリティルールを確認してください。";
+							break;
+						case "failed-precondition":
+							errorMessage =
+								"インデックスが必要です。Firestore Consoleでインデックスを作成してください。";
+							break;
+						case "unavailable":
+							errorMessage =
+								"Firestoreに接続できません。インターネット接続を確認してください。";
+							break;
+						default:
+							errorMessage = `読み込みエラー: ${error.code}`;
+					}
+				}
+
+				if ("message" in error && typeof error.message === "string") {
+					console.error("詳細:", error.message);
+					if (__DEV__) {
+						errorMessage += `\n\n[開発モード] ${error.message}`;
+					}
+				}
+			}
+
 			Toast.show({
 				type: "error",
 				text1: "読み込み失敗",
-				text2: "Todoの読み込みに失敗しました",
+				text2: errorMessage,
+				visibilityTime: 8000,
 			});
 		} finally {
 			setLoading(false);

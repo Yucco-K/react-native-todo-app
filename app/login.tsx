@@ -65,7 +65,7 @@ export default function LoginScreen() {
 			router.replace("/");
 		} catch (error) {
 			console.error("ログインエラー:", error);
-			let errorTitle = "ログイン失敗";
+			const errorTitle = "ログイン失敗";
 			let errorMessage = "ログインに失敗しました";
 
 			if (error && typeof error === "object") {
@@ -92,7 +92,8 @@ export default function LoginScreen() {
 								"ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
 							break;
 						case "auth/network-request-failed":
-							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							errorMessage =
+								"ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `ログインエラー: ${error.code}`;
@@ -188,9 +189,7 @@ export default function LoginScreen() {
 						</Text>
 						<Link href="/signup" asChild>
 							<TouchableHighlight>
-								<Text className="text-blue-500 font-noto-bold">
-									新規登録
-								</Text>
+								<Text className="text-blue-500 font-noto-bold">新規登録</Text>
 							</TouchableHighlight>
 						</Link>
 					</View>
@@ -199,4 +198,3 @@ export default function LoginScreen() {
 		</SafeAreaView>
 	);
 }
-
