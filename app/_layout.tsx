@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
 import {
@@ -9,8 +9,42 @@ import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
+
+function RootLayoutNav() {
+	const { user, loading } = useAuth();
+	const segments = useSegments();
+	const router = useRouter();
+
+	useEffect(() => {
+		if (loading) return;
+
+		const inAuthScreen =
+			segments[0] === "login" || segments[0] === "signup";
+
+		if (!user && !inAuthScreen) {
+			// ユーザーが未ログインの場合、ログイン画面へ
+			router.replace("/login");
+		} else if (user && inAuthScreen) {
+			// ユーザーがログイン済みの場合、ホーム画面へ
+			router.replace("/");
+		}
+	}, [user, loading, segments, router]);
+
+	if (loading) {
+		return null;
+	}
+
+	return (
+		<Stack>
+			<Stack.Screen name="index" options={{ headerShown: false }} />
+			<Stack.Screen name="login" options={{ headerShown: false }} />
+			<Stack.Screen name="signup" options={{ headerShown: false }} />
+		</Stack>
+	);
+}
 
 export default function RootLayout() {
 	const [fontsLoaded, fontError] = useFonts({
@@ -26,11 +60,9 @@ export default function RootLayout() {
 		return null;
 	}
 	return (
-		<>
-			<Stack>
-				<Stack.Screen name="index" options={{ headerShown: false }} />
-			</Stack>
+		<AuthProvider>
+			<RootLayoutNav />
 			<Toast position="top" topOffset={60} />
-		</>
+		</AuthProvider>
 	);
 }

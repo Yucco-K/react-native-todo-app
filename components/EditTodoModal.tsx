@@ -1,5 +1,5 @@
-import type { Todo } from "@/types/Todo";
 import { updateTodo } from "@/services/todoService";
+import type { Todo } from "@/types/Todo";
 import React, { useState } from "react";
 import { Modal, Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";

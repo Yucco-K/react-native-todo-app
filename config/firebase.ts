@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Firebaseの設定
@@ -14,6 +15,9 @@ const firebaseConfig = {
 
 // Firebaseの初期化
 const app = initializeApp(firebaseConfig);
+
+// Authenticationのインスタンスを取得
+export const auth = getAuth(app);
 
 // Firestoreのインスタンスを取得
 export const db = getFirestore(app);

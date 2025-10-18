@@ -1,9 +1,9 @@
-import type { Todo } from "@/types/Todo";
 import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
 } from "@/services/todoService";
+import type { Todo } from "@/types/Todo";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";

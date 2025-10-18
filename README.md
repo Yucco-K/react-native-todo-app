@@ -209,11 +209,11 @@ react-native-todo-app/
 
 ```typescript
 {
-  id: string;           // FirestoreのドキュメントID（自動生成）
-  title: string;        // Todoのタイトル（1〜50文字）
-  content: string;      // Todoの内容（1〜200文字）
-  completed: boolean;   // 完了状態（true/false）
-  createdAt: Date;      // 作成日時
+	id: string; // FirestoreのドキュメントID（自動生成）
+	title: string; // Todoのタイトル（1〜50文字）
+	content: string; // Todoの内容（1〜200文字）
+	completed: boolean; // 完了状態（true/false）
+	createdAt: Date; // 作成日時
 }
 ```
 
@@ -238,7 +238,7 @@ service cloud.firestore {
     match /todos/{todoId} {
       // 開発環境: すべての読み書きを許可
       allow read, write: if true;
-      
+
       // 本番環境の例（認証が必要）:
       // allow read, write: if request.auth != null;
     }

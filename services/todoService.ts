@@ -7,8 +7,9 @@ import {
 	orderBy,
 	query,
 	updateDoc,
+	where,
 } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import type { Todo } from "../types/Todo";
 
 const COLLECTION_NAME = "todos";
@@ -19,11 +20,20 @@ type FirestoreTodo = Omit<Todo, "id"> & {
 };
 
 /**
- * すべてのTodoを取得
+ * 現在のユーザーのTodoを取得
  */
 export const getTodos = async (): Promise<Todo[]> => {
 	try {
-		const q = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		const q = query(
+			collection(db, COLLECTION_NAME),
+			where("userId", "==", userId),
+			orderBy("createdAt", "desc")
+		);
 		const querySnapshot = await getDocs(q);
 
 		const todos: Todo[] = [];
@@ -31,6 +41,7 @@ export const getTodos = async (): Promise<Todo[]> => {
 			const data = doc.data() as FirestoreTodo;
 			todos.push({
 				id: doc.id,
+				userId: data.userId,
 				title: data.title,
 				content: data.content,
 				completed: data.completed,
@@ -52,7 +63,13 @@ export const createTodo = async (
 	content: string
 ): Promise<string> => {
 	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
 		const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+			userId,
 			title,
 			content,
 			completed: false,
