@@ -46,7 +46,9 @@ export const migrateTodosAddSharedField = async (): Promise<{
 			}
 		}
 
-		console.log(`✅ マイグレーション完了: ${updated}件更新, ${skipped}件スキップ`);
+		console.log(
+			`✅ マイグレーション完了: ${updated}件更新, ${skipped}件スキップ`
+		);
 
 		return {
 			success: true,
@@ -63,4 +65,3 @@ export const migrateTodosAddSharedField = async (): Promise<{
 		};
 	}
 };
-

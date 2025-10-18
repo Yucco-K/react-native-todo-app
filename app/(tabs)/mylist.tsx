@@ -3,7 +3,12 @@ import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
 import { migrateTodosAddSharedField } from "@/services/migrationService";
 import { useState } from "react";
-import { ActivityIndicator, Text, TouchableHighlight, View } from "react-native";
+import {
+	ActivityIndicator,
+	Text,
+	TouchableHighlight,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -24,7 +29,7 @@ export default function MyListScreen() {
 			if (result.success) {
 				Toast.show({
 					type: "success",
-					text1: "マイグレーション完了",
+					text1: "更新完了",
 					text2: `${result.updated}件のTodoを更新しました`,
 					visibilityTime: 4000,
 				});
@@ -33,7 +38,7 @@ export default function MyListScreen() {
 			} else {
 				Toast.show({
 					type: "error",
-					text1: "マイグレーション失敗",
+					text1: "更新失敗",
 					text2: result.error || "不明なエラー",
 					visibilityTime: 4000,
 				});
@@ -125,4 +130,3 @@ export default function MyListScreen() {
 		</SafeAreaView>
 	);
 }
-

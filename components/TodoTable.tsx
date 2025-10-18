@@ -147,6 +147,19 @@ export default function TodoTable({
 				<View className="py-4">
 					<ActivityIndicator />
 				</View>
+			) : data.length === 0 ? (
+				<View className="py-8 items-center">
+					<Text className="text-gray-400 font-noto-regular text-base">
+						{isShared
+							? "共有Todoはまだありません"
+							: "Todoはまだありません"}
+					</Text>
+					<Text className="text-gray-400 font-noto-regular text-sm mt-2">
+						{isShared
+							? "上のフォームから共有Todoを作成できます"
+							: "上のフォームから新しいTodoを作成できます"}
+					</Text>
+				</View>
 			) : (
 				<FlatList
 					data={data}

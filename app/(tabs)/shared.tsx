@@ -23,6 +23,9 @@ export default function SharedListScreen() {
 							{user.email}
 						</Text>
 					)}
+					<Text className="text-xs text-gray-500 font-noto-regular mt-1">
+						他の人と共有するTodoをここで作成・管理できます
+					</Text>
 				</View>
 				<TodoForm onSave={handleSave} isShared={true} />
 				<TodoTable refresh={refreshKey} isShared={true} />
