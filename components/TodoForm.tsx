@@ -2,7 +2,11 @@ import { API_URL } from "@/constants/urls";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableHighlight, View } from "react-native";
 
-export default function TodoForm() {
+type TodoFormProps = {
+	onSave?: () => void;
+};
+
+export default function TodoForm({ onSave }: TodoFormProps) {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 
@@ -15,6 +19,11 @@ export default function TodoForm() {
 				},
 				body: JSON.stringify({ title, content }),
 			});
+			// フォームをクリア
+			setTitle("");
+			setContent("");
+			// 保存後のコールバックを呼び出す
+			onSave?.();
 		} catch (error) {
 			console.error(error);
 		}

@@ -1,13 +1,19 @@
 import TodoForm from "@/components/TodoForm";
 import TodoTable from "@/components/TodoTable";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function index() {
+	const [refreshKey, setRefreshKey] = useState(0);
+
+	const handleSave = () => {
+		setRefreshKey((prev) => prev + 1);
+	};
+
 	return (
 		<SafeAreaView>
-			<TodoForm />
-			<TodoTable />
+			<TodoForm onSave={handleSave} />
+			<TodoTable refresh={refreshKey} />
 		</SafeAreaView>
 	);
 }

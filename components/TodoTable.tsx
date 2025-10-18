@@ -4,12 +4,17 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import TodoItem from "./ui/TodoItem";
 
-export default function TodoTable() {
+type TodoTableProps = {
+	refresh?: number;
+};
+
+export default function TodoTable({ refresh }: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
 
 	useEffect(() => {
 		const getTodos = async () => {
+			setLoading(true);
 			try {
 				const response = await fetch(`${API_URL}/api/todos`);
 				const json = await response.json();
@@ -20,8 +25,10 @@ export default function TodoTable() {
 				setLoading(false);
 			}
 		};
-		getTodos();
-	}, []);
+		if (refresh !== undefined) {
+			getTodos();
+		}
+	}, [refresh]);
 	return (
 		<>
 			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400">
@@ -37,11 +44,6 @@ export default function TodoTable() {
 					keyExtractor={(item) => item.id.toString()}
 				/>
 			)}
-			<FlatList
-				data={data}
-				renderItem={({ item }) => <TodoItem {...item} />}
-				keyExtractor={(item) => item.id.toString()}
-			/>
 		</>
 	);
 }
