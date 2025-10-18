@@ -46,7 +46,7 @@ npx expo start
 
 ## アプリへのアクセス
 
-1. アプリを起動：`npx expo start`
+1. アプリを起動
 2. QRコードをスキャン
    - **iOS**: カメラアプリでスキャン
    - **Android**: Expo Goアプリでスキャン
