@@ -1,6 +1,7 @@
 import TodoForm from "@/components/TodoForm";
 import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { migrateTodosAddSharedField } from "@/services/migrationService";
 import { useState } from "react";
 import {
@@ -13,12 +14,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function MyListScreen() {
-	const [refreshKey, setRefreshKey] = useState(0);
 	const [isMigrating, setIsMigrating] = useState(false);
 	const { user, logout } = useAuth();
+	const { refreshTrigger, triggerRefresh } = useTodoRefresh();
 
 	const handleSave = () => {
-		setRefreshKey((prev) => prev + 1);
+		triggerRefresh();
 	};
 
 	const handleMigration = async () => {
@@ -34,7 +35,7 @@ export default function MyListScreen() {
 					visibilityTime: 4000,
 				});
 				// リストを更新
-				setRefreshKey((prev) => prev + 1);
+				triggerRefresh();
 			} else {
 				Toast.show({
 					type: "error",
@@ -125,7 +126,7 @@ export default function MyListScreen() {
 				</View>
 
 				<TodoForm onSave={handleSave} />
-				<TodoTable refresh={refreshKey} isShared={false} />
+				<TodoTable refresh={refreshTrigger} isShared={false} />
 			</View>
 		</SafeAreaView>
 	);

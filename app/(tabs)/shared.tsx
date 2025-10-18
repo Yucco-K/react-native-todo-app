@@ -1,16 +1,16 @@
 import TodoForm from "@/components/TodoForm";
 import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SharedListScreen() {
-	const [refreshKey, setRefreshKey] = useState(0);
 	const { user } = useAuth();
+	const { refreshTrigger, triggerRefresh } = useTodoRefresh();
 
 	const handleSave = () => {
-		setRefreshKey((prev) => prev + 1);
+		triggerRefresh();
 	};
 
 	return (
@@ -28,7 +28,7 @@ export default function SharedListScreen() {
 					</Text>
 				</View>
 				<TodoForm onSave={handleSave} isShared={true} />
-				<TodoTable refresh={refreshKey} isShared={true} />
+				<TodoTable refresh={refreshTrigger} isShared={true} />
 			</View>
 		</SafeAreaView>
 	);

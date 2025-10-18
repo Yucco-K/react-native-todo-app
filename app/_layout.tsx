@@ -2,6 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
@@ -71,8 +72,10 @@ export default function RootLayout() {
 	}
 	return (
 		<AuthProvider>
-			<RootLayoutNav />
-			<Toast position="top" topOffset={60} />
+			<TodoRefreshProvider>
+				<RootLayoutNav />
+				<Toast position="top" topOffset={60} />
+			</TodoRefreshProvider>
 		</AuthProvider>
 	);
 }

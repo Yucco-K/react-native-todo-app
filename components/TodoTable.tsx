@@ -5,6 +5,7 @@ import {
 	toggleTodoShared,
 } from "@/services/todoService";
 import type { Todo } from "@/types/Todo";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -24,6 +25,7 @@ export default function TodoTable({
 	const [data, setData] = useState<Todo[]>([]);
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { triggerRefresh } = useTodoRefresh();
 
 	const getTodos = useCallback(async () => {
 		setLoading(true);
@@ -118,8 +120,8 @@ export default function TodoTable({
 				visibilityTime: 3000,
 			});
 
-			// リストを再取得
-			getTodos();
+			// グローバルにリフレッシュをトリガー（両方のタブで即座に反映）
+			triggerRefresh();
 		} catch (error) {
 			console.error(error);
 			Toast.show({
