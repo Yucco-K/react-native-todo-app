@@ -1,6 +1,6 @@
 import { API_URL } from "@/constants/urls";
 import type { Todo } from "@/types/Todo";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
@@ -43,6 +43,39 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		getTodos();
 	};
 
+	const toggleComplete = async (id: number) => {
+		try {
+			// 現在のTodoを取得
+			const todo = data.find((item) => item.id === id);
+			if (!todo) return;
+
+			const response = await fetch(`${API_URL}/api/todos/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					...todo,
+					completed: !todo.completed,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("更新に失敗しました");
+			}
+
+			// リストを再取得
+			getTodos();
+		} catch (error) {
+			console.error(error);
+			Toast.show({
+				type: "error",
+				text1: "更新失敗",
+				text2: "ステータスの更新に失敗しました",
+			});
+		}
+	};
+
 	const deleteTodo = async (id: number) => {
 		try {
 			const response = await fetch(`${API_URL}/api/todos/${id}`, {
@@ -79,6 +112,7 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 	return (
 		<View className="flex-1">
 			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400 items-center">
+				<Text className="w-1/12 text-center font-noto-bold"></Text>
 				<Text className="w-2/6 text-center font-noto-bold">タイトル</Text>
 				<Text className="w-2/6 text-center font-noto-bold">内容</Text>
 				<Text className="w-2/6 text-center font-noto-bold">操作</Text>
@@ -88,15 +122,20 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 					<ActivityIndicator />
 				</View>
 			) : (
-				<FlatList
-					data={data}
-					renderItem={({ item }) => (
-						<TodoItem {...item} onEdit={handleEdit} onDelete={deleteTodo} />
-					)}
-					keyExtractor={(item) => item.id.toString()}
-					contentContainerStyle={{ paddingBottom: 20 }}
-					showsVerticalScrollIndicator={true}
-				/>
+			<FlatList
+				data={data}
+				renderItem={({ item }) => (
+					<TodoItem
+						{...item}
+						onToggleComplete={toggleComplete}
+						onEdit={handleEdit}
+						onDelete={deleteTodo}
+					/>
+				)}
+				keyExtractor={(item) => item.id.toString()}
+				contentContainerStyle={{ paddingBottom: 20 }}
+				showsVerticalScrollIndicator={true}
+			/>
 			)}
 			<EditTodoModal
 				visible={isModalVisible}

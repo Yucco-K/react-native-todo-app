@@ -1,5 +1,5 @@
 import { API_URL } from "@/constants/urls";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
@@ -66,7 +66,7 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ title, content }),
+				body: JSON.stringify({ title, content, completed: false }),
 			});
 
 			if (!response.ok) {
