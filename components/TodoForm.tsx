@@ -1,5 +1,5 @@
-import { createTodo } from "@/services/todoService";
 import { notifyTodoAdded } from "@/services/notificationService";
+import { createTodo } from "@/services/todoService";
 import { useState } from "react";
 import { Text, TextInput, TouchableHighlight, View } from "react-native";
 import Toast from "react-native-toast-message";

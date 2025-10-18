@@ -1,11 +1,11 @@
 import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
+import { notifyTodoDeleted } from "@/services/notificationService";
 import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
 	toggleTodoShared,
 } from "@/services/todoService";
-import { notifyTodoDeleted } from "@/services/notificationService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
@@ -146,7 +146,7 @@ export default function TodoTable({
 		try {
 			// 削除前にTodoの情報を取得（通知用）
 			const todo = data.find((item) => item.id === id);
-			
+
 			await deleteTodoService(id);
 
 			// 共有Todoの場合は通知を送信

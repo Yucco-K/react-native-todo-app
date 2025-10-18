@@ -1,5 +1,5 @@
-import { updateTodo } from "@/services/todoService";
 import { notifyTodoUpdated } from "@/services/notificationService";
+import { updateTodo } from "@/services/todoService";
 import type { Todo } from "@/types/Todo";
 import React, { useState } from "react";
 import { Modal, Text, TextInput, TouchableHighlight, View } from "react-native";
