@@ -162,9 +162,7 @@ export default function TodoTable({
 			<View className="flex-row py-3 px-2 border-b-2 border-t-2 border-gray-400 items-center bg-gray-50">
 				<View style={{ width: 40 }} />
 				<Text className="flex-1 px-2 font-noto-bold text-sm">Todo</Text>
-				{!isShared && (
-					<Text className="font-noto-bold text-xs mr-2">共有</Text>
-				)}
+				{!isShared && <Text className="font-noto-bold text-xs mr-2">共有</Text>}
 				<Text className="font-noto-bold text-xs mr-16">操作</Text>
 			</View>
 			{isLoading ? (
