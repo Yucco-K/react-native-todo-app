@@ -1,7 +1,7 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
 import { Platform } from "react-native";
-import { doc, setDoc, collection, query, getDocs } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 
 // 通知の表示設定
@@ -16,7 +16,9 @@ Notifications.setNotificationHandler({
 /**
  * プッシュ通知のパーミッションを取得してトークンを登録
  */
-export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
+export async function registerForPushNotificationsAsync(): Promise<
+	string | undefined
+> {
 	let token: string | undefined;
 
 	if (Platform.OS === "android") {
@@ -82,7 +84,9 @@ export async function savePushToken(token: string): Promise<void> {
 /**
  * 全ユーザーのプッシュトークンを取得（現在のユーザーを除く）
  */
-async function getAllPushTokens(excludeCurrentUser: boolean = true): Promise<string[]> {
+async function getAllPushTokens(
+	excludeCurrentUser: boolean = true
+): Promise<string[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
 		const usersRef = collection(db, "users");
@@ -197,4 +201,3 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 		{ type: "todo_deleted" }
 	);
 }
-
