@@ -82,30 +82,22 @@ npx expo start
 
 ## アプリへのアクセス
 
-### 開発環境での動作確認
-
-#### 1. 環境を選択
-
-**開発環境（テスト用Firebase）:**
-
-```bash
-cp .env.development .env
-npx expo start
-```
-
-**本番環境:**
-
-```bash
-cp .env.production .env
-npx expo start
-```
-
-#### 2. QRコードをスキャン
-
-- **iOS**: カメラアプリでスキャン
-- **Android**: Expo Goアプリでスキャン
+1. アプリを起動：`npx expo start`
+2. QRコードをスキャン
+   - **iOS**: カメラアプリでスキャン
+   - **Android**: Expo Goアプリでスキャン
 
 > **注意**: 開発サーバーと同じWiFiネットワークに接続している必要があります
+
+### 環境の切り替え（開発/本番）
+
+```bash
+# 開発環境（テスト用Firebase）
+cp .env.development .env
+
+# 本番環境
+cp .env.production .env
+```
 
 ## プロジェクト構造
 
