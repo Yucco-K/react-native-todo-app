@@ -3,6 +3,7 @@ import type { Todo } from "@/types/Todo";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
+import EditTodoModal from "./EditTodoModal";
 import TodoItem from "./ui/TodoItem";
 
 type TodoTableProps = {
@@ -12,6 +13,8 @@ type TodoTableProps = {
 export default function TodoTable({ refresh }: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
+	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const getTodos = useCallback(async () => {
 		setLoading(true);
@@ -25,6 +28,20 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 			setLoading(false);
 		}
 	}, []);
+
+	const handleEdit = (todo: Todo) => {
+		setEditingTodo(todo);
+		setIsModalVisible(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsModalVisible(false);
+		setEditingTodo(null);
+	};
+
+	const handleSaveEdit = () => {
+		getTodos();
+	};
 
 	const deleteTodo = async (id: number) => {
 		try {
@@ -63,8 +80,8 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		<View className="flex-1">
 			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400 items-center">
 				<Text className="w-2/6 text-center font-noto-bold">タイトル</Text>
-				<Text className="w-3/6 text-center font-noto-bold">内容</Text>
-				<Text className="w-1/6 text-center font-noto-bold">操作</Text>
+				<Text className="w-2/6 text-center font-noto-bold">内容</Text>
+				<Text className="w-2/6 text-center font-noto-bold">操作</Text>
 			</View>
 			{isLoading ? (
 				<View className="py-4">
@@ -74,13 +91,19 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 				<FlatList
 					data={data}
 					renderItem={({ item }) => (
-						<TodoItem {...item} onDelete={deleteTodo} />
+						<TodoItem {...item} onEdit={handleEdit} onDelete={deleteTodo} />
 					)}
 					keyExtractor={(item) => item.id.toString()}
 					contentContainerStyle={{ paddingBottom: 20 }}
 					showsVerticalScrollIndicator={true}
 				/>
 			)}
+			<EditTodoModal
+				visible={isModalVisible}
+				todo={editingTodo}
+				onClose={handleCloseModal}
+				onSave={handleSaveEdit}
+			/>
 		</View>
 	);
 }
