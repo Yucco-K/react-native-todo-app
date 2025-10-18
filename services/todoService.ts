@@ -129,3 +129,18 @@ export const toggleTodoComplete = async (
 		throw error;
 	}
 };
+
+/**
+ * Todoの共有状態をトグル
+ */
+export const toggleTodoShared = async (
+	id: string,
+	currentShared: boolean
+): Promise<void> => {
+	try {
+		await updateTodo(id, { shared: !currentShared });
+	} catch (error) {
+		console.error("Error toggling todo shared:", error);
+		throw error;
+	}
+};

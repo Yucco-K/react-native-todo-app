@@ -2,6 +2,7 @@ import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
+	toggleTodoShared,
 } from "@/services/todoService";
 import type { Todo } from "@/types/Todo";
 import { useCallback, useEffect, useState } from "react";
@@ -106,6 +107,31 @@ export default function TodoTable({
 		}
 	};
 
+	const toggleShare = async (id: string, currentShared: boolean) => {
+		try {
+			await toggleTodoShared(id, currentShared);
+
+			Toast.show({
+				type: "success",
+				text1: currentShared ? "個人用に変更" : "共有に変更",
+				text2: currentShared
+					? "My Listに移動しました"
+					: "Sharedに移動しました",
+				visibilityTime: 3000,
+			});
+
+			// リストを再取得
+			getTodos();
+		} catch (error) {
+			console.error(error);
+			Toast.show({
+				type: "error",
+				text1: "更新失敗",
+				text2: "共有状態の更新に失敗しました",
+			});
+		}
+	};
+
 	const deleteTodo = async (id: string) => {
 		try {
 			await deleteTodoService(id);
@@ -139,6 +165,11 @@ export default function TodoTable({
 				<View style={{ width: 40 }} />
 				<Text className="flex-1 text-center font-noto-bold">タイトル</Text>
 				<Text className="flex-1 text-center font-noto-bold">内容</Text>
+				{!isShared && (
+					<Text style={{ width: 60 }} className="text-center font-noto-bold">
+						共有
+					</Text>
+				)}
 				<Text style={{ width: 110 }} className="text-center font-noto-bold">
 					操作
 				</Text>
@@ -150,9 +181,7 @@ export default function TodoTable({
 			) : data.length === 0 ? (
 				<View className="py-8 items-center">
 					<Text className="text-gray-400 font-noto-regular text-base">
-						{isShared
-							? "共有Todoはまだありません"
-							: "Todoはまだありません"}
+						{isShared ? "共有Todoはまだありません" : "Todoはまだありません"}
 					</Text>
 					<Text className="text-gray-400 font-noto-regular text-sm mt-2">
 						{isShared
@@ -167,8 +196,10 @@ export default function TodoTable({
 						<TodoItem
 							{...item}
 							onToggleComplete={toggleComplete}
+							onToggleShared={toggleShare}
 							onEdit={handleEdit}
 							onDelete={deleteTodo}
+							showShareToggle={!isShared}
 						/>
 					)}
 					keyExtractor={(item) => item.id.toString()}
