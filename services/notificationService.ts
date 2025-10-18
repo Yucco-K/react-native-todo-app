@@ -93,18 +93,26 @@ async function getAllPushTokens(
 		const q = query(usersRef);
 		const querySnapshot = await getDocs(q);
 
+		console.log(`📱 全ユーザー数: ${querySnapshot.size}`);
+		console.log(`📱 現在のユーザーID: ${currentUserId}`);
+
 		const tokens: string[] = [];
 		querySnapshot.forEach((doc) => {
 			const data = doc.data();
+			console.log(`📱 ユーザー ${doc.id}: トークン=${data.pushToken ? '有' : '無'}`);
+			
 			if (data.pushToken) {
 				// 現在のユーザーを除外する場合
 				if (excludeCurrentUser && doc.id === currentUserId) {
+					console.log(`📱 自分自身を除外: ${doc.id}`);
 					return;
 				}
 				tokens.push(data.pushToken);
+				console.log(`📱 送信先に追加: ${doc.id}`);
 			}
 		});
 
+		console.log(`📱 送信先トークン数: ${tokens.length}`);
 		return tokens;
 	} catch (error) {
 		console.error("Error getting push tokens:", error);
