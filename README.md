@@ -31,50 +31,14 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 npm install
 ```
 
-### 2. 環境変数
-
-プロジェクトには3つの環境設定ファイルがあります：
-
-- `.env` - 現在使用中の環境
-- `.env.development` - 開発環境（テスト用Firebase）
-- `.env.production` - 本番環境
-
-#### 環境の切り替え方法
-
-**開発環境で起動（デフォルト）:**
-
-```bash
-cp .env.development .env
-npx expo start
-```
-
-**本番環境で起動:**
-
-```bash
-cp .env.production .env
-npx expo start
-```
-
-#### 環境変数の形式
-
-```bash
-EXPO_PUBLIC_FIREBASE_API_KEY=your-api-key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
-EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
-EXPO_PUBLIC_FIREBASE_APP_ID=your-app-id
-EXPO_PUBLIC_EAS_PROJECT_ID=your-eas-project-id
-```
-
-### 3. Firebase設定
+### 2. Firebase設定
 
 - [Firebase Console](https://console.firebase.google.com/) でプロジェクト作成
 - Firestore Database を有効化
 - Authentication でメール/パスワードを有効化
 - セキュリティルールを設定（詳細は `SPECIFICATION.md`）
 
-### 4. 起動
+### 3. 起動
 
 ```bash
 npx expo start
@@ -88,16 +52,6 @@ npx expo start
    - **Android**: Expo Goアプリでスキャン
 
 > **注意**: 開発サーバーと同じWiFiネットワークに接続している必要があります
-
-### 環境の切り替え（開発/本番）
-
-```bash
-# 開発環境（テスト用Firebase）
-cp .env.development .env
-
-# 本番環境
-cp .env.production .env
-```
 
 ## プロジェクト構造
 
