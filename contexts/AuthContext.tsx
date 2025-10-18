@@ -23,7 +23,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
+		console.log("🔐 AuthContext: 認証状態の監視を開始");
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			console.log("🔐 AuthContext: 認証状態変更", {
+				isLoggedIn: !!user,
+				email: user?.email,
+			});
 			setUser(user);
 			setLoading(false);
 		});

@@ -19,15 +19,25 @@ function RootLayoutNav() {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (loading) return;
+		if (loading) {
+			console.log("🔄 Router: 認証状態を読み込み中...");
+			return;
+		}
 
 		const inAuthScreen = segments[0] === "login" || segments[0] === "signup";
+		console.log("🔄 Router: 現在の状態", {
+			isLoggedIn: !!user,
+			currentScreen: segments[0] || "index",
+			inAuthScreen,
+		});
 
 		if (!user && !inAuthScreen) {
 			// ユーザーが未ログインの場合、ログイン画面へ
+			console.log("➡️ Router: ログインページにリダイレクト");
 			router.replace("/login");
 		} else if (user && inAuthScreen) {
 			// ユーザーがログイン済みの場合、ホーム画面へ
+			console.log("➡️ Router: ホーム画面にリダイレクト");
 			router.replace("/");
 		}
 	}, [user, loading, segments, router]);
