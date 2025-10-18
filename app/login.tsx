@@ -64,23 +64,56 @@ export default function LoginScreen() {
 			});
 			router.replace("/");
 		} catch (error) {
-			console.error(error);
+			console.error("ログインエラー:", error);
+			let errorTitle = "ログイン失敗";
 			let errorMessage = "ログインに失敗しました";
 
-			if (error && typeof error === "object" && "code" in error) {
-				if (error.code === "auth/invalid-credential") {
-					errorMessage = "メールアドレスまたはパスワードが間違っています";
-				} else if (error.code === "auth/user-not-found") {
-					errorMessage = "ユーザーが見つかりません";
-				} else if (error.code === "auth/wrong-password") {
-					errorMessage = "パスワードが間違っています";
+			if (error && typeof error === "object") {
+				// エラーコードによる詳細なメッセージ
+				if ("code" in error) {
+					switch (error.code) {
+						case "auth/invalid-credential":
+							errorMessage = "メールアドレスまたはパスワードが間違っています";
+							break;
+						case "auth/user-not-found":
+							errorMessage = "このメールアドレスは登録されていません";
+							break;
+						case "auth/wrong-password":
+							errorMessage = "パスワードが間違っています";
+							break;
+						case "auth/invalid-email":
+							errorMessage = "無効なメールアドレス形式です";
+							break;
+						case "auth/user-disabled":
+							errorMessage = "このアカウントは無効化されています";
+							break;
+						case "auth/too-many-requests":
+							errorMessage =
+								"ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
+							break;
+						case "auth/network-request-failed":
+							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							break;
+						default:
+							errorMessage = `ログインエラー: ${error.code}`;
+					}
+				}
+
+				// エラーメッセージがある場合
+				if ("message" in error && typeof error.message === "string") {
+					console.error("詳細:", error.message);
+					// 開発用に詳細メッセージも表示
+					if (__DEV__) {
+						errorMessage += `\n\n[開発モード] ${error.message}`;
+					}
 				}
 			}
 
 			Toast.show({
 				type: "error",
-				text1: "ログイン失敗",
+				text1: errorTitle,
 				text2: errorMessage,
+				visibilityTime: 6000,
 			});
 		} finally {
 			setIsLoading(false);

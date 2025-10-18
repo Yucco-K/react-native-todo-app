@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
@@ -9,7 +10,6 @@ import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,8 +21,7 @@ function RootLayoutNav() {
 	useEffect(() => {
 		if (loading) return;
 
-		const inAuthScreen =
-			segments[0] === "login" || segments[0] === "signup";
+		const inAuthScreen = segments[0] === "login" || segments[0] === "signup";
 
 		if (!user && !inAuthScreen) {
 			// ユーザーが未ログインの場合、ログイン画面へ

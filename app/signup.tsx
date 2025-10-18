@@ -86,23 +86,51 @@ export default function SignupScreen() {
 			});
 			router.replace("/");
 		} catch (error) {
-			console.error(error);
+			console.error("サインアップエラー:", error);
+			let errorTitle = "登録失敗";
 			let errorMessage = "登録に失敗しました";
 
-			if (error && typeof error === "object" && "code" in error) {
-				if (error.code === "auth/email-already-in-use") {
-					errorMessage = "このメールアドレスは既に使用されています";
-				} else if (error.code === "auth/weak-password") {
-					errorMessage = "パスワードが弱すぎます";
-				} else if (error.code === "auth/invalid-email") {
-					errorMessage = "無効なメールアドレスです";
+			if (error && typeof error === "object") {
+				// エラーコードによる詳細なメッセージ
+				if ("code" in error) {
+					switch (error.code) {
+						case "auth/email-already-in-use":
+							errorMessage = "このメールアドレスは既に使用されています";
+							break;
+						case "auth/weak-password":
+							errorMessage = "パスワードが弱すぎます（6文字以上必要）";
+							break;
+						case "auth/invalid-email":
+							errorMessage = "無効なメールアドレス形式です";
+							break;
+						case "auth/operation-not-allowed":
+							errorTitle = "認証が無効です";
+							errorMessage =
+								"メール/パスワード認証が有効化されていません。Firebase Consoleで有効にしてください。";
+							break;
+						case "auth/network-request-failed":
+							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							break;
+						default:
+							errorMessage = `登録エラー: ${error.code}`;
+					}
+				}
+
+				// エラーメッセージがある場合
+				if ("message" in error && typeof error.message === "string") {
+					console.error("詳細:", error.message);
+					// 開発用に詳細メッセージも表示
+					if (__DEV__) {
+						errorMessage += `\n\n[開発モード] ${error.message}`;
+					}
 				}
 			}
 
 			Toast.show({
 				type: "error",
-				text1: "登録失敗",
+				text1: errorTitle,
 				text2: errorMessage,
+				visibilityTime: 6000,
 			});
 		} finally {
 			setIsLoading(false);
@@ -194,9 +222,7 @@ export default function SignupScreen() {
 						</Text>
 						<Link href="/login" asChild>
 							<TouchableHighlight>
-								<Text className="text-blue-500 font-noto-bold">
-									ログイン
-								</Text>
+								<Text className="text-blue-500 font-noto-bold">ログイン</Text>
 							</TouchableHighlight>
 						</Link>
 					</View>
@@ -205,4 +231,3 @@ export default function SignupScreen() {
 		</SafeAreaView>
 	);
 }
-

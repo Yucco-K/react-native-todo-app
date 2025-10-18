@@ -125,4 +125,3 @@ export const toggleTodoComplete = async (
 		throw error;
 	}
 };
-
