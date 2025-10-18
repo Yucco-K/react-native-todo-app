@@ -114,9 +114,7 @@ export default function TodoTable({
 			Toast.show({
 				type: "success",
 				text1: currentShared ? "個人用に変更" : "共有に変更",
-				text2: currentShared
-					? "My Listに移動しました"
-					: "Sharedに移動しました",
+				text2: currentShared ? "My Listに移動しました" : "Sharedに移動しました",
 				visibilityTime: 3000,
 			});
 
@@ -161,18 +159,13 @@ export default function TodoTable({
 	}, [refresh, getTodos]);
 	return (
 		<View className="flex-1">
-			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400 items-center">
+			<View className="flex-row py-3 px-2 border-b-2 border-t-2 border-gray-400 items-center bg-gray-50">
 				<View style={{ width: 40 }} />
-				<Text className="flex-1 text-center font-noto-bold">タイトル</Text>
-				<Text className="flex-1 text-center font-noto-bold">内容</Text>
+				<Text className="flex-1 px-2 font-noto-bold text-sm">Todo</Text>
 				{!isShared && (
-					<Text style={{ width: 60 }} className="text-center font-noto-bold">
-						共有
-					</Text>
+					<Text className="font-noto-bold text-xs mr-2">共有</Text>
 				)}
-				<Text style={{ width: 110 }} className="text-center font-noto-bold">
-					操作
-				</Text>
+				<Text className="font-noto-bold text-xs mr-16">操作</Text>
 			</View>
 			{isLoading ? (
 				<View className="py-4">
