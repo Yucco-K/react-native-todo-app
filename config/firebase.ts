@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeApp } from "firebase/app";
 import {
 	getAuth,
+	// @ts-expect-error - getReactNativePersistence is available but type definitions may be incomplete
 	getReactNativePersistence,
 	initializeAuth,
 } from "firebase/auth";
@@ -23,15 +24,16 @@ const app = initializeApp(firebaseConfig);
 
 // Authenticationのインスタンスを取得（AsyncStorageで永続化）
 // HMR（Hot Module Replacement）対策: 既に初期化されている場合は getAuth を使用
-let auth;
-try {
-	auth = initializeAuth(app, {
-		persistence: getReactNativePersistence(AsyncStorage),
-	});
-} catch (error) {
-	// 既に初期化されている場合
-	auth = getAuth(app);
-}
+const auth = (() => {
+	try {
+		return initializeAuth(app, {
+			persistence: getReactNativePersistence(AsyncStorage),
+		});
+	} catch {
+		// 既に初期化されている場合
+		return getAuth(app);
+	}
+})();
 
 export { auth };
 

@@ -1,6 +1,13 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	setDoc,
+} from "firebase/firestore";
 import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
 
@@ -124,10 +131,11 @@ async function getAllPushTokens(
 export async function sendPushNotification(
 	title: string,
 	body: string,
-	data?: Record<string, unknown>
+	data?: Record<string, unknown>,
+	includeCurrentUser: boolean = false
 ): Promise<void> {
 	try {
-		const tokens = await getAllPushTokens(true);
+		const tokens = await getAllPushTokens(!includeCurrentUser);
 
 		if (tokens.length === 0) {
 			console.log("送信先のプッシュトークンがありません");
@@ -167,15 +175,43 @@ export async function sendPushNotification(
 }
 
 /**
+ * 現在のユーザーの表示名を取得（ニックネーム優先）
+ */
+async function getCurrentUserDisplayName(): Promise<string> {
+	const userId = auth.currentUser?.uid;
+	if (!userId) {
+		return "不明なユーザー";
+	}
+
+	try {
+		// ニックネームを取得
+		const userRef = doc(db, "users", userId);
+		const userDoc = await getDoc(userRef);
+
+		if (userDoc.exists()) {
+			const data = userDoc.data();
+			if (data.nickname) {
+				return `${data.nickname}さん`;
+			}
+		}
+
+		// ニックネームがない場合はメールアドレスを使用
+		return auth.currentUser?.email || "不明なユーザー";
+	} catch (error) {
+		console.error("Error getting user display name:", error);
+		return auth.currentUser?.email || "不明なユーザー";
+	}
+}
+
+/**
  * 共有Todoの追加通知
  */
 export async function notifyTodoAdded(title: string): Promise<void> {
-	const currentUser = auth.currentUser;
-	if (!currentUser?.email) return;
+	const displayName = await getCurrentUserDisplayName();
 
 	await sendPushNotification(
 		"新しい共有Todo",
-		`${currentUser.email} が「${title}」を追加しました`,
+		`${displayName} が「${title}」を追加しました`,
 		{ type: "todo_added" }
 	);
 }
@@ -184,12 +220,11 @@ export async function notifyTodoAdded(title: string): Promise<void> {
  * 共有Todoの編集通知
  */
 export async function notifyTodoUpdated(title: string): Promise<void> {
-	const currentUser = auth.currentUser;
-	if (!currentUser?.email) return;
+	const displayName = await getCurrentUserDisplayName();
 
 	await sendPushNotification(
 		"共有Todoが更新されました",
-		`${currentUser.email} が「${title}」を編集しました`,
+		`${displayName} が「${title}」を編集しました`,
 		{ type: "todo_updated" }
 	);
 }
@@ -198,12 +233,37 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
  * 共有Todoの削除通知
  */
 export async function notifyTodoDeleted(title: string): Promise<void> {
-	const currentUser = auth.currentUser;
-	if (!currentUser?.email) return;
+	const displayName = await getCurrentUserDisplayName();
 
 	await sendPushNotification(
 		"共有Todoが削除されました",
-		`${currentUser.email} が「${title}」を削除しました`,
+		`${displayName} が「${title}」を削除しました`,
 		{ type: "todo_deleted" }
+	);
+}
+
+/**
+ * 日時を「○月○日○時○分」形式でフォーマット
+ */
+function formatDateTime(date: Date): string {
+	const month = date.getMonth() + 1;
+	const day = date.getDate();
+	const hours = date.getHours();
+	const minutes = date.getMinutes();
+	return `${month}月${day}日${hours}時${minutes}分`;
+}
+
+/**
+ * 共有Todoの完了通知
+ */
+export async function notifyTodoCompleted(title: string): Promise<void> {
+	const displayName = await getCurrentUserDisplayName();
+	const completedTime = formatDateTime(new Date());
+
+	await sendPushNotification(
+		"共有TODO完了",
+		`${displayName} が共有TODO「${title}」を完了しました。完了時刻：${completedTime}`,
+		{ type: "todo_completed" }
+		// 本人は除外（本人は画面でトーストを見ている）
 	);
 }

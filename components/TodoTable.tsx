@@ -1,11 +1,19 @@
 import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
-import { notifyTodoDeleted } from "@/services/notificationService";
+import {
+	notifyTodoCompleted,
+	notifyTodoDeleted,
+} from "@/services/notificationService";
+import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
 	toggleTodoShared,
 } from "@/services/todoService";
+import {
+	getUserStats,
+	incrementCompletedTaskCount,
+} from "@/services/userStatsService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
@@ -105,7 +113,56 @@ export default function TodoTable({
 			const todo = data.find((item) => item.id === id);
 			if (!todo) return;
 
+			// 完了処理を実行
 			await toggleTodoComplete(id, todo.completed);
+
+			// 未完了 → 完了の場合、褒め言葉を表示
+			if (!todo.completed) {
+				// ユーザー統計を取得
+				const userStats = await getUserStats();
+
+				// 褒め言葉を生成
+				const praiseMessage = generatePraiseMessage(todo, userStats);
+
+				// ランダムなテーマインデックスを生成（0-24の25種類）
+				const randomThemeIndex = Math.floor(Math.random() * 25);
+
+				console.log(
+					"🎨 新しいテーマ:",
+					randomThemeIndex,
+					"褒め言葉:",
+					praiseMessage
+				);
+
+				// 前のトーストを確実に消してから新しいトーストを表示
+				Toast.hide();
+
+				// 少し待ってから新しいトーストを表示（Toastが完全にクリアされるまで）
+				setTimeout(() => {
+					Toast.show({
+						type: "praise",
+						text1: "✨ タスク完了おめでとう！✨",
+						text2: praiseMessage,
+						visibilityTime: 2000,
+						props: {
+							themeIndex: randomThemeIndex,
+							key: `praise-${Date.now()}-${Math.random()}`, // ユニークキー
+						},
+					});
+				}, 100);
+
+				// ユーザー統計を更新
+				await incrementCompletedTaskCount();
+
+				// 共有Todoの場合はプッシュ通知を送信（他のユーザーに通知）
+				if (todo.shared) {
+					try {
+						await notifyTodoCompleted(todo.title);
+					} catch (error) {
+						console.error("完了通知送信エラー:", error);
+					}
+				}
+			}
 
 			// リストを再取得
 			getTodos();

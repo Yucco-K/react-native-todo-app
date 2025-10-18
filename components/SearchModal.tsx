@@ -1,9 +1,12 @@
+import type { TodoCategory } from "@/types/Category";
+import { CATEGORY_OPTIONS } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
 	FlatList,
 	Modal,
+	ScrollView,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -36,6 +39,9 @@ export default function SearchModal({
 }: SearchModalProps) {
 	const [searchText, setSearchText] = useState("");
 	const [filterType, setFilterType] = useState<FilterType>("all");
+	const [categoryFilter, setCategoryFilter] = useState<TodoCategory | "all">(
+		"all"
+	);
 
 	// フィルタリングと検索を適用したデータ
 	const filteredData = (() => {
@@ -58,12 +64,18 @@ export default function SearchModal({
 			result = result.filter((todo) => todo.completed);
 		}
 
+		// カテゴリフィルター
+		if (categoryFilter !== "all") {
+			result = result.filter((todo) => todo.category === categoryFilter);
+		}
+
 		return result;
 	})();
 
 	const handleClose = () => {
 		setSearchText("");
 		setFilterType("all");
+		setCategoryFilter("all");
 		onClose();
 	};
 
@@ -102,7 +114,7 @@ export default function SearchModal({
 						)}
 					</View>
 
-					{/* フィルターボタン */}
+					{/* 完了状態フィルターボタン */}
 					<View className="flex-row mt-3">
 						<TouchableOpacity
 							onPress={() => setFilterType("all")}
@@ -146,6 +158,52 @@ export default function SearchModal({
 								完了済み
 							</Text>
 						</TouchableOpacity>
+					</View>
+
+					{/* カテゴリフィルター */}
+					<View className="mt-3">
+						<Text className="text-gray-600 font-noto-bold text-xs mb-2">
+							カテゴリ
+						</Text>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							<TouchableOpacity
+								onPress={() => setCategoryFilter("all")}
+								className={`mr-2 px-4 py-2 rounded-full border-2 ${
+									categoryFilter === "all"
+										? "bg-purple-500 border-purple-500"
+										: "bg-white border-gray-300"
+								}`}
+							>
+								<Text
+									className={`font-noto-bold text-xs ${
+										categoryFilter === "all" ? "text-white" : "text-gray-700"
+									}`}
+								>
+									すべて
+								</Text>
+							</TouchableOpacity>
+							{CATEGORY_OPTIONS.map((option) => (
+								<TouchableOpacity
+									key={option.value}
+									onPress={() => setCategoryFilter(option.value)}
+									className={`mr-2 px-4 py-2 rounded-full border-2 ${
+										categoryFilter === option.value
+											? "bg-purple-500 border-purple-500"
+											: "bg-white border-gray-300"
+									}`}
+								>
+									<Text
+										className={`font-noto-regular text-xs ${
+											categoryFilter === option.value
+												? "text-white"
+												: "text-gray-700"
+										}`}
+									>
+										{option.icon} {option.label}
+									</Text>
+								</TouchableOpacity>
+							))}
+						</ScrollView>
 					</View>
 				</View>
 

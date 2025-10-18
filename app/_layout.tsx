@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
+import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
 import {
@@ -70,11 +71,16 @@ export default function RootLayout() {
 	if (!fontsLoaded || fontError) {
 		return null;
 	}
+
+	const toastConfig = {
+		praise: PraiseToast,
+	};
+
 	return (
 		<AuthProvider>
 			<TodoRefreshProvider>
 				<RootLayoutNav />
-				<Toast position="top" topOffset={60} />
+				<Toast position="top" topOffset={100} config={toastConfig} />
 			</TodoRefreshProvider>
 		</AuthProvider>
 	);

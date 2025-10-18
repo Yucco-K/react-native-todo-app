@@ -2,6 +2,7 @@ import {
 	addDoc,
 	collection,
 	deleteDoc,
+	deleteField,
 	doc,
 	getDocs,
 	orderBy,
@@ -10,14 +11,10 @@ import {
 	where,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
+import type { TodoCategory } from "../types/Category";
 import type { Todo } from "../types/Todo";
 
 const COLLECTION_NAME = "todos";
-
-// Todo型（Firestoreから取得した際の型）
-type FirestoreTodo = Omit<Todo, "id"> & {
-	createdAt: Date;
-};
 
 /**
  * Todoを取得（自分のTodoまたは共有Todo）
@@ -39,7 +36,7 @@ export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
 
 		const todos: Todo[] = [];
 		querySnapshot.forEach((doc) => {
-			const data = doc.data() as FirestoreTodo;
+			const data = doc.data();
 			todos.push({
 				id: doc.id,
 				userId: data.userId,
@@ -47,6 +44,10 @@ export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
 				content: data.content,
 				completed: data.completed,
 				shared: data.shared,
+				category: data.category || "other",
+				createdAt: data.createdAt?.toDate(),
+				completedAt: data.completedAt?.toDate(),
+				completedBy: data.completedBy,
 			});
 		});
 
@@ -63,6 +64,7 @@ export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
 export const createTodo = async (
 	title: string,
 	content: string,
+	category: TodoCategory = "other",
 	isShared: boolean = false
 ): Promise<string> => {
 	try {
@@ -75,6 +77,7 @@ export const createTodo = async (
 			userId,
 			title,
 			content,
+			category,
 			completed: false,
 			shared: isShared,
 			createdAt: new Date(),
@@ -123,7 +126,27 @@ export const toggleTodoComplete = async (
 	currentCompleted: boolean
 ): Promise<void> => {
 	try {
-		await updateTodo(id, { completed: !currentCompleted });
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		const todoRef = doc(db, COLLECTION_NAME, id);
+		if (currentCompleted) {
+			// 完了 → 未完了：completedAtとcompletedByを削除
+			await updateDoc(todoRef, {
+				completed: false,
+				completedAt: deleteField(),
+				completedBy: deleteField(),
+			});
+		} else {
+			// 未完了 → 完了：completedAtとcompletedByを設定
+			await updateDoc(todoRef, {
+				completed: true,
+				completedAt: new Date(),
+				completedBy: userId,
+			});
+		}
 	} catch (error) {
 		console.error("Error toggling todo:", error);
 		throw error;

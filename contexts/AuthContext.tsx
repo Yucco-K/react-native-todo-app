@@ -11,13 +11,16 @@ import {
 	registerForPushNotificationsAsync,
 	savePushToken,
 } from "../services/notificationService";
+import { getUserNickname, saveUserNickname } from "../services/userService";
 
 type AuthContextType = {
 	user: User | null;
 	loading: boolean;
+	nickname: string | null;
 	signUp: (email: string, password: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
+	updateNickname: (nickname: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [nickname, setNickname] = useState<string | null>(null);
 
 	useEffect(() => {
 		console.log("🔐 AuthContext: 認証状態の監視を開始");
@@ -47,6 +51,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				} catch (error) {
 					console.error("❌ プッシュ通知の登録に失敗:", error);
 				}
+
+				// ニックネームを取得
+				try {
+					const userNickname = await getUserNickname();
+					setNickname(userNickname);
+					console.log("✅ ニックネームを取得しました:", userNickname);
+				} catch (error) {
+					console.error("❌ ニックネームの取得に失敗:", error);
+				}
+			} else {
+				setNickname(null);
 			}
 		});
 
@@ -65,8 +80,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		await signOut(auth);
 	};
 
+	const updateNickname = async (newNickname: string) => {
+		await saveUserNickname(newNickname);
+		setNickname(newNickname);
+	};
+
 	return (
-		<AuthContext.Provider value={{ user, loading, signUp, signIn, logout }}>
+		<AuthContext.Provider
+			value={{
+				user,
+				loading,
+				nickname,
+				signUp,
+				signIn,
+				logout,
+				updateNickname,
+			}}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

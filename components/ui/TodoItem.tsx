@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { TODO_CATEGORIES } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -26,6 +27,7 @@ export default function TodoItem({
 	content,
 	completed,
 	shared,
+	category,
 	onToggleComplete,
 	onToggleShared,
 	onEdit,
@@ -81,13 +83,25 @@ export default function TodoItem({
 							{title}
 						</Text>
 						{isExpanded && (
-							<Text
-								className={`font-noto-regular text-sm text-gray-500 mt-2 ${
-									completed ? "line-through text-gray-400" : ""
-								}`}
-							>
-								{content}
-							</Text>
+							<>
+								{/* カテゴリバッジ */}
+								{category && (
+									<View className="mt-2 flex-row">
+										<View className="bg-blue-100 px-3 py-1 rounded-full">
+											<Text className="text-blue-700 font-noto-bold text-xs">
+												{TODO_CATEGORIES[category] || "その他"}
+											</Text>
+										</View>
+									</View>
+								)}
+								<Text
+									className={`font-noto-regular text-sm text-gray-500 mt-2 ${
+										completed ? "line-through text-gray-400" : ""
+									}`}
+								>
+									{content}
+								</Text>
+							</>
 						)}
 					</View>
 				</TouchableOpacity>
@@ -147,7 +161,15 @@ export default function TodoItem({
 								<Pressable
 									className="flex-row items-center px-4 py-3 border-b border-gray-200"
 									onPress={() => {
-										onEdit?.({ id, userId, title, content, completed, shared });
+										onEdit?.({
+											id,
+											userId,
+											title,
+											content,
+											completed,
+											shared,
+											category,
+										});
 										setMenuVisible(false);
 									}}
 								>
