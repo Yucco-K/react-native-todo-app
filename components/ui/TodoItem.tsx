@@ -1,5 +1,5 @@
-import type { Todo } from "@/types/Todo";
 import { useAuth } from "@/contexts/AuthContext";
+import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -35,7 +35,7 @@ export default function TodoItem({
 	const [menuVisible, setMenuVisible] = React.useState(false);
 	const [isExpanded, setIsExpanded] = React.useState(false);
 	const { user } = useAuth();
-	
+
 	// 現在のユーザーが作成者かどうか
 	const isOwner = user?.uid === userId;
 
@@ -70,27 +70,27 @@ export default function TodoItem({
 						</TouchableOpacity>
 					</View>
 
-				{/* タイトルと内容 */}
-				<View className="flex-1">
-					<Text
-						className={`font-noto-regular text-base ${
-							completed ? "line-through text-gray-400" : ""
-						}`}
-						numberOfLines={1}
-					>
-						{title}
-					</Text>
-					{isExpanded && (
+					{/* タイトルと内容 */}
+					<View className="flex-1">
 						<Text
-							className={`font-noto-regular text-sm text-gray-500 mt-2 ${
+							className={`font-noto-regular text-base ${
 								completed ? "line-through text-gray-400" : ""
 							}`}
+							numberOfLines={1}
 						>
-							{content}
+							{title}
 						</Text>
-					)}
-				</View>
-			</TouchableOpacity>
+						{isExpanded && (
+							<Text
+								className={`font-noto-regular text-sm text-gray-500 mt-2 ${
+									completed ? "line-through text-gray-400" : ""
+								}`}
+							>
+								{content}
+							</Text>
+						)}
+					</View>
+				</TouchableOpacity>
 
 				{/* 右側: 3点メニューボタン */}
 				<TouchableOpacity

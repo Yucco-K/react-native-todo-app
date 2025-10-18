@@ -6,11 +6,21 @@ import {
 	toggleTodoShared,
 } from "@/services/todoService";
 import type { Todo } from "@/types/Todo";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+	ActivityIndicator,
+	FlatList,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
 import TodoItem from "./ui/TodoItem";
+
+type FilterType = "all" | "active" | "completed";
 
 type TodoTableProps = {
 	refresh?: number;
@@ -25,6 +35,8 @@ export default function TodoTable({
 	const [data, setData] = useState<Todo[]>([]);
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [searchText, setSearchText] = useState("");
+	const [filterType, setFilterType] = useState<FilterType>("all");
 	const { triggerRefresh } = useTodoRefresh();
 
 	const getTodos = useCallback(async () => {
@@ -159,8 +171,98 @@ export default function TodoTable({
 			getTodos();
 		}
 	}, [refresh, getTodos]);
+
+	// フィルタリングと検索を適用したデータ
+	const filteredData = useMemo(() => {
+		let result = [...data];
+
+		// 検索フィルター
+		if (searchText.trim()) {
+			const searchLower = searchText.toLowerCase();
+			result = result.filter(
+				(todo) =>
+					todo.title.toLowerCase().includes(searchLower) ||
+					todo.content.toLowerCase().includes(searchLower)
+			);
+		}
+
+		// 完了状態フィルター
+		if (filterType === "active") {
+			result = result.filter((todo) => !todo.completed);
+		} else if (filterType === "completed") {
+			result = result.filter((todo) => todo.completed);
+		}
+
+		return result;
+	}, [data, searchText, filterType]);
+
 	return (
 		<View className="flex-1">
+			{/* 検索バー */}
+			<View className="px-2 py-3 bg-white border-b border-gray-200">
+				<View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2">
+					<Ionicons name="search" size={20} color="#6b7280" />
+					<TextInput
+						className="flex-1 ml-2 text-base font-noto-regular"
+						placeholder="検索..."
+						placeholderTextColor="#9ca3af"
+						value={searchText}
+						onChangeText={setSearchText}
+					/>
+					{searchText.length > 0 && (
+						<TouchableOpacity onPress={() => setSearchText("")}>
+							<Ionicons name="close-circle" size={20} color="#6b7280" />
+						</TouchableOpacity>
+					)}
+				</View>
+			</View>
+
+			{/* フィルターボタン */}
+			<View className="flex-row px-2 py-2 bg-white border-b border-gray-200">
+				<TouchableOpacity
+					onPress={() => setFilterType("all")}
+					className={`flex-1 py-2 rounded-md mx-1 ${
+						filterType === "all" ? "bg-blue-500" : "bg-gray-200"
+					}`}
+				>
+					<Text
+						className={`text-center font-noto-bold text-sm ${
+							filterType === "all" ? "text-white" : "text-gray-700"
+						}`}
+					>
+						すべて
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => setFilterType("active")}
+					className={`flex-1 py-2 rounded-md mx-1 ${
+						filterType === "active" ? "bg-blue-500" : "bg-gray-200"
+					}`}
+				>
+					<Text
+						className={`text-center font-noto-bold text-sm ${
+							filterType === "active" ? "text-white" : "text-gray-700"
+						}`}
+					>
+						未完了
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => setFilterType("completed")}
+					className={`flex-1 py-2 rounded-md mx-1 ${
+						filterType === "completed" ? "bg-blue-500" : "bg-gray-200"
+					}`}
+				>
+					<Text
+						className={`text-center font-noto-bold text-sm ${
+							filterType === "completed" ? "text-white" : "text-gray-700"
+						}`}
+					>
+						完了済み
+					</Text>
+				</TouchableOpacity>
+			</View>
+
 			<View className="flex-row py-3 px-2 border-b-2 border-t-2 border-gray-400 items-center bg-gray-50">
 				<View style={{ width: 32 }} className="mr-2" />
 				<Text className="flex-1 font-noto-bold text-base">Todo</Text>
@@ -181,9 +283,19 @@ export default function TodoTable({
 							: "上のフォームから新しいTodoを作成できます"}
 					</Text>
 				</View>
+			) : filteredData.length === 0 ? (
+				<View className="py-8 items-center">
+					<Ionicons name="search-outline" size={48} color="#d1d5db" />
+					<Text className="text-gray-400 font-noto-regular text-lg mt-4">
+						該当するTodoが見つかりません
+					</Text>
+					<Text className="text-gray-400 font-noto-regular text-base mt-2">
+						検索条件やフィルターを変更してください
+					</Text>
+				</View>
 			) : (
 				<FlatList
-					data={data}
+					data={filteredData}
 					renderItem={({ item }) => (
 						<TodoItem
 							{...item}
