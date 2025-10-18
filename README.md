@@ -44,6 +44,24 @@ EXPO_PUBLIC_EAS_PROJECT_ID=
 npx expo start
 ```
 
+## アプリへのアクセス
+
+### QRコードでアクセス
+1. 開発サーバーを起動：`npx expo start`
+2. ターミナルに表示されるQRコードをスキャン
+   - **iOS**: カメラアプリでスキャン
+   - **Android**: Expo Goアプリでスキャン
+
+### テストユーザーでログイン
+アプリを試す際は、以下のテストアカウントをご利用ください：
+
+```
+Email: test@example.com
+Password: password123
+```
+
+> **注意**: このテストアカウントは誰でも使用できます。個人情報は入力しないでください。
+
 ## プロジェクト構造
 ```
 app/              # 画面（Expo Router）
