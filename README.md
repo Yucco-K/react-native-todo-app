@@ -270,13 +270,13 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /todos/{todoId} {
       // ログイン済みユーザーのみアクセス可能
-      allow read: if request.auth != null && 
+      allow read: if request.auth != null &&
                      resource.data.userId == request.auth.uid;
-      
-      allow create: if request.auth != null && 
+
+      allow create: if request.auth != null &&
                        request.resource.data.userId == request.auth.uid;
-      
-      allow update, delete: if request.auth != null && 
+
+      allow update, delete: if request.auth != null &&
                                resource.data.userId == request.auth.uid;
     }
   }
@@ -290,9 +290,9 @@ service cloud.firestore {
 1. **Firebase Console** → **Firestore Database** → **インデックス**タブ
 2. 以下のインデックスを作成：
 
-| コレクション | フィールド1        | フィールド2 | クエリスコープ |
-| ------------ | ------------------ | ----------- | -------------- |
-| `todos`      | `userId` (昇順)    | `shared` (昇順) | `createdAt` (降順) | コレクション   |
+| コレクション | フィールド1     | フィールド2     | クエリスコープ     |
+| ------------ | --------------- | --------------- | ------------------ | ------------ |
+| `todos`      | `userId` (昇順) | `shared` (昇順) | `createdAt` (降順) | コレクション |
 
 **または**、初回クエリ実行時にFirebaseが自動的にインデックスリンクを生成します。エラーメッセージ内のリンクをクリックして自動作成できます。
 

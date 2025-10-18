@@ -15,7 +15,10 @@ type TodoTableProps = {
 	isShared?: boolean;
 };
 
-export default function TodoTable({ refresh, isShared = false }: TodoTableProps) {
+export default function TodoTable({
+	refresh,
+	isShared = false,
+}: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
