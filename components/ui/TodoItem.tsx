@@ -20,6 +20,7 @@ type TodoItemProps = Todo & {
 
 export default function TodoItem({
 	id,
+	userId,
 	title,
 	content,
 	completed,
@@ -31,7 +32,7 @@ export default function TodoItem({
 	showShareToggle = false,
 }: TodoItemProps) {
 	const [menuVisible, setMenuVisible] = React.useState(false);
-	
+
 	return (
 		<View className="py-2 border-b border-gray-200">
 			<View className="flex-row items-center justify-between">
@@ -41,9 +42,11 @@ export default function TodoItem({
 					<View style={{ width: 32 }} className="items-center mr-2">
 						<TouchableOpacity onPress={() => onToggleComplete?.(id)}>
 							<View
-								className={\`w-6 h-6 rounded border-2 items-center justify-center \${
-									completed ? "bg-green-500 border-green-500" : "border-gray-400"
-								}\`}
+								className={`w-6 h-6 rounded border-2 items-center justify-center ${
+									completed
+										? "bg-green-500 border-green-500"
+										: "border-gray-400"
+								}`}
 							>
 								{completed && (
 									<Text className="text-white font-noto-bold text-lg">✓</Text>
@@ -55,17 +58,17 @@ export default function TodoItem({
 					{/* タイトルと内容 */}
 					<View className="flex-1">
 						<Text
-							className={\`font-noto-regular text-sm \${
+							className={`font-noto-regular text-sm ${
 								completed ? "line-through text-gray-400" : ""
-							}\`}
+							}`}
 							numberOfLines={1}
 						>
 							{title}
 						</Text>
 						<Text
-							className={\`font-noto-regular text-xs text-gray-500 \${
+							className={`font-noto-regular text-xs text-gray-500 ${
 								completed ? "line-through text-gray-400" : ""
-							}\`}
+							}`}
 							numberOfLines={1}
 						>
 							{content}
@@ -74,10 +77,7 @@ export default function TodoItem({
 				</View>
 
 				{/* 右側: 3点メニューボタン */}
-				<TouchableOpacity
-					onPress={() => setMenuVisible(true)}
-					className="p-2"
-				>
+				<TouchableOpacity onPress={() => setMenuVisible(true)} className="p-2">
 					<Ionicons name="ellipsis-vertical" size={20} color="#6b7280" />
 				</TouchableOpacity>
 
@@ -123,7 +123,7 @@ export default function TodoItem({
 								<Pressable
 									className="flex-row items-center px-4 py-3 border-b border-gray-200"
 									onPress={() => {
-										onEdit?.({ id, title, content, completed, shared });
+										onEdit?.({ id, userId, title, content, completed, shared });
 										setMenuVisible(false);
 									}}
 								>
