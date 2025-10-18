@@ -103,17 +103,17 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 					value={content}
 					onChangeText={setContent}
 				/>
-				{errors.content && (
-					<Text className="text-red-500 text-sm mt-1">{errors.content}</Text>
-				)}
-			</View>
-			<TouchableHighlight
-				onPress={createTodos}
-				disabled={isLoading}
-				activeOpacity={0.5}
-				className="bg-black rounded-md p-2"
-				underlayColor="gray"
-			>
+			{errors.content && (
+				<Text className="text-red-500 text-sm mt-1">{errors.content}</Text>
+			)}
+		</View>
+		<TouchableHighlight
+			onPress={createTodos}
+			disabled={isLoading}
+			activeOpacity={0.5}
+			className="bg-black rounded-md p-2 mt-4"
+			underlayColor="gray"
+		>
 				<Text className="text-white text-center font-noto-bold">
 					{isLoading ? "保存中..." : "保存"}
 				</Text>

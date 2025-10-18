@@ -1,3 +1,4 @@
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
@@ -5,7 +6,6 @@ import {
 	toggleTodoShared,
 } from "@/services/todoService";
 import type { Todo } from "@/types/Todo";
-import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
