@@ -42,12 +42,14 @@ npm install
 #### 環境の切り替え方法
 
 **開発環境で起動（デフォルト）:**
+
 ```bash
 cp .env.development .env
 npx expo start
 ```
 
 **本番環境で起動:**
+
 ```bash
 cp .env.production .env
 npx expo start
@@ -80,12 +82,39 @@ npx expo start
 
 ## アプリへのアクセス
 
-### QRコードでアクセス
+### 開発環境での動作確認
 
-1. 開発サーバーを起動：`npx expo start`
-2. ターミナルに表示されるQRコードをスキャン
-   - **iOS**: カメラアプリでスキャン
-   - **Android**: Expo Goアプリでスキャン
+#### 1. 環境を選択
+
+**開発環境（テスト用Firebase）:**
+```bash
+cp .env.development .env
+npx expo start
+```
+
+**本番環境:**
+```bash
+cp .env.production .env
+npx expo start
+```
+
+#### 2. QRコードをスキャン
+
+- **iOS**: カメラアプリでスキャン
+- **Android**: Expo Goアプリでスキャン
+
+> **注意**: 開発サーバーと同じWiFiネットワークに接続している必要があります
+
+#### 3. テストユーザーでログイン
+
+初回はサインアップが必要です：
+
+```
+Email: test@example.com
+Password: password123
+```
+
+> **注意**: このテストアカウントは開発・検証用です。本番環境では別のアカウントを使用してください。
 
 ## プロジェクト構造
 
