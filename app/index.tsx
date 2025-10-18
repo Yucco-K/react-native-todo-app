@@ -1,6 +1,7 @@
 import TodoForm from "@/components/TodoForm";
 import TodoTable from "@/components/TodoTable";
 import React, { useState } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function index() {
@@ -11,9 +12,11 @@ export default function index() {
 	};
 
 	return (
-		<SafeAreaView>
-			<TodoForm onSave={handleSave} />
-			<TodoTable refresh={refreshKey} />
+		<SafeAreaView className="flex-1">
+			<View className="flex-1 px-4 pt-4">
+				<TodoForm onSave={handleSave} />
+				<TodoTable refresh={refreshKey} />
+			</View>
 		</SafeAreaView>
 	);
 }

@@ -8,6 +8,7 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
+import Toast from "react-native-toast-message";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,8 +26,11 @@ export default function RootLayout() {
 		return null;
 	}
 	return (
-		<Stack>
-			<Stack.Screen name="index" options={{ headerShown: false }} />
-		</Stack>
+		<>
+			<Stack>
+				<Stack.Screen name="index" options={{ headerShown: false }} />
+			</Stack>
+			<Toast position="top" topOffset={60} />
+		</>
 	);
 }

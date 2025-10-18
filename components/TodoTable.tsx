@@ -30,20 +30,24 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		}
 	}, [refresh]);
 	return (
-		<>
+		<View className="flex-1">
 			<View className="flex flex-row py-2 border-b-2 border-t-2 border-gray-400">
 				<Text className="w-1/3 text-center font-noto-bold">タイトル</Text>
 				<Text className="w-2/3 text-center font-noto-bold">内容</Text>
 			</View>
 			{isLoading ? (
-				<ActivityIndicator />
+				<View className="py-4">
+					<ActivityIndicator />
+				</View>
 			) : (
 				<FlatList
 					data={data}
 					renderItem={({ item }) => <TodoItem {...item} />}
 					keyExtractor={(item) => item.id.toString()}
+					contentContainerStyle={{ paddingBottom: 20 }}
+					showsVerticalScrollIndicator={true}
 				/>
 			)}
-		</>
+		</View>
 	);
 }
