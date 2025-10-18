@@ -84,37 +84,46 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 	};
 
 	return (
-		<View className="space-y-2 mb-2">
+		<View className="space-y-2 mb-4">
 			<View>
 				<TextInput
-					className="border-2 border-gray-300 rounded-md p-2"
+					className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
 					placeholder="タイトル"
+					placeholderTextColor="#9ca3af"
 					value={title}
 					onChangeText={setTitle}
 				/>
 				{errors.title && (
-					<Text className="text-red-500 text-sm mt-1">{errors.title}</Text>
+					<Text className="text-red-500 text-base mt-1 font-noto-regular">
+						{errors.title}
+					</Text>
 				)}
 			</View>
-			<View>
+			<View className="mt-3">
 				<TextInput
-					className="border-2 border-gray-300 rounded-md p-2"
+					className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
 					placeholder="内容"
+					placeholderTextColor="#9ca3af"
 					value={content}
 					onChangeText={setContent}
+					multiline
+					numberOfLines={3}
+					textAlignVertical="top"
 				/>
-			{errors.content && (
-				<Text className="text-red-500 text-sm mt-1">{errors.content}</Text>
-			)}
-		</View>
-		<TouchableHighlight
-			onPress={createTodos}
-			disabled={isLoading}
-			activeOpacity={0.5}
-			className="bg-black rounded-md p-2 mt-4"
-			underlayColor="gray"
-		>
-				<Text className="text-white text-center font-noto-bold">
+				{errors.content && (
+					<Text className="text-red-500 text-base mt-1 font-noto-regular">
+						{errors.content}
+					</Text>
+				)}
+			</View>
+			<TouchableHighlight
+				onPress={createTodos}
+				disabled={isLoading}
+				activeOpacity={0.5}
+				className="bg-black rounded-md p-3 mt-4"
+				underlayColor="gray"
+			>
+				<Text className="text-white text-center font-noto-bold text-base">
 					{isLoading ? "保存中..." : "保存"}
 				</Text>
 			</TouchableHighlight>

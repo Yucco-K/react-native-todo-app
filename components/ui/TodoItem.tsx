@@ -1,4 +1,5 @@
 import type { Todo } from "@/types/Todo";
+import { useAuth } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -33,6 +34,10 @@ export default function TodoItem({
 }: TodoItemProps) {
 	const [menuVisible, setMenuVisible] = React.useState(false);
 	const [isExpanded, setIsExpanded] = React.useState(false);
+	const { user } = useAuth();
+	
+	// 現在のユーザーが作成者かどうか
+	const isOwner = user?.uid === userId;
 
 	return (
 		<View className="py-2 border-b border-gray-200">
@@ -65,27 +70,27 @@ export default function TodoItem({
 						</TouchableOpacity>
 					</View>
 
-					{/* タイトルと内容 */}
-					<View className="flex-1">
+				{/* タイトルと内容 */}
+				<View className="flex-1">
+					<Text
+						className={`font-noto-regular text-base ${
+							completed ? "line-through text-gray-400" : ""
+						}`}
+						numberOfLines={1}
+					>
+						{title}
+					</Text>
+					{isExpanded && (
 						<Text
-							className={`font-noto-regular text-sm ${
+							className={`font-noto-regular text-sm text-gray-500 mt-2 ${
 								completed ? "line-through text-gray-400" : ""
 							}`}
-							numberOfLines={1}
 						>
-							{title}
+							{content}
 						</Text>
-						{isExpanded && (
-							<Text
-								className={`font-noto-regular text-xs text-gray-500 mt-1 ${
-									completed ? "line-through text-gray-400" : ""
-								}`}
-							>
-								{content}
-							</Text>
-						)}
-					</View>
-				</TouchableOpacity>
+					)}
+				</View>
+			</TouchableOpacity>
 
 				{/* 右側: 3点メニューボタン */}
 				<TouchableOpacity
@@ -112,15 +117,15 @@ export default function TodoItem({
 				>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">
 						<View className="bg-white rounded-lg shadow-lg overflow-hidden min-w-[180px]">
-							{/* 共有トグル */}
-							{showShareToggle && (
+							{/* 共有トグル - 作成者のみ */}
+							{showShareToggle && isOwner && (
 								<Pressable
 									className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200"
 									onPress={(e) => {
 										e.stopPropagation();
 									}}
 								>
-									<Text className="font-noto-regular text-gray-700">
+									<Text className="font-noto-regular text-gray-700 text-base">
 										共有する
 									</Text>
 									<Switch
@@ -137,33 +142,46 @@ export default function TodoItem({
 								</Pressable>
 							)}
 
-							{/* 編集ボタン */}
-							<Pressable
-								className="flex-row items-center px-4 py-3 border-b border-gray-200"
-								onPress={() => {
-									onEdit?.({ id, userId, title, content, completed, shared });
-									setMenuVisible(false);
-								}}
-							>
-								<Ionicons name="create-outline" size={20} color="#3b82f6" />
-								<Text className="ml-3 font-noto-regular text-gray-700">
-									編集
-								</Text>
-							</Pressable>
+							{/* 編集ボタン - 作成者のみ */}
+							{isOwner && (
+								<Pressable
+									className="flex-row items-center px-4 py-3 border-b border-gray-200"
+									onPress={() => {
+										onEdit?.({ id, userId, title, content, completed, shared });
+										setMenuVisible(false);
+									}}
+								>
+									<Ionicons name="create-outline" size={22} color="#3b82f6" />
+									<Text className="ml-3 font-noto-regular text-gray-700 text-base">
+										編集
+									</Text>
+								</Pressable>
+							)}
 
-							{/* 削除ボタン */}
-							<Pressable
-								className="flex-row items-center px-4 py-3"
-								onPress={() => {
-									onDelete?.(id);
-									setMenuVisible(false);
-								}}
-							>
-								<Ionicons name="trash-outline" size={20} color="#ef4444" />
-								<Text className="ml-3 font-noto-regular text-red-500">
-									削除
-								</Text>
-							</Pressable>
+							{/* 削除ボタン - 作成者のみ */}
+							{isOwner && (
+								<Pressable
+									className="flex-row items-center px-4 py-3"
+									onPress={() => {
+										onDelete?.(id);
+										setMenuVisible(false);
+									}}
+								>
+									<Ionicons name="trash-outline" size={22} color="#ef4444" />
+									<Text className="ml-3 font-noto-regular text-red-500 text-base">
+										削除
+									</Text>
+								</Pressable>
+							)}
+
+							{/* 作成者でない場合のメッセージ */}
+							{!isOwner && (
+								<View className="px-4 py-4">
+									<Text className="font-noto-regular text-gray-500 text-sm text-center">
+										この操作は作成者のみ可能です
+									</Text>
+								</View>
+							)}
 						</View>
 					</View>
 				</Pressable>

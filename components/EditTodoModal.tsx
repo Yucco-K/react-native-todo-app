@@ -107,31 +107,36 @@ export default function EditTodoModal({
 		>
 			<View className="flex-1 justify-center items-center bg-black/50">
 				<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
-					<Text className="text-xl font-noto-bold mb-4">Todo編集</Text>
+					<Text className="text-2xl font-noto-bold mb-4">Todo編集</Text>
 
 					<View className="mb-4">
 						<TextInput
-							className="border-2 border-gray-300 rounded-md p-2"
+							className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
 							placeholder="タイトル"
+							placeholderTextColor="#9ca3af"
 							value={title}
 							onChangeText={setTitle}
 						/>
 						{errors.title && (
-							<Text className="text-red-500 text-sm mt-1">{errors.title}</Text>
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
+								{errors.title}
+							</Text>
 						)}
 					</View>
 
 					<View className="mb-4">
 						<TextInput
-							className="border-2 border-gray-300 rounded-md p-2"
+							className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
 							placeholder="内容"
+							placeholderTextColor="#9ca3af"
 							value={content}
 							onChangeText={setContent}
 							multiline
-							numberOfLines={3}
+							numberOfLines={4}
+							textAlignVertical="top"
 						/>
 						{errors.content && (
-							<Text className="text-red-500 text-sm mt-1">
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.content}
 							</Text>
 						)}
@@ -142,20 +147,22 @@ export default function EditTodoModal({
 							onPress={onClose}
 							disabled={isLoading}
 							activeOpacity={0.5}
-							className="bg-gray-300 rounded-md px-4 py-2 mr-2"
+							className="bg-gray-300 rounded-md px-4 py-3 mr-2"
 							underlayColor="#d1d5db"
 						>
-							<Text className="text-gray-700 font-noto-bold">キャンセル</Text>
+							<Text className="text-gray-700 font-noto-bold text-base">
+								キャンセル
+							</Text>
 						</TouchableHighlight>
 
 						<TouchableHighlight
 							onPress={handleSave}
 							disabled={isLoading}
 							activeOpacity={0.5}
-							className="bg-blue-500 rounded-md px-4 py-2"
+							className="bg-blue-500 rounded-md px-4 py-3"
 							underlayColor="#3b82f6"
 						>
-							<Text className="text-white font-noto-bold">
+							<Text className="text-white font-noto-bold text-base">
 								{isLoading ? "保存中..." : "保存"}
 							</Text>
 						</TouchableHighlight>
