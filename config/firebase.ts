@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Firebaseの設定
@@ -16,8 +17,10 @@ const firebaseConfig = {
 // Firebaseの初期化
 const app = initializeApp(firebaseConfig);
 
-// Authenticationのインスタンスを取得
-export const auth = getAuth(app);
+// Authenticationのインスタンスを取得（AsyncStorageで永続化）
+export const auth = initializeAuth(app, {
+	persistence: getReactNativePersistence(AsyncStorage),
+});
 
 // Firestoreのインスタンスを取得
 export const db = getFirestore(app);
