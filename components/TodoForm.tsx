@@ -18,9 +18,10 @@ const todoSchema = z.object({
 
 type TodoFormProps = {
 	onSave?: () => void;
+	isShared?: boolean;
 };
 
-export default function TodoForm({ onSave }: TodoFormProps) {
+export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +55,7 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 		setErrors({});
 		setIsLoading(true);
 		try {
-			await createTodo(title, content);
+			await createTodo(title, content, isShared);
 
 			// フォームをクリア
 			setTitle("");

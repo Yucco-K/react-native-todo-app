@@ -12,9 +12,10 @@ import TodoItem from "./ui/TodoItem";
 
 type TodoTableProps = {
 	refresh?: number;
+	isShared?: boolean;
 };
 
-export default function TodoTable({ refresh }: TodoTableProps) {
+export default function TodoTable({ refresh, isShared = false }: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
@@ -23,7 +24,7 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 	const getTodos = useCallback(async () => {
 		setLoading(true);
 		try {
-			const todos = await getTodosService();
+			const todos = await getTodosService(isShared);
 			setData(todos);
 		} catch (error) {
 			console.error("Todo取得エラー:", error);
@@ -66,7 +67,7 @@ export default function TodoTable({ refresh }: TodoTableProps) {
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [isShared]);
 
 	const handleEdit = (todo: Todo) => {
 		setEditingTodo(todo);

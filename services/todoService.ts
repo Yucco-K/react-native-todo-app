@@ -20,9 +20,9 @@ type FirestoreTodo = Omit<Todo, "id"> & {
 };
 
 /**
- * 現在のユーザーのTodoを取得
+ * Todoを取得（自分のTodoまたは共有Todo）
  */
-export const getTodos = async (): Promise<Todo[]> => {
+export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
 	try {
 		const userId = auth.currentUser?.uid;
 		if (!userId) {
@@ -32,6 +32,7 @@ export const getTodos = async (): Promise<Todo[]> => {
 		const q = query(
 			collection(db, COLLECTION_NAME),
 			where("userId", "==", userId),
+			where("shared", "==", isShared),
 			orderBy("createdAt", "desc")
 		);
 		const querySnapshot = await getDocs(q);
@@ -45,6 +46,7 @@ export const getTodos = async (): Promise<Todo[]> => {
 				title: data.title,
 				content: data.content,
 				completed: data.completed,
+				shared: data.shared,
 			});
 		});
 
@@ -60,7 +62,8 @@ export const getTodos = async (): Promise<Todo[]> => {
  */
 export const createTodo = async (
 	title: string,
-	content: string
+	content: string,
+	isShared: boolean = false
 ): Promise<string> => {
 	try {
 		const userId = auth.currentUser?.uid;
@@ -73,6 +76,7 @@ export const createTodo = async (
 			title,
 			content,
 			completed: false,
+			shared: isShared,
 			createdAt: new Date(),
 		});
 		return docRef.id;

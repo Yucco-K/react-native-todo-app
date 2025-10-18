@@ -10,6 +10,13 @@ React NativeとExpo Routerを使用したTodoアプリです。CRUD機能（作�
 - **Todo一覧表示**: 登録されたTodoをリスト表示
 - **Todo編集**: 既存のTodoの内容を編集
 - **Todo削除**: 不要なTodoを削除
+- **完了状態の管理**: チェックボックスでTodoの完了/未完了を切り替え
+- **タブナビゲーション**: My ListとSharedの2つのタブで表示
+  - **My List**: 個人用のTodoリスト
+  - **Shared**: 共有用のTodoリスト
+- **Firebase認証**: メール/パスワードでログイン・新規登録
+- **ユーザー別データ管理**: ログインユーザーごとにTodoを管理
+- **認証の永続化**: アプリ再起動後もログイン状態を保持
 - **バリデーション**: Zodを使った入力チェック
   - タイトル: 1〜50文字
   - 内容: 1〜200文字
@@ -172,8 +179,14 @@ eas build --platform android --profile preview
 ```
 react-native-todo-app/
 ├── app/                      # Expo Routerのルート
-│   ├── _layout.tsx          # ルートレイアウト（グローバル設定）
-│   └── index.tsx            # メイン画面
+│   ├── (tabs)/              # タブナビゲーション
+│   │   ├── _layout.tsx     # タブレイアウト
+│   │   ├── mylist.tsx      # My Listタブ
+│   │   └── shared.tsx      # Sharedタブ
+│   ├── _layout.tsx          # ルートレイアウト（認証・グローバル設定）
+│   ├── index.tsx            # エントリーポイント（タブへリダイレクト）
+│   ├── login.tsx            # ログイン画面
+│   └── signup.tsx           # 新規登録画面
 ├── components/              # コンポーネント
 │   ├── TodoForm.tsx         # Todo作成フォーム
 │   ├── TodoTable.tsx        # Todo一覧表示
@@ -182,6 +195,8 @@ react-native-todo-app/
 │       └── TodoItem.tsx     # Todo個別アイテム
 ├── config/                  # 設定
 │   └── firebase.ts          # Firebase設定
+├── contexts/                # Reactコンテキスト
+│   └── AuthContext.tsx      # 認証コンテキスト
 ├── services/                # サービス層
 │   └── todoService.ts       # Firestore操作
 ├── constants/               # 定数
@@ -210,9 +225,11 @@ react-native-todo-app/
 ```typescript
 {
 	id: string; // FirestoreのドキュメントID（自動生成）
+	userId: string; // 作成したユーザーのID（Firebase Auth UID）
 	title: string; // Todoのタイトル（1〜50文字）
 	content: string; // Todoの内容（1〜200文字）
 	completed: boolean; // 完了状態（true/false）
+	shared: boolean; // 共有フラグ（false: My List, true: Shared）
 	createdAt: Date; // 作成日時
 }
 ```
@@ -221,15 +238,17 @@ react-native-todo-app/
 
 アプリは`services/todoService.ts`を通じてFirestoreと通信します：
 
-- **`getTodos()`**: すべてのTodoを取得（`createdAt`の降順）
-- **`createTodo(title, content)`**: 新しいTodoを作成
+- **`getTodos(isShared)`**: ユーザーのTodoを取得（`userId`と`shared`でフィルタ、`createdAt`の降順）
+- **`createTodo(title, content, isShared)`**: 新しいTodoを作成（現在のユーザーIDで）
 - **`updateTodo(id, updates)`**: Todoを更新
 - **`deleteTodo(id)`**: Todoを削除
 - **`toggleTodoComplete(id, currentCompleted)`**: 完了状態をトグル
 
-### セキュリティルール（開発用）
+### セキュリティルール
 
 Firebase Consoleで以下のルールを設定してください：
+
+#### 開発環境（すべて許可）
 
 ```javascript
 rules_version = '2';
@@ -238,15 +257,46 @@ service cloud.firestore {
     match /todos/{todoId} {
       // 開発環境: すべての読み書きを許可
       allow read, write: if true;
-
-      // 本番環境の例（認証が必要）:
-      // allow read, write: if request.auth != null;
     }
   }
 }
 ```
 
-**注意**: 上記は開発用のルールです。本番環境では適切な認証とセキュリティルールを設定してください。
+#### 本番環境（ユーザー認証＆所有権チェック）
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /todos/{todoId} {
+      // ログイン済みユーザーのみアクセス可能
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      
+      allow create: if request.auth != null && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      allow update, delete: if request.auth != null && 
+                               resource.data.userId == request.auth.uid;
+    }
+  }
+}
+```
+
+### Firestoreインデックス
+
+以下のクエリを実行するために、複合インデックスが必要です：
+
+1. **Firebase Console** → **Firestore Database** → **インデックス**タブ
+2. 以下のインデックスを作成：
+
+| コレクション | フィールド1        | フィールド2 | クエリスコープ |
+| ------------ | ------------------ | ----------- | -------------- |
+| `todos`      | `userId` (昇順)    | `shared` (昇順) | `createdAt` (降順) | コレクション   |
+
+**または**、初回クエリ実行時にFirebaseが自動的にインデックスリンクを生成します。エラーメッセージ内のリンクをクリックして自動作成できます。
+
+**注意**: 本番環境では適切な認証とセキュリティルールを設定してください。
 
 ## 🎨 デザイン仕様
 

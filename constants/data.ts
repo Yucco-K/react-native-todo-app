@@ -5,6 +5,7 @@ export const data = [
 		title: "タスク1",
 		content: "タスク1です。",
 		completed: false,
+		shared: false,
 	},
 	{
 		id: "2",
@@ -12,6 +13,7 @@ export const data = [
 		title: "タスク2",
 		content: "タスク2です。",
 		completed: true,
+		shared: false,
 	},
 	{
 		id: "3",
@@ -19,5 +21,6 @@ export const data = [
 		title: "タスク3",
 		content: "タスク3です。",
 		completed: false,
+		shared: true,
 	},
 ];

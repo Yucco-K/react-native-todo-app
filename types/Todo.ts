@@ -4,6 +4,7 @@ type Todo = {
 	title: string;
 	content: string;
 	completed: boolean;
+	shared: boolean; // 共有フラグ
 };
 
 export type { Todo };

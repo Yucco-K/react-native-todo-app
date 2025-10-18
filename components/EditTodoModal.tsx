@@ -75,6 +75,7 @@ export default function EditTodoModal({
 				title,
 				content,
 				completed: todo.completed,
+				shared: todo.shared,
 			});
 
 			Toast.show({
