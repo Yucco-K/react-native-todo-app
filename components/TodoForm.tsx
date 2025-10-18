@@ -9,8 +9,10 @@ type TodoFormProps = {
 export default function TodoForm({ onSave }: TodoFormProps) {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
 	const createTodos = async () => {
+		setIsLoading(true);
 		try {
 			await fetch(`${API_URL}/api/todos`, {
 				method: "POST",
@@ -26,6 +28,8 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 			onSave?.();
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -45,11 +49,14 @@ export default function TodoForm({ onSave }: TodoFormProps) {
 			/>
 			<TouchableHighlight
 				onPress={createTodos}
+				disabled={title === "" || content === "" || isLoading}
 				activeOpacity={0.5}
 				className="bg-black rounded-md p-2"
 				underlayColor="gray"
 			>
-				<Text className="text-white text-center font-noto-bold">保存</Text>
+				<Text className="text-white text-center font-noto-bold">
+					{isLoading ? "保存中..." : "保存"}
+				</Text>
 			</TouchableHighlight>
 		</View>
 	);
