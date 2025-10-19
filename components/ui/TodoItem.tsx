@@ -75,7 +75,7 @@ export default function TodoItem({
 					{/* タイトルと内容 */}
 					<View className="flex-1">
 						<Text
-							className={`font-noto-regular text-lg ${
+							className={`font-noto-regular text-xl ${
 								completed ? "line-through text-gray-400" : ""
 							}`}
 							numberOfLines={1}
@@ -88,14 +88,14 @@ export default function TodoItem({
 								{category && (
 									<View className="mt-2 flex-row">
 										<View className="bg-blue-100 px-3 py-1 rounded-full">
-											<Text className="text-blue-700 font-noto-bold text-sm">
+											<Text className="text-blue-700 font-noto-bold text-base">
 												{TODO_CATEGORIES[category] || "その他"}
 											</Text>
 										</View>
 									</View>
 								)}
 								<Text
-									className={`font-noto-regular text-base text-gray-500 mt-2 ${
+									className={`font-noto-regular text-lg text-gray-500 mt-2 ${
 										completed ? "line-through text-gray-400" : ""
 									}`}
 								>
