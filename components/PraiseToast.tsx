@@ -2,7 +2,7 @@ import { savePraiseFeedback } from "@/services/praiseFeedbackService";
 import type { TodoCategory } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Pressable, Text, View } from "react-native";
 import type { ToastConfigParams } from "react-native-toast-message";
 
 const { height } = Dimensions.get("window");
@@ -228,10 +228,12 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				pointerEvents="box-none"
 			>
 				{/* ライクボタン */}
-				<TouchableOpacity
-					onPress={() => handleFeedback("like")}
-					activeOpacity={0.7}
-					style={{
+				<Pressable
+					onPress={() => {
+						console.log("👍 Like button pressed");
+						handleFeedback("like");
+					}}
+					style={({ pressed }) => ({
 						width: 48,
 						height: 48,
 						borderRadius: 24,
@@ -243,21 +245,23 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						shadowOpacity: 0.2,
 						shadowRadius: 4,
 						elevation: 3,
-					}}
-					pointerEvents="auto"
+						opacity: pressed ? 0.7 : 1,
+					})}
 				>
 					<Ionicons
 						name={feedback === "like" ? "thumbs-up" : "thumbs-up-outline"}
 						size={24}
 						color={feedback === "like" ? "white" : "#10b981"}
 					/>
-				</TouchableOpacity>
+				</Pressable>
 
 				{/* ディスライクボタン */}
-				<TouchableOpacity
-					onPress={() => handleFeedback("dislike")}
-					activeOpacity={0.7}
-					style={{
+				<Pressable
+					onPress={() => {
+						console.log("👎 Dislike button pressed");
+						handleFeedback("dislike");
+					}}
+					style={({ pressed }) => ({
 						width: 48,
 						height: 48,
 						borderRadius: 24,
@@ -269,8 +273,8 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						shadowOpacity: 0.2,
 						shadowRadius: 4,
 						elevation: 3,
-					}}
-					pointerEvents="auto"
+						opacity: pressed ? 0.7 : 1,
+					})}
 				>
 					<Ionicons
 						name={
@@ -279,7 +283,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						size={24}
 						color={feedback === "dislike" ? "white" : "#ef4444"}
 					/>
-				</TouchableOpacity>
+				</Pressable>
 			</View>
 
 			{/* タイトル */}

@@ -153,7 +153,7 @@ export default function TodoTable({
 						type: "praise",
 						text1: "✨ タスク完了おめでとう！✨",
 						text2: praiseMessage,
-						visibilityTime: 2000,
+						visibilityTime: 4000,
 						props: {
 							themeIndex: randomThemeIndex,
 							category: todo.category, // フィードバック用にカテゴリを渡す

@@ -105,7 +105,7 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 
 ### 7. 褒め言葉システム
 
-- **トースト表示**: タスク完了時に画面の1/3サイズの大きなトースト表示（2秒間）
+- **トースト表示**: タスク完了時に画面の1/3サイズの大きなトースト表示（4秒間）
 - **フィードバック機能**:
   - トースト左端にライク（👍）とディスライク（👎）ボタンを配置
   - ユーザーの好みを`praiseFeedback`コレクションに保存
@@ -305,6 +305,7 @@ service cloud.firestore {
 アプリの各機能に必要な複合インデックスを設定してください。
 
 #### インデックス1: My List/Shared List表示用
+
 ```
 Collection: todos
 Fields:
@@ -314,6 +315,7 @@ Fields:
 ```
 
 #### インデックス2: おすすめTODO機能用
+
 ```
 Collection: todos
 Fields:
@@ -323,6 +325,7 @@ Fields:
 ```
 
 **作成方法**:
+
 1. Firebase Console → Firestore Database → Indexesタブ
 2. 「Add index」をクリック
 3. 上記の設定で作成
@@ -501,20 +504,20 @@ FirebaseError: The query requires an index.
 ```
 
 **対処法**:
+
 1. **エラーメッセージ内のリンクをクリック**（最も確実）
    - Firebaseが必要なインデックスを自動設定してくれます
    - 「Save」をクリックしてインデックスを作成
-   
 2. **手動で作成**:
    - Firebase Console → Firestore Database → Indexesタブ
    - 「Add index」から上記の必須インデックスを作成
-   
 3. **インデックス作成後**:
    - Status が「Building」→「Enabled」になるまで待つ（1-5分）
    - アプリを完全にリロード（Expo Goを再起動）
    - キャッシュをクリア: `npx expo start --clear`
 
 **特に「おすすめTODO生成エラー」が出る場合**:
+
 - インデックス2（userId + createdAt）が必要です
 - エラーメッセージのURLから自動作成が最も確実です
 
