@@ -167,3 +167,54 @@ export const toggleTodoShared = async (
 		throw error;
 	}
 };
+
+/**
+ * 完了後48時間経過したTodoを自動削除
+ */
+export const deleteExpiredCompletedTodos = async (): Promise<number> => {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			return 0;
+		}
+
+		// 現在時刻から48時間前を計算
+		const fortyEightHoursAgo = new Date();
+		fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
+
+		// 自分の完了済みTodoを取得
+		const q = query(
+			collection(db, COLLECTION_NAME),
+			where("userId", "==", userId),
+			where("completed", "==", true)
+		);
+		const querySnapshot = await getDocs(q);
+
+		let deletedCount = 0;
+		const deletePromises: Promise<void>[] = [];
+
+		querySnapshot.forEach((document) => {
+			const data = document.data();
+			const completedAt = data.completedAt?.toDate();
+
+			// 完了日時が48時間以上前の場合、削除対象
+			if (completedAt && completedAt < fortyEightHoursAgo) {
+				deletePromises.push(deleteDoc(doc(db, COLLECTION_NAME, document.id)));
+				deletedCount++;
+				console.log(`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`);
+			}
+		});
+
+		// 一括削除を実行
+		await Promise.all(deletePromises);
+
+		if (deletedCount > 0) {
+			console.log(`✅ ${deletedCount}件の期限切れTodoを削除しました`);
+		}
+
+		return deletedCount;
+	} catch (error) {
+		console.error("Error deleting expired todos:", error);
+		throw error;
+	}
+};

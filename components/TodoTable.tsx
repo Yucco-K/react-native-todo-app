@@ -6,6 +6,7 @@ import {
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteTodo as deleteTodoService,
+	deleteExpiredCompletedTodos,
 	getTodos as getTodosService,
 	toggleTodoComplete,
 	toggleTodoShared,
@@ -48,8 +49,17 @@ export default function TodoTable({
 	const getTodos = useCallback(async () => {
 		setLoading(true);
 		try {
+			// 期限切れのTodoを自動削除
+			const deletedCount = await deleteExpiredCompletedTodos();
+			
+			// Todoリストを取得
 			const todos = await getTodosService(isShared);
 			setData(todos);
+			
+			// 削除があった場合はログ出力（本番環境ではトーストを表示しない）
+			if (deletedCount > 0 && __DEV__) {
+				console.log(`🗑️ ${deletedCount}件の完了済みTodoを自動削除しました`);
+			}
 		} catch (error) {
 			console.error("Todo取得エラー:", error);
 			let errorMessage = "Todoの読み込みに失敗しました";
