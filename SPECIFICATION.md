@@ -137,6 +137,23 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 }
 ```
 
+#### `completedTodoHistory` コレクション（AI統計用）
+
+```typescript
+{
+	id: string; // 自動生成されるドキュメントID
+	userId: string; // TodoのユーザーUID
+	title: string; // タイトル
+	category: TodoCategory; // カテゴリ
+	completedAt: Date; // 完了日時
+	completedBy?: string; // 完了者のUID
+	createdAt: Date; // 作成日時
+	deletedAt: Date; // 削除日時（48時間経過後）
+}
+```
+
+**用途**: 完了後48時間経過して自動削除されたTodoの履歴を保存し、AI統計機能（褒め言葉生成、パーソナライゼーション）のデータとして活用します。
+
 ### バリデーション（Zod）
 
 ```typescript
@@ -217,6 +234,14 @@ service cloud.firestore {
     match /userStats/{userId} {
       // 自分の統計のみ読み書き可能
       allow read, write: if request.auth.uid == userId;
+    }
+
+    // completedTodoHistoryコレクション（完了Todo履歴、AI統計用）
+    match /completedTodoHistory/{historyId} {
+      // 自分の履歴のみ読み込み可能、書き込みは自動削除処理のみ
+      allow read: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // 履歴は更新・削除不可
     }
   }
 }

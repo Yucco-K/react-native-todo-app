@@ -169,7 +169,7 @@ export const toggleTodoShared = async (
 };
 
 /**
- * 完了後48時間経過したTodoを自動削除
+ * 完了後48時間経過したTodoを自動削除（履歴は保存）
  */
 export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 	try {
@@ -191,7 +191,7 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		const querySnapshot = await getDocs(q);
 
 		let deletedCount = 0;
-		const deletePromises: Promise<void>[] = [];
+		const operations: Promise<void>[] = [];
 
 		querySnapshot.forEach((document) => {
 			const data = document.data();
@@ -199,17 +199,33 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 
 			// 完了日時が48時間以上前の場合、削除対象
 			if (completedAt && completedAt < fortyEightHoursAgo) {
-				deletePromises.push(deleteDoc(doc(db, COLLECTION_NAME, document.id)));
+				// AI統計用に完了履歴を保存
+				const historyPromise = addDoc(collection(db, "completedTodoHistory"), {
+					userId: data.userId,
+					title: data.title,
+					category: data.category || "other",
+					completedAt: data.completedAt,
+					completedBy: data.completedBy,
+					createdAt: data.createdAt,
+					deletedAt: new Date(), // 削除日時を記録
+				});
+				
+				// Todo本体を削除
+				const deletePromise = deleteDoc(doc(db, COLLECTION_NAME, document.id));
+				
+				operations.push(historyPromise, deletePromise);
 				deletedCount++;
-				console.log(`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`);
+				console.log(
+					`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`
+				);
 			}
 		});
 
-		// 一括削除を実行
-		await Promise.all(deletePromises);
+		// 履歴保存と削除を並列実行
+		await Promise.all(operations);
 
 		if (deletedCount > 0) {
-			console.log(`✅ ${deletedCount}件の期限切れTodoを削除しました`);
+			console.log(`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`);
 		}
 
 		return deletedCount;
