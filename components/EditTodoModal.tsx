@@ -172,11 +172,11 @@ export default function EditTodoModal({
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
-							<Text className="text-2xl font-noto-bold mb-4">Todo編集</Text>
+							<Text className="text-3xl font-noto-bold mb-4">Todo編集</Text>
 
 							<View className="mb-4">
 								<TextInput
-									className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
 									placeholder="タイトル"
 									placeholderTextColor="#9ca3af"
 									value={title}
@@ -184,7 +184,7 @@ export default function EditTodoModal({
 									autoFocus={true}
 								/>
 								{errors.title && (
-									<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 										{errors.title}
 									</Text>
 								)}
@@ -192,7 +192,7 @@ export default function EditTodoModal({
 
 							<View className="mb-4">
 								<TextInput
-									className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
 									placeholder="内容（任意）"
 									placeholderTextColor="#9ca3af"
 									value={content}
@@ -202,7 +202,7 @@ export default function EditTodoModal({
 									textAlignVertical="top"
 								/>
 								{errors.content && (
-									<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 										{errors.content}
 									</Text>
 								)}
@@ -210,7 +210,7 @@ export default function EditTodoModal({
 
 							{/* カテゴリ選択 */}
 							<View className="mb-4">
-								<Text className="text-gray-700 font-noto-bold text-base mb-2">
+								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
 									カテゴリ
 								</Text>
 								<ScrollView
@@ -229,7 +229,7 @@ export default function EditTodoModal({
 											}`}
 										>
 											<Text
-												className={`font-noto-regular text-sm ${
+												className={`font-noto-regular text-base ${
 													category === option.value
 														? "text-white"
 														: "text-gray-700"
@@ -257,7 +257,7 @@ export default function EditTodoModal({
 										<Ionicons name="sparkles" size={18} color="#9333ea" />
 									)}
 									<Text
-										className={`ml-2 font-noto-bold text-sm ${
+										className={`ml-2 font-noto-bold text-base ${
 											isPredicting || !title.trim()
 												? "text-gray-400"
 												: "text-purple-600"
@@ -276,7 +276,7 @@ export default function EditTodoModal({
 									className="bg-gray-300 rounded-md px-4 py-3 mr-2"
 									underlayColor="#d1d5db"
 								>
-									<Text className="text-gray-700 font-noto-bold text-base">
+									<Text className="text-gray-700 font-noto-bold text-lg">
 										キャンセル
 									</Text>
 								</TouchableHighlight>
@@ -288,7 +288,7 @@ export default function EditTodoModal({
 									className="bg-blue-500 rounded-md px-4 py-3"
 									underlayColor="#3b82f6"
 								>
-									<Text className="text-white font-noto-bold text-base">
+									<Text className="text-white font-noto-bold text-lg">
 										{isLoading ? "保存中..." : "保存"}
 									</Text>
 								</TouchableHighlight>

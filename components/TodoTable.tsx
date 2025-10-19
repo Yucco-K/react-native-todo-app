@@ -243,7 +243,7 @@ export default function TodoTable({
 		<View className="flex-1">
 			<View className="flex-row py-3 px-2 border-b-2 border-t-2 border-gray-400 items-center bg-gray-50">
 				<View style={{ width: 32 }} className="mr-2" />
-				<Text className="flex-1 font-noto-bold text-base">Todo</Text>
+				<Text className="flex-1 font-noto-bold text-lg">Todo</Text>
 				{/* 検索アイコンボタン */}
 				<TouchableOpacity
 					onPress={() => setIsSearchModalVisible(true)}
@@ -258,10 +258,10 @@ export default function TodoTable({
 				</View>
 			) : data.length === 0 ? (
 				<View className="py-8 items-center">
-					<Text className="text-gray-400 font-noto-regular text-lg">
+					<Text className="text-gray-400 font-noto-regular text-xl">
 						{isShared ? "共有Todoはまだありません" : "Todoはまだありません"}
 					</Text>
-					<Text className="text-gray-400 font-noto-regular text-base mt-2">
+					<Text className="text-gray-400 font-noto-regular text-lg mt-2">
 						{isShared
 							? "上のフォームから共有Todoを作成できます"
 							: "上のフォームから新しいTodoを作成できます"}

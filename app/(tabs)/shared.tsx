@@ -18,19 +18,19 @@ export default function SharedListScreen() {
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View className="flex-1 px-4 pt-4">
 					<View className="mb-4">
-						<Text className="text-2xl font-noto-bold">Shared List</Text>
+						<Text className="text-3xl font-noto-bold">Shared List</Text>
 						{nickname ? (
-							<Text className="text-sm text-blue-600 font-noto-bold">
+							<Text className="text-base text-blue-600 font-noto-bold">
 								{nickname}さん
 							</Text>
 						) : (
 							user?.email && (
-								<Text className="text-sm text-gray-600 font-noto-regular">
+								<Text className="text-base text-gray-600 font-noto-regular">
 									{user.email}
 								</Text>
 							)
 						)}
-						<Text className="text-xs text-gray-500 font-noto-regular mt-1">
+						<Text className="text-sm text-gray-500 font-noto-regular mt-1">
 							他の人と共有するTodoをここで作成・管理できます
 						</Text>
 					</View>

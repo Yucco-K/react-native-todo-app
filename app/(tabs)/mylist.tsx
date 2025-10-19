@@ -49,13 +49,13 @@ export default function MyListScreen() {
 				<View className="flex-1 px-4 pt-4">
 					<View className="flex-row justify-between items-center mb-4">
 						<View className="flex-1">
-							<Text className="text-2xl font-noto-bold">My List</Text>
+							<Text className="text-3xl font-noto-bold">My List</Text>
 							{nickname ? (
 								<TouchableOpacity
 									onPress={() => setIsNicknameModalVisible(true)}
 									className="flex-row items-center mt-1"
 								>
-									<Text className="text-base text-blue-600 font-noto-bold">
+									<Text className="text-lg text-blue-600 font-noto-bold">
 										{nickname}さん
 									</Text>
 									<Ionicons
@@ -71,7 +71,7 @@ export default function MyListScreen() {
 										onPress={() => setIsNicknameModalVisible(true)}
 										className="flex-row items-center mt-1"
 									>
-										<Text className="text-sm text-gray-500 font-noto-regular">
+										<Text className="text-base text-gray-500 font-noto-regular">
 											ニックネームを設定
 										</Text>
 										<Ionicons
@@ -82,7 +82,7 @@ export default function MyListScreen() {
 										/>
 									</TouchableOpacity>
 									{user?.email && (
-										<Text className="text-xs text-gray-500 font-noto-regular mt-1">
+										<Text className="text-sm text-gray-500 font-noto-regular mt-1">
 											{user.email}
 										</Text>
 									)}

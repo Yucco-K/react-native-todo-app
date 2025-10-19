@@ -66,7 +66,7 @@ export default function TodoItem({
 								}`}
 							>
 								{completed && (
-									<Text className="text-white font-noto-bold text-lg">✓</Text>
+									<Text className="text-white font-noto-bold text-xl">✓</Text>
 								)}
 							</View>
 						</TouchableOpacity>
@@ -75,7 +75,7 @@ export default function TodoItem({
 					{/* タイトルと内容 */}
 					<View className="flex-1">
 						<Text
-							className={`font-noto-regular text-base ${
+							className={`font-noto-regular text-lg ${
 								completed ? "line-through text-gray-400" : ""
 							}`}
 							numberOfLines={1}
@@ -88,14 +88,14 @@ export default function TodoItem({
 								{category && (
 									<View className="mt-2 flex-row">
 										<View className="bg-blue-100 px-3 py-1 rounded-full">
-											<Text className="text-blue-700 font-noto-bold text-xs">
+											<Text className="text-blue-700 font-noto-bold text-sm">
 												{TODO_CATEGORIES[category] || "その他"}
 											</Text>
 										</View>
 									</View>
 								)}
 								<Text
-									className={`font-noto-regular text-sm text-gray-500 mt-2 ${
+									className={`font-noto-regular text-base text-gray-500 mt-2 ${
 										completed ? "line-through text-gray-400" : ""
 									}`}
 								>
@@ -139,7 +139,7 @@ export default function TodoItem({
 										e.stopPropagation();
 									}}
 								>
-									<Text className="font-noto-regular text-gray-700 text-base">
+									<Text className="font-noto-regular text-gray-700 text-lg">
 										共有する
 									</Text>
 									<Switch
@@ -174,7 +174,7 @@ export default function TodoItem({
 									}}
 								>
 									<Ionicons name="create-outline" size={22} color="#3b82f6" />
-									<Text className="ml-3 font-noto-regular text-gray-700 text-base">
+									<Text className="ml-3 font-noto-regular text-gray-700 text-lg">
 										編集
 									</Text>
 								</Pressable>
@@ -190,7 +190,7 @@ export default function TodoItem({
 									}}
 								>
 									<Ionicons name="trash-outline" size={22} color="#ef4444" />
-									<Text className="ml-3 font-noto-regular text-red-500 text-base">
+									<Text className="ml-3 font-noto-regular text-red-500 text-lg">
 										削除
 									</Text>
 								</Pressable>
@@ -199,7 +199,7 @@ export default function TodoItem({
 							{/* 作成者でない場合のメッセージ */}
 							{!isOwner && (
 								<View className="px-4 py-4">
-									<Text className="font-noto-regular text-gray-500 text-sm text-center">
+									<Text className="font-noto-regular text-gray-500 text-base text-center">
 										この操作は作成者のみ可能です
 									</Text>
 								</View>

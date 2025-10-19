@@ -90,7 +90,7 @@ export default function SearchModal({
 				{/* ヘッダー */}
 				<View className="bg-white border-b border-gray-200 pt-12 pb-3 px-4">
 					<View className="flex-row items-center justify-between mb-3">
-						<Text className="text-2xl font-noto-bold">検索</Text>
+						<Text className="text-3xl font-noto-bold">検索</Text>
 						<TouchableOpacity onPress={handleClose} className="p-2">
 							<Ionicons name="close" size={28} color="#374151" />
 						</TouchableOpacity>
@@ -100,7 +100,7 @@ export default function SearchModal({
 					<View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-3">
 						<Ionicons name="search" size={22} color="#6b7280" />
 						<TextInput
-							className="flex-1 ml-2 text-base font-noto-regular"
+							className="flex-1 ml-2 text-lg font-noto-regular"
 							placeholder="タイトルや内容で検索..."
 							placeholderTextColor="#9ca3af"
 							value={searchText}
@@ -123,7 +123,7 @@ export default function SearchModal({
 							}`}
 						>
 							<Text
-								className={`text-center font-noto-bold text-sm ${
+								className={`text-center font-noto-bold text-base ${
 									filterType === "all" ? "text-white" : "text-gray-700"
 								}`}
 							>
@@ -137,7 +137,7 @@ export default function SearchModal({
 							}`}
 						>
 							<Text
-								className={`text-center font-noto-bold text-sm ${
+								className={`text-center font-noto-bold text-base ${
 									filterType === "active" ? "text-white" : "text-gray-700"
 								}`}
 							>
@@ -151,7 +151,7 @@ export default function SearchModal({
 							}`}
 						>
 							<Text
-								className={`text-center font-noto-bold text-sm ${
+								className={`text-center font-noto-bold text-base ${
 									filterType === "completed" ? "text-white" : "text-gray-700"
 								}`}
 							>
@@ -162,7 +162,7 @@ export default function SearchModal({
 
 					{/* カテゴリフィルター */}
 					<View className="mt-3">
-						<Text className="text-gray-600 font-noto-bold text-xs mb-2">
+						<Text className="text-gray-600 font-noto-bold text-sm mb-2">
 							カテゴリ
 						</Text>
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -175,7 +175,7 @@ export default function SearchModal({
 								}`}
 							>
 								<Text
-									className={`font-noto-bold text-xs ${
+									className={`font-noto-bold text-sm ${
 										categoryFilter === "all" ? "text-white" : "text-gray-700"
 									}`}
 								>
@@ -193,7 +193,7 @@ export default function SearchModal({
 									}`}
 								>
 									<Text
-										className={`font-noto-regular text-xs ${
+										className={`font-noto-regular text-sm ${
 											categoryFilter === option.value
 												? "text-white"
 												: "text-gray-700"
@@ -216,12 +216,12 @@ export default function SearchModal({
 								size={64}
 								color="#d1d5db"
 							/>
-							<Text className="text-gray-400 font-noto-regular text-lg mt-4 text-center">
+							<Text className="text-gray-400 font-noto-regular text-xl mt-4 text-center">
 								{searchText
 									? "該当するTodoが見つかりません"
 									: "キーワードを入力して検索"}
 							</Text>
-							<Text className="text-gray-400 font-noto-regular text-base mt-2 text-center">
+							<Text className="text-gray-400 font-noto-regular text-lg mt-2 text-center">
 								{searchText
 									? "検索条件やフィルターを変更してください"
 									: "タイトルや内容で検索できます"}
@@ -230,7 +230,7 @@ export default function SearchModal({
 					) : (
 						<>
 							<View className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-								<Text className="text-gray-600 font-noto-regular text-sm">
+								<Text className="text-gray-600 font-noto-regular text-base">
 									{filteredData.length}件のTodoが見つかりました
 								</Text>
 							</View>

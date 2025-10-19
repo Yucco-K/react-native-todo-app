@@ -128,10 +128,10 @@ export default function LoginScreen() {
 				className="flex-1"
 			>
 				<View className="flex-1 justify-center px-8">
-					<Text className="text-3xl font-noto-bold text-center mb-8">
+					<Text className="text-4xl font-noto-bold text-center mb-8">
 						Todo App
 					</Text>
-					<Text className="text-xl font-noto-bold mb-6">ログイン</Text>
+					<Text className="text-2xl font-noto-bold mb-6">ログイン</Text>
 
 					<View className="mb-4">
 						<TextInput
@@ -144,7 +144,7 @@ export default function LoginScreen() {
 							autoComplete="email"
 						/>
 						{errors.email && (
-							<Text className="text-red-500 text-sm mt-1 font-noto-regular">
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.email}
 							</Text>
 						)}
@@ -161,7 +161,7 @@ export default function LoginScreen() {
 							autoComplete="password"
 						/>
 						{errors.password && (
-							<Text className="text-red-500 text-sm mt-1 font-noto-regular">
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.password}
 							</Text>
 						)}
@@ -177,7 +177,7 @@ export default function LoginScreen() {
 						{isLoading ? (
 							<ActivityIndicator color="white" />
 						) : (
-							<Text className="text-white text-center font-noto-bold text-lg">
+							<Text className="text-white text-center font-noto-bold text-xl">
 								ログイン
 							</Text>
 						)}

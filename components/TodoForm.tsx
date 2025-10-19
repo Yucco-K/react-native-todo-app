@@ -147,7 +147,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 			<View className="space-y-2 mb-4">
 				<View>
 					<TextInput
-						className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
+						className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
 						placeholder="タイトル"
 						placeholderTextColor="#9ca3af"
 						value={title}
@@ -155,14 +155,14 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 						autoFocus={true}
 					/>
 					{errors.title && (
-						<Text className="text-red-500 text-base mt-1 font-noto-regular">
+						<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 							{errors.title}
 						</Text>
 					)}
 				</View>
 				<View className="mt-3">
 					<TextInput
-						className="border-2 border-gray-300 rounded-md p-3 text-base font-noto-regular"
+						className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
 						placeholder="内容（任意）"
 						placeholderTextColor="#9ca3af"
 						value={content}
@@ -172,7 +172,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 						textAlignVertical="top"
 					/>
 					{errors.content && (
-						<Text className="text-red-500 text-base mt-1 font-noto-regular">
+						<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 							{errors.content}
 						</Text>
 					)}
@@ -180,7 +180,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 
 				{/* カテゴリ選択 */}
 				<View className="mt-3">
-					<Text className="text-gray-700 font-noto-bold text-base mb-2">
+					<Text className="text-gray-700 font-noto-bold text-lg mb-2">
 						カテゴリ
 					</Text>
 					<ScrollView
@@ -199,7 +199,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 								}`}
 							>
 								<Text
-									className={`font-noto-regular text-sm ${
+									className={`font-noto-regular text-base ${
 										category === option.value ? "text-white" : "text-gray-700"
 									}`}
 								>
@@ -225,7 +225,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 							<Ionicons name="sparkles" size={18} color="#9333ea" />
 						)}
 						<Text
-							className={`ml-2 font-noto-bold text-sm ${
+							className={`ml-2 font-noto-bold text-base ${
 								isPredicting || !title.trim()
 									? "text-gray-400"
 									: "text-purple-600"
@@ -243,7 +243,7 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 					className="bg-black rounded-md p-3 mt-4"
 					underlayColor="gray"
 				>
-					<Text className="text-white text-center font-noto-bold text-base">
+					<Text className="text-white text-center font-noto-bold text-lg">
 						{isLoading ? "保存中..." : "保存"}
 					</Text>
 				</TouchableHighlight>
