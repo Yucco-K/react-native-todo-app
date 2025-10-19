@@ -252,6 +252,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						shadowRadius: 4,
 						elevation: 3,
 						opacity: pressed ? 0.7 : 1,
+						marginTop: 24,
 					})}
 				>
 					<Ionicons
