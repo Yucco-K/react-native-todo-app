@@ -1,7 +1,7 @@
 import { savePraiseFeedback } from "@/services/praiseFeedbackService";
 import type { TodoCategory } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import type { ToastConfigParams } from "react-native-toast-message";
 
@@ -182,6 +182,12 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 	const category = (props?.category as TodoCategory) || "other";
 
 	const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+
+	// メッセージが変わるたびにフィードバック状態をリセット
+	useEffect(() => {
+		setFeedback(null);
+		console.log("🔄 トースト初期化: フィードバックをリセット");
+	}, [message, themeIndex]);
 
 	const handleFeedback = async (type: "like" | "dislike") => {
 		try {
