@@ -60,20 +60,39 @@ export default function AddTodoModal({
 	>([]);
 	const [isLoadingRecommendations, setIsLoadingRecommendations] =
 		useState(false);
+	const [shownRecommendations, setShownRecommendations] = useState<string[]>(
+		[]
+	);
 
 	// おすすめTODOを取得
+	const fetchRecommendations = async () => {
+		setIsLoadingRecommendations(true);
+		try {
+			const newRecs = await generateTodoRecommendations();
+			setRecommendations(newRecs);
+			// 表示済みリストに追加
+			const newTitles = newRecs.map((r) => r.title.toLowerCase().trim());
+			setShownRecommendations((prev) => [...prev, ...newTitles]);
+		} catch (error) {
+			console.error("おすすめTODO取得エラー:", error);
+			setRecommendations([]);
+		} finally {
+			setIsLoadingRecommendations(false);
+		}
+	};
+
+	// モーダルが開いたら初回のおすすめを取得
 	useEffect(() => {
 		if (visible) {
-			setIsLoadingRecommendations(true);
-			generateTodoRecommendations()
-				.then(setRecommendations)
-				.catch((error) => {
-					console.error("おすすめTODO取得エラー:", error);
-					setRecommendations([]);
-				})
-				.finally(() => setIsLoadingRecommendations(false));
+			setShownRecommendations([]); // リセット
+			fetchRecommendations();
 		}
 	}, [visible]);
+
+	// 次の候補を取得
+	const handleNextRecommendations = () => {
+		fetchRecommendations();
+	};
 
 	const handlePredictCategory = async () => {
 		if (!title.trim()) {
@@ -204,14 +223,7 @@ export default function AddTodoModal({
 			onSave?.();
 
 			// おすすめを再取得（常に3件表示されるように）
-			setIsLoadingRecommendations(true);
-			generateTodoRecommendations()
-				.then(setRecommendations)
-				.catch((error) => {
-					console.error("おすすめTODO再取得エラー:", error);
-					setRecommendations([]);
-				})
-				.finally(() => setIsLoadingRecommendations(false));
+			fetchRecommendations();
 		} catch (error) {
 			console.error("おすすめTODO追加エラー:", error);
 			Toast.show({
@@ -252,9 +264,21 @@ export default function AddTodoModal({
 									</View>
 								) : recommendations.length > 0 ? (
 									<View className="mb-4">
-										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-											💡 おすすめTODO（タップで追加）
-										</Text>
+										<View className="flex-row items-center justify-between mb-2">
+											<Text className="text-gray-700 font-noto-bold text-lg">
+												💡 おすすめTODO（タップで追加）
+											</Text>
+											<TouchableOpacity
+												onPress={handleNextRecommendations}
+												className="flex-row items-center px-3 py-1 bg-gray-100 rounded-full"
+												activeOpacity={0.7}
+											>
+												<Ionicons name="refresh" size={16} color="#6b7280" />
+												<Text className="ml-1 text-gray-600 font-noto-regular text-sm">
+													次の候補
+												</Text>
+											</TouchableOpacity>
+										</View>
 										{recommendations.map((rec) => (
 											<TouchableOpacity
 												key={`${rec.title}-${rec.category}`}
