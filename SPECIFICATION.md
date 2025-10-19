@@ -242,13 +242,18 @@ app/
 
 ### UI/UXコンポーネント
 
+- **AddTodoModal**: Todo追加モーダル（FABから起動、おすすめTODO表示）
 - **TodoForm**: Todo作成フォーム（カテゴリ選択、AI推測ボタン付き）
 - **TodoTable**: Todoリスト表示・管理
-- **TodoItem**: 個別Todoカード（アコーディオン表示、カテゴリバッジ表示）
+- **TodoItem**: 個別Todoカード（アコーディオン表示、カテゴリバッジ表示、**チェックボックス1.5倍**）
 - **EditTodoModal**: Todo編集モーダル（カテゴリ選択、AI推測ボタン付き）
 - **SearchModal**: 検索・フィルターモーダル（カテゴリフィルター対応）
 - **NicknameModal**: ニックネーム登録・編集モーダル
-- **PraiseToast**: 褒め言葉トースト（カスタムデザイン）
+- **PraiseToast**: 褒め言葉トースト（カスタムデザイン、4秒表示）
+  - **画面の1/3サイズ**の大型トースト
+  - **ライク👍/ディスライク👎ボタン**（72×72px、グレーデザイン）
+  - **25種類のランダムカラーテーマ**と絵文字
+  - トースト下部に配置、適切なマージンで操作しやすい
 
 ### ナビゲーション
 
@@ -410,12 +415,13 @@ react-native-todo-app/
 ├── components/              # UIコンポーネント
 │   ├── ui/
 │   │   └── TodoItem.tsx     # Todoカード
+│   ├── AddTodoModal.tsx     # Todo追加モーダル
 │   ├── EditTodoModal.tsx    # 編集モーダル
 │   ├── SearchModal.tsx      # 検索モーダル
 │   ├── TodoForm.tsx         # 作成フォーム
 │   ├── TodoTable.tsx        # リスト表示
 │   ├── NicknameModal.tsx    # ニックネーム設定モーダル
-│   └── PraiseToast.tsx      # 褒め言葉トースト
+│   └── PraiseToast.tsx      # 褒め言葉トースト（フィードバックボタン付き）
 ├── contexts/                # Context API
 │   ├── AuthContext.tsx      # 認証コンテキスト
 │   └── TodoRefreshContext.tsx
