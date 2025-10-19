@@ -221,14 +221,13 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 			}}
 			pointerEvents="box-none"
 		>
-			{/* フィードバックボタン（左端） */}
+			{/* フィードバックボタン（左端下寄り） */}
 			<View
 				style={{
 					position: "absolute",
 					left: 16,
-					top: "50%",
-					transform: [{ translateY: -40 }],
-					gap: 12,
+					bottom: 32,
+					gap: 20,
 					zIndex: 10,
 					marginRight: 24,
 				}}
@@ -241,9 +240,9 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						handleFeedback("like");
 					}}
 					style={({ pressed }) => ({
-						width: 48,
-						height: 48,
-						borderRadius: 24,
+						width: 72,
+						height: 72,
+						borderRadius: 36,
 						backgroundColor: feedback === "like" ? "#6b7280" : "white",
 						justifyContent: "center",
 						alignItems: "center",
@@ -257,7 +256,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				>
 					<Ionicons
 						name={feedback === "like" ? "thumbs-up" : "thumbs-up-outline"}
-						size={24}
+						size={36}
 						color={feedback === "like" ? "white" : "#6b7280"}
 					/>
 				</Pressable>
@@ -269,9 +268,9 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						handleFeedback("dislike");
 					}}
 					style={({ pressed }) => ({
-						width: 48,
-						height: 48,
-						borderRadius: 24,
+						width: 72,
+						height: 72,
+						borderRadius: 36,
 						backgroundColor: feedback === "dislike" ? "#6b7280" : "white",
 						justifyContent: "center",
 						alignItems: "center",
@@ -287,7 +286,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						name={
 							feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"
 						}
-						size={24}
+						size={36}
 						color={feedback === "dislike" ? "white" : "#6b7280"}
 					/>
 				</Pressable>
