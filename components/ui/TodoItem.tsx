@@ -52,27 +52,27 @@ export default function TodoItem({
 					onPress={() => setIsExpanded(!isExpanded)}
 					activeOpacity={0.7}
 				>
-				{/* 完了チェックボックス */}
-				<View style={{ width: 48 }} className="items-center mr-2">
-					<TouchableOpacity
-						onPress={(e) => {
-							e.stopPropagation();
-							onToggleComplete?.(id);
-						}}
-					>
-						<View
-							className={`w-9 h-9 rounded border-2 items-center justify-center ${
-								completed
-									? "bg-green-500 border-green-500"
-									: "border-gray-400"
-							}`}
+					{/* 完了チェックボックス */}
+					<View style={{ width: 48 }} className="items-center mr-2">
+						<TouchableOpacity
+							onPress={(e) => {
+								e.stopPropagation();
+								onToggleComplete?.(id);
+							}}
 						>
-							{completed && (
-								<Text className="text-white font-noto-bold text-2xl">✓</Text>
-							)}
-						</View>
-					</TouchableOpacity>
-				</View>
+							<View
+								className={`w-9 h-9 rounded border-2 items-center justify-center ${
+									completed
+										? "bg-green-500 border-green-500"
+										: "border-gray-400"
+								}`}
+							>
+								{completed && (
+									<Text className="text-white font-noto-bold text-2xl">✓</Text>
+								)}
+							</View>
+						</TouchableOpacity>
+					</View>
 
 					{/* タイトルと内容 */}
 					<View className="flex-1">

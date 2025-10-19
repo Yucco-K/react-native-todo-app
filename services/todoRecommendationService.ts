@@ -470,8 +470,9 @@ export async function generateTodoRecommendations(): Promise<
 
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
 		if (recommendations.length < 3) {
-			const sortedCategories = Object.entries(frequentCategories)
-				.sort(([, a], [, b]) => b - a);
+			const sortedCategories = Object.entries(frequentCategories).sort(
+				([, a], [, b]) => b - a
+			);
 
 			// 全カテゴリを試して3件埋める
 			for (const [category, _count] of sortedCategories) {
@@ -481,7 +482,9 @@ export async function generateTodoRecommendations(): Promise<
 				const templates = CATEGORY_TEMPLATES[cat] || [];
 
 				// そのカテゴリから複数提案可能にする
-				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
+				const shuffledTemplates = [...templates].sort(
+					() => Math.random() - 0.5
+				);
 
 				for (const title of shuffledTemplates) {
 					if (recommendations.length >= 3) break;
@@ -519,7 +522,9 @@ export async function generateTodoRecommendations(): Promise<
 				if (recommendations.length >= 3) break;
 
 				const templates = CATEGORY_TEMPLATES[cat] || [];
-				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
+				const shuffledTemplates = [...templates].sort(
+					() => Math.random() - 0.5
+				);
 
 				for (const title of shuffledTemplates) {
 					if (recommendations.length >= 3) break;

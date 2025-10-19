@@ -39,30 +39,30 @@ export default function SharedListScreen() {
 								</Text>
 							)
 						)}
-				<Text className="text-sm text-gray-500 font-noto-regular mt-1">
-					他の人と共有するTodoをここで作成・管理できます
-				</Text>
-			</View>
+						<Text className="text-sm text-gray-500 font-noto-regular mt-1">
+							他の人と共有するTodoをここで作成・管理できます
+						</Text>
+					</View>
 
-			<TodoTable refresh={refreshTrigger} isShared={true} />
+					<TodoTable refresh={refreshTrigger} isShared={true} />
 
-			{/* Floating Action Button */}
-			<TouchableOpacity
-				onPress={() => setIsAddModalVisible(true)}
-				className="absolute bottom-6 right-6 bg-blue-500 rounded-full w-14 h-14 items-center justify-center shadow-lg"
-				activeOpacity={0.8}
-			>
-				<Ionicons name="add" size={32} color="white" />
-			</TouchableOpacity>
-		</View>
-	</TouchableWithoutFeedback>
+					{/* Floating Action Button */}
+					<TouchableOpacity
+						onPress={() => setIsAddModalVisible(true)}
+						className="absolute bottom-6 right-6 bg-blue-500 rounded-full w-14 h-14 items-center justify-center shadow-lg"
+						activeOpacity={0.8}
+					>
+						<Ionicons name="add" size={32} color="white" />
+					</TouchableOpacity>
+				</View>
+			</TouchableWithoutFeedback>
 
-	<AddTodoModal
-		visible={isAddModalVisible}
-		onClose={() => setIsAddModalVisible(false)}
-		onSave={handleSave}
-		isShared={true}
-	/>
-</SafeAreaView>
+			<AddTodoModal
+				visible={isAddModalVisible}
+				onClose={() => setIsAddModalVisible(false)}
+				onSave={handleSave}
+				isShared={true}
+			/>
+		</SafeAreaView>
 	);
 }

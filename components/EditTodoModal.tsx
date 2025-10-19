@@ -141,14 +141,14 @@ export default function EditTodoModal({
 				}
 			}
 
-		// Toast.show({
-		// 	type: "success",
-		// 	text1: "更新成功",
-		// 	text2: "Todoを更新しました",
-		// });
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "更新成功",
+			// 	text2: "Todoを更新しました",
+			// });
 
-		onSave();
-		onClose();
+			onSave();
+			onClose();
 		} catch (error) {
 			console.error(error);
 			Toast.show({
@@ -174,41 +174,41 @@ export default function EditTodoModal({
 						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
 							<Text className="text-3xl font-noto-bold mb-4">Todo編集</Text>
 
-						<View className="mb-4">
-							<TextInput
-								className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-								style={{ lineHeight: 24 }}
-								placeholder="タイトル"
-								placeholderTextColor="#9ca3af"
-								value={title}
-								onChangeText={setTitle}
-								autoFocus={true}
-							/>
-							{errors.title && (
-								<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-									{errors.title}
-								</Text>
-							)}
-						</View>
+							<View className="mb-4">
+								<TextInput
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+									style={{ lineHeight: 24 }}
+									placeholder="タイトル"
+									placeholderTextColor="#9ca3af"
+									value={title}
+									onChangeText={setTitle}
+									autoFocus={true}
+								/>
+								{errors.title && (
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+										{errors.title}
+									</Text>
+								)}
+							</View>
 
-						<View className="mb-4">
-							<TextInput
-								className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-								style={{ lineHeight: 24, minHeight: 100 }}
-								placeholder="内容（任意）"
-								placeholderTextColor="#9ca3af"
-								value={content}
-								onChangeText={setContent}
-								multiline
-								numberOfLines={4}
-								textAlignVertical="top"
-							/>
-							{errors.content && (
-								<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-									{errors.content}
-								</Text>
-							)}
-						</View>
+							<View className="mb-4">
+								<TextInput
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+									style={{ lineHeight: 24, minHeight: 100 }}
+									placeholder="内容（任意）"
+									placeholderTextColor="#9ca3af"
+									value={content}
+									onChangeText={setContent}
+									multiline
+									numberOfLines={4}
+									textAlignVertical="top"
+								/>
+								{errors.content && (
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+										{errors.content}
+									</Text>
+								)}
+							</View>
 
 							{/* カテゴリ選択 */}
 							<View className="mb-4">

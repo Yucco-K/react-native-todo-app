@@ -209,10 +209,10 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 					createdAt: data.createdAt,
 					deletedAt: new Date(), // 削除日時を記録
 				});
-				
+
 				// Todo本体を削除
 				const deletePromise = deleteDoc(doc(db, COLLECTION_NAME, document.id));
-				
+
 				operations.push(historyPromise, deletePromise);
 				deletedCount++;
 				console.log(
@@ -225,7 +225,9 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		await Promise.all(operations);
 
 		if (deletedCount > 0) {
-			console.log(`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`);
+			console.log(
+				`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`
+			);
 		}
 
 		return deletedCount;

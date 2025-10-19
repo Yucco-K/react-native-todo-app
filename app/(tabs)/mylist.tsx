@@ -98,34 +98,34 @@ export default function MyListScreen() {
 						>
 							<Text className="text-white font-noto-bold">ログアウト</Text>
 						</TouchableHighlight>
+					</View>
+
+					<TodoTable refresh={refreshTrigger} isShared={false} />
+
+					{/* Floating Action Button */}
+					<TouchableOpacity
+						onPress={() => setIsAddModalVisible(true)}
+						className="absolute bottom-6 right-6 bg-blue-500 rounded-full w-14 h-14 items-center justify-center shadow-lg"
+						activeOpacity={0.8}
+					>
+						<Ionicons name="add" size={32} color="white" />
+					</TouchableOpacity>
 				</View>
+			</TouchableWithoutFeedback>
 
-				<TodoTable refresh={refreshTrigger} isShared={false} />
+			<AddTodoModal
+				visible={isAddModalVisible}
+				onClose={() => setIsAddModalVisible(false)}
+				onSave={handleSave}
+				isShared={false}
+			/>
 
-				{/* Floating Action Button */}
-				<TouchableOpacity
-					onPress={() => setIsAddModalVisible(true)}
-					className="absolute bottom-6 right-6 bg-blue-500 rounded-full w-14 h-14 items-center justify-center shadow-lg"
-					activeOpacity={0.8}
-				>
-					<Ionicons name="add" size={32} color="white" />
-				</TouchableOpacity>
-			</View>
-		</TouchableWithoutFeedback>
-
-		<AddTodoModal
-			visible={isAddModalVisible}
-			onClose={() => setIsAddModalVisible(false)}
-			onSave={handleSave}
-			isShared={false}
-		/>
-
-		<NicknameModal
-			visible={isNicknameModalVisible}
-			currentNickname={nickname || ""}
-			onClose={() => setIsNicknameModalVisible(false)}
-			onSave={updateNickname}
-		/>
-	</SafeAreaView>
+			<NicknameModal
+				visible={isNicknameModalVisible}
+				currentNickname={nickname || ""}
+				onClose={() => setIsNicknameModalVisible(false)}
+				onSave={updateNickname}
+			/>
+		</SafeAreaView>
 	);
 }

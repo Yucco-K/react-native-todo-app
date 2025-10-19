@@ -72,7 +72,7 @@ export const getMessageScores = async (): Promise<Record<string, number>> => {
 		console.log(
 			`📊 メッセージスコア: ${Object.keys(messageScores).length}件のメッセージ`
 		);
-		
+
 		return messageScores;
 	} catch (error) {
 		console.error("Error getting message scores:", error);
