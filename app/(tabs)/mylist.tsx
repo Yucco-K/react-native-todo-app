@@ -1,5 +1,5 @@
+import AddTodoModal from "@/components/AddTodoModal";
 import NicknameModal from "@/components/NicknameModal";
-import TodoForm from "@/components/TodoForm";
 import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
@@ -20,6 +20,7 @@ export default function MyListScreen() {
 	const { user, nickname, logout, updateNickname } = useAuth();
 	const { refreshTrigger, triggerRefresh } = useTodoRefresh();
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
+	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
 	const handleSave = () => {
 		triggerRefresh();
@@ -97,19 +98,34 @@ export default function MyListScreen() {
 						>
 							<Text className="text-white font-noto-bold">ログアウト</Text>
 						</TouchableHighlight>
-					</View>
-
-					<TodoForm onSave={handleSave} />
-					<TodoTable refresh={refreshTrigger} isShared={false} />
 				</View>
-			</TouchableWithoutFeedback>
 
-			<NicknameModal
-				visible={isNicknameModalVisible}
-				currentNickname={nickname || ""}
-				onClose={() => setIsNicknameModalVisible(false)}
-				onSave={updateNickname}
-			/>
-		</SafeAreaView>
+				<TodoTable refresh={refreshTrigger} isShared={false} />
+
+				{/* Floating Action Button */}
+				<TouchableOpacity
+					onPress={() => setIsAddModalVisible(true)}
+					className="absolute bottom-6 right-6 bg-blue-500 rounded-full w-14 h-14 items-center justify-center shadow-lg"
+					activeOpacity={0.8}
+				>
+					<Ionicons name="add" size={32} color="white" />
+				</TouchableOpacity>
+			</View>
+		</TouchableWithoutFeedback>
+
+		<AddTodoModal
+			visible={isAddModalVisible}
+			onClose={() => setIsAddModalVisible(false)}
+			onSave={handleSave}
+			isShared={false}
+		/>
+
+		<NicknameModal
+			visible={isNicknameModalVisible}
+			currentNickname={nickname || ""}
+			onClose={() => setIsNicknameModalVisible(false)}
+			onSave={updateNickname}
+		/>
+	</SafeAreaView>
 	);
 }
