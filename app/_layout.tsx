@@ -33,14 +33,16 @@ function RootLayoutNav() {
 			inAuthScreen,
 		});
 
-		if (!user && !inAuthScreen) {
+		// ログイン/サインアップ画面では認証チェックによる自動リダイレクトを行わない
+		if (inAuthScreen) {
+			console.log("⏭️ Router: 認証画面では自動リダイレクトをスキップ");
+			return;
+		}
+
+		if (!user) {
 			// ユーザーが未ログインの場合、ログイン画面へ
 			console.log("➡️ Router: ログインページにリダイレクト");
 			router.replace("/login");
-		} else if (user && inAuthScreen) {
-			// ユーザーがログイン済みの場合、ホーム画面へ
-			console.log("➡️ Router: ホーム画面にリダイレクト");
-			router.replace("/");
 		}
 	}, [user, loading, segments, router]);
 
