@@ -84,7 +84,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 		collection(db, TODOS_COLLECTION),
 		where("userId", "==", userId),
 		orderBy("createdAt", "desc"),
-		limit(50),
+		limit(50)
 	);
 
 	const currentSnapshot = await getDocs(currentTodosQuery);
@@ -116,7 +116,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 		const historyQuery = query(
 			collection(db, HISTORY_COLLECTION),
 			where("userId", "==", userId),
-			limit(50),
+			limit(50)
 		);
 
 		const historySnapshot = await getDocs(historyQuery);
@@ -170,7 +170,8 @@ async function analyzeUserTodoPatterns(): Promise<{
 				// 平均間隔を計算（時間単位）
 				const intervals: number[] = [];
 				for (let i = 1; i < sortedDates.length; i++) {
-					const interval = (sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60);
+					const interval =
+						(sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60);
 					intervals.push(interval);
 				}
 				const averageInterval =
@@ -239,7 +240,7 @@ function generateFriendlyMessage(
 		interval?: number;
 		matchesTimePattern?: boolean;
 		matchesDayOfWeek?: boolean;
-	},
+	}
 ): string {
 	const messages: Record<TodoCategory, string[]> = {
 		work: [
@@ -354,7 +355,7 @@ export async function generateTodoRecommendations(): Promise<
 			if (pattern.averageInterval) {
 				// 最後に追加された時刻を取得
 				const lastAdded = recentTodos.find(
-					(t) => t.title.toLowerCase().trim() === normalizedTitle,
+					(t) => t.title.toLowerCase().trim() === normalizedTitle
 				);
 
 				if (lastAdded) {
@@ -367,13 +368,13 @@ export async function generateTodoRecommendations(): Promise<
 
 						// 時間帯が一致する場合、スコアを上げる
 						const matchesHour = pattern.timePatterns.some(
-							(tp) => Math.abs(tp.hour - currentHour) <= 2,
+							(tp) => Math.abs(tp.hour - currentHour) <= 2
 						);
 						if (matchesHour) score += 50;
 
 						// 曜日が一致する場合、スコアを上げる
 						const matchesDayOfWeek = pattern.timePatterns.some(
-							(tp) => tp.dayOfWeek === currentDayOfWeek,
+							(tp) => tp.dayOfWeek === currentDayOfWeek
 						);
 						if (matchesDayOfWeek) score += 30;
 
@@ -393,10 +394,10 @@ export async function generateTodoRecommendations(): Promise<
 			} else if (pattern.timePatterns.length >= 2) {
 				// 周期は不明だが、時間帯や曜日のパターンがあるタスク
 				const matchesHour = pattern.timePatterns.some(
-					(tp) => Math.abs(tp.hour - currentHour) <= 2,
+					(tp) => Math.abs(tp.hour - currentHour) <= 2
 				);
 				const matchesDayOfWeek = pattern.timePatterns.some(
-					(tp) => tp.dayOfWeek === currentDayOfWeek,
+					(tp) => tp.dayOfWeek === currentDayOfWeek
 				);
 
 				if (matchesHour || matchesDayOfWeek) {
@@ -404,7 +405,7 @@ export async function generateTodoRecommendations(): Promise<
 					const recentlyAdded = recentTodos.some(
 						(todo) =>
 							todo.createdAt.getTime() > now - 7 * 24 * 60 * 60 * 1000 &&
-							todo.title.toLowerCase().trim() === normalizedTitle,
+							todo.title.toLowerCase().trim() === normalizedTitle
 					);
 
 					if (!recentlyAdded) {
@@ -434,13 +435,17 @@ export async function generateTodoRecommendations(): Promise<
 			recommendations.push({
 				title: task.title,
 				category: task.category,
-				message: generateFriendlyMessage(task.category, task.title, task.options),
+				message: generateFriendlyMessage(
+					task.category,
+					task.title,
+					task.options
+				),
 			});
 		}
 
 		// 既に提案済みのタイトルを記録
 		const recommendedTitles = new Set(
-			recommendations.map((r) => r.title.toLowerCase().trim()),
+			recommendations.map((r) => r.title.toLowerCase().trim())
 		);
 
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
@@ -465,7 +470,7 @@ export async function generateTodoRecommendations(): Promise<
 					const recentlyAdded = recentTodos.some(
 						(todo) =>
 							todo.title.toLowerCase().includes(title.toLowerCase()) ||
-							title.toLowerCase().includes(todo.title.toLowerCase()),
+							title.toLowerCase().includes(todo.title.toLowerCase())
 					);
 
 					if (!recentlyAdded) {
@@ -480,8 +485,10 @@ export async function generateTodoRecommendations(): Promise<
 			}
 		}
 
-		console.log(`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`);
-		
+		console.log(
+			`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`
+		);
+
 		// 最大3件に制限
 		return recommendations.slice(0, 3);
 	} catch (error) {
@@ -489,13 +496,3 @@ export async function generateTodoRecommendations(): Promise<
 		return [];
 	}
 }
-collection,
-    getDocs,
-    limit,
-    orderBy,
-    query,
-    where,
-} from "firebase/firestore"
-
-import { auth, db } from "../config/firebase";
-import type { TodoCategory } from "../types/Category";

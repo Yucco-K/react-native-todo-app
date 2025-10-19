@@ -58,7 +58,8 @@ export default function AddTodoModal({
 	const [recommendations, setRecommendations] = useState<
 		Array<{ title: string; category: TodoCategory; message: string }>
 	>([]);
-	const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+	const [isLoadingRecommendations, setIsLoadingRecommendations] =
+		useState(false);
 
 	// おすすめTODOを取得
 	useEffect(() => {
@@ -198,46 +199,50 @@ export default function AddTodoModal({
 						<View className="bg-white rounded-lg p-6 w-11/12 max-h-5/6">
 							<Text className="text-3xl font-noto-bold mb-4">Todo追加</Text>
 
-						<ScrollView
-							className="flex-1"
-							showsVerticalScrollIndicator={false}
-						>
-							{/* おすすめTODO */}
-							{isLoadingRecommendations ? (
-								<View className="mb-4 p-3 bg-blue-50 rounded-lg">
-									<ActivityIndicator size="small" color="#3b82f6" />
-									<Text className="text-center text-blue-600 font-noto-regular text-base mt-2">
-										おすすめを読み込み中...
-									</Text>
-								</View>
-							) : recommendations.length > 0 ? (
-								<View className="mb-4">
-									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-										💡 おすすめTODO
-									</Text>
-									{recommendations.map((rec, index) => (
-										<TouchableOpacity
-											key={index}
-											onPress={() => handleSelectRecommendation(rec)}
-											className="mb-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
-											activeOpacity={0.7}
-										>
-											<Text className="text-gray-600 font-noto-regular text-sm mb-1">
-												{rec.message}
-											</Text>
-											<View className="flex-row items-center mt-1">
-												<Ionicons name="add-circle-outline" size={16} color="#3b82f6" />
-												<Text className="ml-2 text-blue-600 font-noto-bold text-base">
-													{rec.title}
+							<ScrollView
+								className="flex-1"
+								showsVerticalScrollIndicator={false}
+							>
+								{/* おすすめTODO */}
+								{isLoadingRecommendations ? (
+									<View className="mb-4 p-3 bg-blue-50 rounded-lg">
+										<ActivityIndicator size="small" color="#3b82f6" />
+										<Text className="text-center text-blue-600 font-noto-regular text-base mt-2">
+											おすすめを読み込み中...
+										</Text>
+									</View>
+								) : recommendations.length > 0 ? (
+									<View className="mb-4">
+										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+											💡 おすすめTODO
+										</Text>
+										{recommendations.map((rec) => (
+											<TouchableOpacity
+												key={`${rec.title}-${rec.category}`}
+												onPress={() => handleSelectRecommendation(rec)}
+												className="mb-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+												activeOpacity={0.7}
+											>
+												<Text className="text-gray-600 font-noto-regular text-sm mb-1">
+													{rec.message}
 												</Text>
-											</View>
-										</TouchableOpacity>
-									))}
-								</View>
-							) : null}
+												<View className="flex-row items-center mt-1">
+													<Ionicons
+														name="add-circle-outline"
+														size={16}
+														color="#3b82f6"
+													/>
+													<Text className="ml-2 text-blue-600 font-noto-bold text-base">
+														{rec.title}
+													</Text>
+												</View>
+											</TouchableOpacity>
+										))}
+									</View>
+								) : null}
 
-							{/* タイトル入力 */}
-							<View className="mb-3">
+								{/* タイトル入力 */}
+								<View className="mb-3">
 									<TextInput
 										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
 										placeholder="タイトル"
