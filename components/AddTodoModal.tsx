@@ -1,10 +1,11 @@
 import { predictCategory } from "@/services/aiCategoryService";
 import { notifyTodoAdded } from "@/services/notificationService";
+import { generateTodoRecommendations } from "@/services/todoRecommendationService";
 import { createTodo } from "@/services/todoService";
 import type { TodoCategory } from "@/types/Category";
 import { CATEGORY_OPTIONS } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -54,6 +55,24 @@ export default function AddTodoModal({
 	const [errors, setErrors] = useState<{ title?: string; content?: string }>(
 		{}
 	);
+	const [recommendations, setRecommendations] = useState<
+		Array<{ title: string; category: TodoCategory; message: string }>
+	>([]);
+	const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+
+	// おすすめTODOを取得
+	useEffect(() => {
+		if (visible) {
+			setIsLoadingRecommendations(true);
+			generateTodoRecommendations()
+				.then(setRecommendations)
+				.catch((error) => {
+					console.error("おすすめTODO取得エラー:", error);
+					setRecommendations([]);
+				})
+				.finally(() => setIsLoadingRecommendations(false));
+		}
+	}, [visible]);
 
 	const handlePredictCategory = async () => {
 		if (!title.trim()) {
@@ -158,6 +177,14 @@ export default function AddTodoModal({
 		onClose();
 	};
 
+	const handleSelectRecommendation = (recommendation: {
+		title: string;
+		category: TodoCategory;
+	}) => {
+		setTitle(recommendation.title);
+		setCategory(recommendation.category);
+	};
+
 	return (
 		<Modal
 			visible={visible}
@@ -168,51 +195,80 @@ export default function AddTodoModal({
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View
-							className="bg-white rounded-lg p-6 w-11/12"
-							style={{ maxHeight: "80%" }}
-						>
+						<View className="bg-white rounded-lg p-6 w-11/12 max-h-5/6">
 							<Text className="text-3xl font-noto-bold mb-4">Todo追加</Text>
 
-							<ScrollView
-								style={{ maxHeight: 400 }}
-								showsVerticalScrollIndicator={false}
-							>
+						<ScrollView
+							className="flex-1"
+							showsVerticalScrollIndicator={false}
+						>
+							{/* おすすめTODO */}
+							{isLoadingRecommendations ? (
+								<View className="mb-4 p-3 bg-blue-50 rounded-lg">
+									<ActivityIndicator size="small" color="#3b82f6" />
+									<Text className="text-center text-blue-600 font-noto-regular text-base mt-2">
+										おすすめを読み込み中...
+									</Text>
+								</View>
+							) : recommendations.length > 0 ? (
+								<View className="mb-4">
+									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+										💡 おすすめTODO
+									</Text>
+									{recommendations.map((rec, index) => (
+										<TouchableOpacity
+											key={index}
+											onPress={() => handleSelectRecommendation(rec)}
+											className="mb-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+											activeOpacity={0.7}
+										>
+											<Text className="text-gray-600 font-noto-regular text-sm mb-1">
+												{rec.message}
+											</Text>
+											<View className="flex-row items-center mt-1">
+												<Ionicons name="add-circle-outline" size={16} color="#3b82f6" />
+												<Text className="ml-2 text-blue-600 font-noto-bold text-base">
+													{rec.title}
+												</Text>
+											</View>
+										</TouchableOpacity>
+									))}
+								</View>
+							) : null}
+
 							{/* タイトル入力 */}
 							<View className="mb-3">
-								<TextInput
-									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-									style={{ lineHeight: 24 }}
-									placeholder="タイトル"
-									value={title}
-									onChangeText={setTitle}
-									autoFocus={true}
-								/>
-								{errors.title && (
-									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-										{errors.title}
-									</Text>
-								)}
-							</View>
+									<TextInput
+										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+										placeholder="タイトル"
+										value={title}
+										onChangeText={setTitle}
+										autoFocus={true}
+									/>
+									{errors.title && (
+										<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+											{errors.title}
+										</Text>
+									)}
+								</View>
 
-							{/* 内容入力 */}
-							<View className="mb-3">
-								<TextInput
-									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-									style={{ lineHeight: 24, minHeight: 100 }}
-									placeholder="内容（任意）"
-									value={content}
-									onChangeText={setContent}
-									multiline
-									numberOfLines={4}
-									textAlignVertical="top"
-								/>
-								{errors.content && (
-									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-										{errors.content}
-									</Text>
-								)}
-							</View>
+								{/* 内容入力 */}
+								<View className="mb-3">
+									<TextInput
+										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+										placeholder="内容（任意）"
+										value={content}
+										onChangeText={setContent}
+										multiline
+										numberOfLines={4}
+										textAlignVertical="top"
+									/>
+									{errors.content && (
+										<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+											{errors.content}
+										</Text>
+									)}
+								</View>
 
 								{/* カテゴリ選択 */}
 								<View className="mb-3">
@@ -260,25 +316,21 @@ export default function AddTodoModal({
 									<TouchableOpacity
 										onPress={handlePredictCategory}
 										disabled={isPredicting || !title.trim()}
-										className={`mt-3 flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
+										className={`flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
 											isPredicting || !title.trim()
-												? "bg-gray-100 border-gray-300"
-												: "bg-purple-50 border-purple-500"
+												? "bg-gray-200 border-gray-300"
+												: "bg-purple-50 border-purple-300"
 										}`}
 									>
-										{isPredicting ? (
-											<ActivityIndicator size="small" color="#9333ea" />
-										) : (
-											<Ionicons name="sparkles" size={18} color="#9333ea" />
-										)}
-										<Text
-											className={`ml-2 font-noto-bold text-base ${
-												isPredicting || !title.trim()
-													? "text-gray-400"
-													: "text-purple-600"
-											}`}
-										>
-											{isPredicting ? "AI推測中..." : "AIでカテゴリを推測"}
+										<Ionicons
+											name="sparkles"
+											size={18}
+											color={
+												isPredicting || !title.trim() ? "#9ca3af" : "#9333ea"
+											}
+										/>
+										<Text className="text-gray-700 font-noto-bold text-lg ml-2">
+											{isPredicting ? "推測中..." : "AIカテゴリ推測"}
 										</Text>
 									</TouchableOpacity>
 								</View>
