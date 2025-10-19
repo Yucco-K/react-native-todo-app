@@ -28,6 +28,8 @@ export default function TodoItem({
 	completed,
 	shared,
 	category,
+	completedAt,
+	completedBy,
 	onToggleComplete,
 	onToggleShared,
 	onEdit,
@@ -50,32 +52,32 @@ export default function TodoItem({
 					onPress={() => setIsExpanded(!isExpanded)}
 					activeOpacity={0.7}
 				>
-					{/* 完了チェックボックス */}
-					<View style={{ width: 32 }} className="items-center mr-2">
-						<TouchableOpacity
-							onPress={(e) => {
-								e.stopPropagation();
-								onToggleComplete?.(id);
-							}}
+				{/* 完了チェックボックス */}
+				<View style={{ width: 48 }} className="items-center mr-2">
+					<TouchableOpacity
+						onPress={(e) => {
+							e.stopPropagation();
+							onToggleComplete?.(id);
+						}}
+					>
+						<View
+							className={`w-9 h-9 rounded border-2 items-center justify-center ${
+								completed
+									? "bg-green-500 border-green-500"
+									: "border-gray-400"
+							}`}
 						>
-							<View
-								className={`w-6 h-6 rounded border-2 items-center justify-center ${
-									completed
-										? "bg-green-500 border-green-500"
-										: "border-gray-400"
-								}`}
-							>
-								{completed && (
-									<Text className="text-white font-noto-bold text-xl">✓</Text>
-								)}
-							</View>
-						</TouchableOpacity>
-					</View>
+							{completed && (
+								<Text className="text-white font-noto-bold text-2xl">✓</Text>
+							)}
+						</View>
+					</TouchableOpacity>
+				</View>
 
 					{/* タイトルと内容 */}
 					<View className="flex-1">
 						<Text
-							className={`font-noto-regular text-xl ${
+							className={`font-noto-bold text-xl ${
 								completed ? "line-through text-gray-400" : ""
 							}`}
 							numberOfLines={1}
@@ -89,11 +91,14 @@ export default function TodoItem({
 									<View className="mt-2 flex-row">
 										<View className="bg-blue-100 px-3 py-1 rounded-full">
 											<Text className="text-blue-700 font-noto-bold text-base">
-												{TODO_CATEGORIES[category] || "その他"}
+												{TODO_CATEGORIES[
+													category as keyof typeof TODO_CATEGORIES
+												] || "その他"}
 											</Text>
 										</View>
 									</View>
 								)}
+
 								<Text
 									className={`font-noto-regular text-lg text-gray-500 mt-2 ${
 										completed ? "line-through text-gray-400" : ""
@@ -139,7 +144,7 @@ export default function TodoItem({
 										e.stopPropagation();
 									}}
 								>
-									<Text className="font-noto-regular text-gray-700 text-lg">
+									<Text className="font-noto-regular text-gray-700 text-base">
 										共有する
 									</Text>
 									<Switch
@@ -174,7 +179,7 @@ export default function TodoItem({
 									}}
 								>
 									<Ionicons name="create-outline" size={22} color="#3b82f6" />
-									<Text className="ml-3 font-noto-regular text-gray-700 text-lg">
+									<Text className="ml-3 font-noto-regular text-gray-700 text-base">
 										編集
 									</Text>
 								</Pressable>
@@ -190,7 +195,7 @@ export default function TodoItem({
 									}}
 								>
 									<Ionicons name="trash-outline" size={22} color="#ef4444" />
-									<Text className="ml-3 font-noto-regular text-red-500 text-lg">
+									<Text className="ml-3 font-noto-regular text-red-500 text-base">
 										削除
 									</Text>
 								</Pressable>
@@ -199,7 +204,7 @@ export default function TodoItem({
 							{/* 作成者でない場合のメッセージ */}
 							{!isOwner && (
 								<View className="px-4 py-4">
-									<Text className="font-noto-regular text-gray-500 text-base text-center">
+									<Text className="font-noto-regular text-gray-500 text-sm text-center">
 										この操作は作成者のみ可能です
 									</Text>
 								</View>
