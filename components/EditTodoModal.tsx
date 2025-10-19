@@ -81,11 +81,11 @@ export default function EditTodoModal({
 		try {
 			const predicted = await predictCategory(title, content);
 			setCategory(predicted);
-			Toast.show({
-				type: "success",
-				text1: "AI推測完了",
-				text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
-			});
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "AI推測完了",
+			// 	text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
+			// });
 		} catch (error) {
 			console.error("カテゴリ推測エラー:", error);
 			Toast.show({
@@ -141,14 +141,14 @@ export default function EditTodoModal({
 				}
 			}
 
-			Toast.show({
-				type: "success",
-				text1: "更新成功",
-				text2: "Todoを更新しました",
-			});
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "更新成功",
+		// 	text2: "Todoを更新しました",
+		// });
 
-			onSave();
-			onClose();
+		onSave();
+		onClose();
 		} catch (error) {
 			console.error(error);
 			Toast.show({

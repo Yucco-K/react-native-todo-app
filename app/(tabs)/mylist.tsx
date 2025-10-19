@@ -28,11 +28,11 @@ export default function MyListScreen() {
 	const handleLogout = async () => {
 		try {
 			await logout();
-			Toast.show({
-				type: "success",
-				text1: "ログアウト",
-				text2: "ログアウトしました",
-			});
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "ログアウト",
+			// 	text2: "ログアウトしました",
+			// });
 		} catch (error) {
 			console.error(error);
 			Toast.show({

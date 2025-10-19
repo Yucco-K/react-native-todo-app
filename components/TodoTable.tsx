@@ -180,12 +180,12 @@ export default function TodoTable({
 		try {
 			await toggleTodoShared(id, currentShared);
 
-			Toast.show({
-				type: "success",
-				text1: currentShared ? "個人用に変更" : "共有に変更",
-				text2: currentShared ? "My Listに移動しました" : "Sharedに移動しました",
-				visibilityTime: 3000,
-			});
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: currentShared ? "個人用に変更" : "共有に変更",
+			// 	text2: currentShared ? "My Listに移動しました" : "Sharedに移動しました",
+			// 	visibilityTime: 3000,
+			// });
 
 			// グローバルにリフレッシュをトリガー（両方のタブで即座に反映）
 			triggerRefresh();
@@ -213,16 +213,16 @@ export default function TodoTable({
 				} catch (error) {
 					console.error("通知送信エラー:", error);
 				}
-			}
+		}
 
-			Toast.show({
-				type: "success",
-				text1: "削除成功",
-				text2: "Todoを削除しました",
-			});
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "削除成功",
+		// 	text2: "Todoを削除しました",
+		// });
 
-			// リストを再取得
-			getTodos();
+		// リストを再取得
+		getTodos();
 		} catch (error) {
 			console.error(error);
 			Toast.show({

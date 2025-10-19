@@ -77,15 +77,15 @@ export default function SignupScreen() {
 		setErrors({});
 		setIsLoading(true);
 
-		try {
-			await signUp(email, password);
-			Toast.show({
-				type: "success",
-				text1: "登録成功",
-				text2: "アカウントを作成しました",
-			});
-			router.replace("/");
-		} catch (error) {
+	try {
+		await signUp(email, password);
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "登録成功",
+		// 	text2: "アカウントを作成しました",
+		// });
+		router.replace("/");
+	} catch (error) {
 			console.error("サインアップエラー:", error);
 			let errorTitle = "登録失敗";
 			let errorMessage = "登録に失敗しました";

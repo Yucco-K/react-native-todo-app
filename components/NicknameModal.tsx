@@ -49,15 +49,15 @@ export default function NicknameModal({
 		}
 
 		setIsLoading(true);
-		try {
-			await onSave(trimmedNickname);
-			Toast.show({
-				type: "success",
-				text1: "保存成功",
-				text2: "ニックネームを更新しました",
-			});
-			onClose();
-		} catch (error) {
+	try {
+		await onSave(trimmedNickname);
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "保存成功",
+		// 	text2: "ニックネームを更新しました",
+		// });
+		onClose();
+	} catch (error) {
 			console.error(error);
 			Toast.show({
 				type: "error",

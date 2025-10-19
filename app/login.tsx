@@ -55,15 +55,15 @@ export default function LoginScreen() {
 		setErrors({});
 		setIsLoading(true);
 
-		try {
-			await signIn(email, password);
-			Toast.show({
-				type: "success",
-				text1: "ログイン成功",
-				text2: "ようこそ！",
-			});
-			router.replace("/");
-		} catch (error) {
+	try {
+		await signIn(email, password);
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "ログイン成功",
+		// 	text2: "ようこそ！",
+		// });
+		router.replace("/");
+	} catch (error) {
 			console.error("ログインエラー:", error);
 			const errorTitle = "ログイン失敗";
 			let errorMessage = "ログインに失敗しました";

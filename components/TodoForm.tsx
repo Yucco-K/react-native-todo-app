@@ -61,11 +61,11 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 		try {
 			const predicted = await predictCategory(title, content);
 			setCategory(predicted);
-			Toast.show({
-				type: "success",
-				text1: "AI推測完了",
-				text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
-			});
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "AI推測完了",
+			// 	text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
+			// });
 		} catch (error) {
 			console.error("カテゴリ推測エラー:", error);
 			Toast.show({
@@ -120,12 +120,12 @@ export default function TodoForm({ onSave, isShared = false }: TodoFormProps) {
 			setContent("");
 			setCategory("other");
 
-			// 成功トーストを表示
-			Toast.show({
-				type: "success",
-				text1: "保存成功",
-				text2: "Todoを保存しました",
-			});
+		// 成功トーストを表示
+		// Toast.show({
+		// 	type: "success",
+		// 	text1: "保存成功",
+		// 	text2: "Todoを保存しました",
+		// });
 
 			// 保存後のコールバックを呼び出す
 			onSave?.();
