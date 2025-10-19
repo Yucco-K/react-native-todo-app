@@ -9,7 +9,6 @@ import {
 	ActivityIndicator,
 	Keyboard,
 	Modal,
-	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
@@ -169,10 +168,16 @@ export default function AddTodoModal({
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View className="bg-white rounded-lg p-6 w-11/12" style={{ maxHeight: '80%' }}>
+						<View
+							className="bg-white rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%" }}
+						>
 							<Text className="text-3xl font-noto-bold mb-4">Todo追加</Text>
 
-							<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
 								{/* タイトル入力 */}
 								<View className="mb-3">
 									<TextInput
@@ -249,27 +254,31 @@ export default function AddTodoModal({
 										))}
 									</ScrollView>
 
-									{/* AI推測ボタン */}
-									<TouchableOpacity
-										onPress={handlePredictCategory}
-										disabled={isPredicting || !title.trim()}
-										className={`flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
+								{/* AI推測ボタン */}
+								<TouchableOpacity
+									onPress={handlePredictCategory}
+									disabled={isPredicting || !title.trim()}
+									className={`mt-3 flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
+										isPredicting || !title.trim()
+											? "bg-gray-100 border-gray-300"
+											: "bg-purple-50 border-purple-500"
+									}`}
+								>
+									{isPredicting ? (
+										<ActivityIndicator size="small" color="#9333ea" />
+									) : (
+										<Ionicons name="sparkles" size={18} color="#9333ea" />
+									)}
+									<Text
+										className={`ml-2 font-noto-bold text-base ${
 											isPredicting || !title.trim()
-												? "bg-gray-200 border-gray-300"
-												: "bg-purple-50 border-purple-300"
+												? "text-gray-400"
+												: "text-purple-600"
 										}`}
 									>
-										<Ionicons
-											name="sparkles"
-											size={18}
-											color={
-												isPredicting || !title.trim() ? "#9ca3af" : "#9333ea"
-											}
-										/>
-										<Text className="text-gray-700 font-noto-bold text-lg ml-2">
-											{isPredicting ? "推測中..." : "AIカテゴリ推測"}
-										</Text>
-									</TouchableOpacity>
+										{isPredicting ? "AI推測中..." : "AIでカテゴリを推測"}
+									</Text>
+								</TouchableOpacity>
 								</View>
 							</ScrollView>
 
@@ -310,4 +319,3 @@ export default function AddTodoModal({
 		</Modal>
 	);
 }
-
