@@ -178,12 +178,48 @@ export default function AddTodoModal({
 		onClose();
 	};
 
-	const handleSelectRecommendation = (recommendation: {
+	const handleSelectRecommendation = async (recommendation: {
 		title: string;
 		category: TodoCategory;
 	}) => {
-		setTitle(recommendation.title);
-		setCategory(recommendation.category);
+		try {
+			// ワンタップで即座に保存
+			await createTodo(
+				recommendation.title,
+				"", // 内容は空
+				recommendation.category,
+				isShared
+			);
+
+			// 共有Todoの場合は通知を送信
+			if (isShared) {
+				try {
+					await notifyTodoAdded(recommendation.title);
+				} catch (error) {
+					console.error("通知送信エラー:", error);
+				}
+			}
+
+			// 保存後のコールバックを呼び出す
+			onSave?.();
+
+			// おすすめを再取得（常に3件表示されるように）
+			setIsLoadingRecommendations(true);
+			generateTodoRecommendations()
+				.then(setRecommendations)
+				.catch((error) => {
+					console.error("おすすめTODO再取得エラー:", error);
+					setRecommendations([]);
+				})
+				.finally(() => setIsLoadingRecommendations(false));
+		} catch (error) {
+			console.error("おすすめTODO追加エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "保存失敗",
+				text2: "Todoの保存に失敗しました",
+			});
+		}
 	};
 
 	return (
@@ -217,13 +253,13 @@ export default function AddTodoModal({
 								) : recommendations.length > 0 ? (
 									<View className="mb-4">
 										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-											💡 おすすめTODO
+											💡 おすすめTODO（タップで追加）
 										</Text>
 										{recommendations.map((rec) => (
 											<TouchableOpacity
 												key={`${rec.title}-${rec.category}`}
 												onPress={() => handleSelectRecommendation(rec)}
-												className="mb-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+												className="mb-2 p-3 bg-green-50 rounded-lg border border-green-300"
 												activeOpacity={0.7}
 											>
 												<Text className="text-gray-600 font-noto-regular text-sm mb-1">
@@ -231,11 +267,11 @@ export default function AddTodoModal({
 												</Text>
 												<View className="flex-row items-center mt-1">
 													<Ionicons
-														name="add-circle-outline"
-														size={16}
-														color="#3b82f6"
+														name="add-circle"
+														size={20}
+														color="#22c55e"
 													/>
-													<Text className="ml-2 text-blue-600 font-noto-bold text-base">
+													<Text className="ml-2 text-green-700 font-noto-bold text-base">
 														{rec.title}
 													</Text>
 												</View>
