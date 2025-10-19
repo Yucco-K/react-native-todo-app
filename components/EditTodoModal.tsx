@@ -179,8 +179,8 @@ export default function EditTodoModal({
 									className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
 									style={{
 										lineHeight: 32,
-										paddingTop: 16,
-										paddingBottom: 16,
+										paddingTop: 8,
+										paddingBottom: 8,
 										paddingLeft: 12,
 										paddingRight: 12,
 									}}
@@ -203,8 +203,8 @@ export default function EditTodoModal({
 									style={{
 										lineHeight: 32,
 										minHeight: 140,
-										paddingTop: 16,
-										paddingBottom: 16,
+										paddingTop: 8,
+										paddingBottom: 8,
 										paddingLeft: 12,
 										paddingRight: 12,
 									}}
