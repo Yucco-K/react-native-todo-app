@@ -1,5 +1,6 @@
 import type { TodoCategory } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
+import { getUserPraiseStats } from "./praiseFeedbackService";
 
 // キーワードベースの褒め言葉マップ
 const KEYWORD_PRAISE_MAP: Record<string, string[]> = {
@@ -264,20 +265,23 @@ function findKeywordPraises(text: string): string[] {
 }
 
 /**
- * タスク完了時の褒め言葉を生成
+ * タスク完了時の褒め言葉を生成（ユーザーフィードバックを考慮）
  * @param todo 完了したタスク
  * @param userStats ユーザーの統計情報
  * @returns 褒め言葉
  */
-export function generatePraiseMessage(
+export async function generatePraiseMessage(
 	todo: Todo,
 	userStats: {
 		totalCompletedTasks: number;
 		lastCompletedAt?: Date;
 	}
-): string {
+): Promise<string> {
 	const now = new Date();
 	const candidateMessages: string[] = [];
+
+	// ユーザーのフィードバック統計を取得
+	const feedbackStats = await getUserPraiseStats();
 
 	// createdAtがない場合は現在時刻を使用（新しいタスク扱い）
 	let createdAt = now;
@@ -343,9 +347,37 @@ export function generatePraiseMessage(
 	// 6. 一般的な褒め言葉
 	candidateMessages.push(...GENERAL_PRAISE);
 
-	// 候補の中からランダムに選択
-	const selectedMessage = getRandomMessage(candidateMessages);
-	console.log(`💬 選択された褒め言葉: "${selectedMessage}"`);
+	// 7. ユーザーフィードバックを考慮してメッセージを選択
+	// dislikeされたメッセージは除外し、likeされたメッセージを優先
+	const filteredMessages = candidateMessages.filter(
+		(msg) => !feedbackStats.dislikedMessages.includes(msg)
+	);
+
+	// likeされたメッセージが候補にあれば、それを優先的に選択
+	const likedCandidates = filteredMessages.filter((msg) =>
+		feedbackStats.likedMessages.includes(msg)
+	);
+
+	let selectedMessage: string;
+	if (likedCandidates.length > 0) {
+		// likeされたメッセージから選択（80%の確率）
+		if (Math.random() < 0.8) {
+			selectedMessage = getRandomMessage(likedCandidates);
+			console.log(`👍 ユーザーが好むメッセージを選択: "${selectedMessage}"`);
+		} else {
+			// 20%の確率で新しいメッセージを提案
+			selectedMessage = getRandomMessage(
+				filteredMessages.length > 0 ? filteredMessages : candidateMessages
+			);
+			console.log(`🎲 新しいメッセージを提案: "${selectedMessage}"`);
+		}
+	} else {
+		// dislikeされていないメッセージから選択
+		selectedMessage = getRandomMessage(
+			filteredMessages.length > 0 ? filteredMessages : candidateMessages
+		);
+		console.log(`💬 選択された褒め言葉: "${selectedMessage}"`);
+	}
 
 	return selectedMessage;
 }

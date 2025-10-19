@@ -84,12 +84,20 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 ### 6. 褒め言葉システム
 
 - **トースト表示**: タスク完了時に画面の1/3サイズの大きなトースト表示（2秒間）
-- **パーソナライズ**: ユーザー統計とタスク内容に基づいてメッセージを選択
+- **フィードバック機能**: 
+  - トースト左端にライク（👍）とディスライク（👎）ボタンを配置
+  - ユーザーの好みを`praiseFeedback`コレクションに保存
+  - フィードバックに基づいて今後の褒め言葉生成を最適化
+- **パーソナライズ**: ユーザー統計、フィードバック、タスク内容に基づいてメッセージを選択
   - **初回完了検出**: 累計完了タスク数が0の場合、初回専用の特別メッセージ
   - **完了頻度分析**: 最終完了日時から24時間以内なら「頻繁」、1週間以上なら「復帰」メッセージ
   - **放置期間検出**: タスク作成から7日以上で「長期放置」、3日以上で「やや放置」メッセージ
   - **キーワードマッチング**: タイトル・内容から「ジム」「勉強」「買い物」などを検出して特化メッセージ
   - **カテゴリ別メッセージ**: 仕事、買い物、家事などカテゴリに応じた褒め言葉
+  - **ユーザーフィードバック反映**:
+    - dislikeされたメッセージは除外
+    - likeされたメッセージを80%の確率で優先的に表示
+    - 20%の確率で新しいメッセージを提案（学習機会）
 - **ランダムテーマ**: 25種類の背景色・絵文字でバリエーション豊か
 - **統計データ**: `userStats`コレクションに累計完了タスク数と最終完了日時を保存し、パーソナライゼーションに活用
 
@@ -153,6 +161,21 @@ React Native + Expo で構築したTodoアプリケーション。個人用と�
 ```
 
 **用途**: 完了後48時間経過して自動削除されたTodoの履歴を保存し、AI統計機能（褒め言葉生成、パーソナライゼーション）のデータとして活用します。
+
+#### `praiseFeedback` コレクション（褒め言葉フィードバック）
+
+```typescript
+{
+	id: string; // 自動生成されるドキュメントID
+	userId: string; // ユーザーUID
+	message: string; // 褒め言葉のメッセージ
+	category: TodoCategory; // 完了したTodoのカテゴリ
+	feedbackType: "like" | "dislike"; // フィードバックの種類
+	createdAt: Date; // フィードバック日時
+}
+```
+
+**用途**: ユーザーが褒め言葉トーストに対して行ったライク/ディスライクのフィードバックを保存し、今後の褒め言葉生成時にユーザーの好みを反映させます。
 
 ### バリデーション（Zod）
 
@@ -242,6 +265,14 @@ service cloud.firestore {
       allow read: if request.auth.uid == resource.data.userId;
       allow create: if request.auth.uid == request.resource.data.userId;
       allow update, delete: if false; // 履歴は更新・削除不可
+    }
+
+    // praiseFeedbackコレクション（褒め言葉フィードバック）
+    match /praiseFeedback/{feedbackId} {
+      // 自分のフィードバックのみ読み書き可能
+      allow read: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth.uid == resource.data.userId;
     }
   }
 }

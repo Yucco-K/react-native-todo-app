@@ -1,4 +1,8 @@
-import { Dimensions, Text, View } from "react-native";
+import { savePraiseFeedback } from "@/services/praiseFeedbackService";
+import type { TodoCategory } from "@/types/Category";
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import type { ToastConfigParams } from "react-native-toast-message";
 
 const { height } = Dimensions.get("window");
@@ -171,9 +175,22 @@ const COLOR_THEMES = [
 ];
 
 export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
-	// propsからテーマを取得（ランダムに選択されたもの）
+	// propsからテーマとカテゴリを取得
 	const themeIndex = (props?.themeIndex ?? 0) % COLOR_THEMES.length;
 	const theme = COLOR_THEMES[themeIndex];
+	const message = text2 || "";
+	const category = (props?.category as TodoCategory) || "other";
+
+	const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+
+	const handleFeedback = async (type: "like" | "dislike") => {
+		try {
+			await savePraiseFeedback(message, category, type);
+			setFeedback(type);
+		} catch (error) {
+			console.error("フィードバック保存エラー:", error);
+		}
+	};
 
 	return (
 		<View
@@ -197,6 +214,65 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				borderColor: theme.border,
 			}}
 		>
+			{/* フィードバックボタン（左端） */}
+			<View
+				style={{
+					position: "absolute",
+					left: 16,
+					top: "50%",
+					transform: [{ translateY: -40 }],
+					gap: 12,
+				}}
+			>
+				{/* ライクボタン */}
+				<TouchableOpacity
+					onPress={() => handleFeedback("like")}
+					style={{
+						width: 48,
+						height: 48,
+						borderRadius: 24,
+						backgroundColor: feedback === "like" ? "#10b981" : "white",
+						justifyContent: "center",
+						alignItems: "center",
+						shadowColor: "#000",
+						shadowOffset: { width: 0, height: 2 },
+						shadowOpacity: 0.2,
+						shadowRadius: 4,
+						elevation: 3,
+					}}
+				>
+					<Ionicons
+						name={feedback === "like" ? "thumbs-up" : "thumbs-up-outline"}
+						size={24}
+						color={feedback === "like" ? "white" : "#10b981"}
+					/>
+				</TouchableOpacity>
+
+				{/* ディスライクボタン */}
+				<TouchableOpacity
+					onPress={() => handleFeedback("dislike")}
+					style={{
+						width: 48,
+						height: 48,
+						borderRadius: 24,
+						backgroundColor: feedback === "dislike" ? "#ef4444" : "white",
+						justifyContent: "center",
+						alignItems: "center",
+						shadowColor: "#000",
+						shadowOffset: { width: 0, height: 2 },
+						shadowOpacity: 0.2,
+						shadowRadius: 4,
+						elevation: 3,
+					}}
+				>
+					<Ionicons
+						name={feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"}
+						size={24}
+						color={feedback === "dislike" ? "white" : "#ef4444"}
+					/>
+				</TouchableOpacity>
+			</View>
+
 			{/* タイトル */}
 			<Text
 				style={{

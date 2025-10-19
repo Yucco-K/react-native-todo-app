@@ -5,8 +5,8 @@ import {
 } from "@/services/notificationService";
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
-	deleteTodo as deleteTodoService,
 	deleteExpiredCompletedTodos,
+	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
 	toggleTodoShared,
@@ -51,11 +51,11 @@ export default function TodoTable({
 		try {
 			// 期限切れのTodoを自動削除
 			const deletedCount = await deleteExpiredCompletedTodos();
-			
+
 			// Todoリストを取得
 			const todos = await getTodosService(isShared);
 			setData(todos);
-			
+
 			// 削除があった場合はログ出力（本番環境ではトーストを表示しない）
 			if (deletedCount > 0 && __DEV__) {
 				console.log(`🗑️ ${deletedCount}件の完了済みTodoを自動削除しました`);
@@ -131,8 +131,8 @@ export default function TodoTable({
 				// ユーザー統計を取得
 				const userStats = await getUserStats();
 
-				// 褒め言葉を生成
-				const praiseMessage = generatePraiseMessage(todo, userStats);
+				// 褒め言葉を生成（ユーザーフィードバックを考慮）
+				const praiseMessage = await generatePraiseMessage(todo, userStats);
 
 				// ランダムなテーマインデックスを生成（0-24の25種類）
 				const randomThemeIndex = Math.floor(Math.random() * 25);
@@ -156,6 +156,7 @@ export default function TodoTable({
 						visibilityTime: 2000,
 						props: {
 							themeIndex: randomThemeIndex,
+							category: todo.category, // フィードバック用にカテゴリを渡す
 							key: `praise-${Date.now()}-${Math.random()}`, // ユニークキー
 						},
 					});
@@ -223,16 +224,16 @@ export default function TodoTable({
 				} catch (error) {
 					console.error("通知送信エラー:", error);
 				}
-		}
+			}
 
-		// Toast.show({
-		// 	type: "success",
-		// 	text1: "削除成功",
-		// 	text2: "Todoを削除しました",
-		// });
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "削除成功",
+			// 	text2: "Todoを削除しました",
+			// });
 
-		// リストを再取得
-		getTodos();
+			// リストを再取得
+			getTodos();
 		} catch (error) {
 			console.error(error);
 			Toast.show({
