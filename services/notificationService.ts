@@ -14,7 +14,8 @@ import { auth, db } from "../config/firebase";
 // 通知の表示設定
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
-		shouldShowAlert: true,
+		shouldShowBanner: true,
+		shouldShowList: true,
 		shouldPlaySound: true,
 		shouldSetBadge: true,
 		priority: Notifications.AndroidNotificationPriority.HIGH,
