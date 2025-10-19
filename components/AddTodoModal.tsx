@@ -68,7 +68,7 @@ export default function AddTodoModal({
 	const fetchRecommendations = async () => {
 		setIsLoadingRecommendations(true);
 		try {
-			const newRecs = await generateTodoRecommendations();
+			const newRecs = await generateTodoRecommendations(shownRecommendations);
 			setRecommendations(newRecs);
 			// 表示済みリストに追加
 			const newTitles = newRecs.map((r) => r.title.toLowerCase().trim());

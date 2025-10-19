@@ -314,10 +314,11 @@ function generateFriendlyMessage(
 
 /**
  * おすすめTODOを生成
+ * @param excludeTitles - 除外するタイトルのリスト（小文字・トリム済み）
  */
-export async function generateTodoRecommendations(): Promise<
-	TodoRecommendation[]
-> {
+export async function generateTodoRecommendations(
+	excludeTitles: string[] = []
+): Promise<TodoRecommendation[]> {
 	try {
 		const {
 			frequentCategories,
@@ -452,21 +453,26 @@ export async function generateTodoRecommendations(): Promise<
 		periodicTasks.sort((a, b) => b.score - a.score);
 
 		for (const task of periodicTasks.slice(0, 2)) {
-			recommendations.push({
-				title: task.title,
-				category: task.category,
-				message: generateFriendlyMessage(
-					task.category,
-					task.title,
-					task.options
-				),
-			});
+			const normalizedTitle = task.title.toLowerCase().trim();
+			// 除外リストにないものだけ追加
+			if (!excludeTitles.includes(normalizedTitle)) {
+				recommendations.push({
+					title: task.title,
+					category: task.category,
+					message: generateFriendlyMessage(
+						task.category,
+						task.title,
+						task.options
+					),
+				});
+			}
 		}
 
-		// 既に提案済みのタイトルを記録
-		const recommendedTitles = new Set(
-			recommendations.map((r) => r.title.toLowerCase().trim())
-		);
+		// 既に提案済みのタイトルを記録（除外リストも含める）
+		const recommendedTitles = new Set([
+			...excludeTitles,
+			...recommendations.map((r) => r.title.toLowerCase().trim()),
+		]);
 
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
 		if (recommendations.length < 3) {
