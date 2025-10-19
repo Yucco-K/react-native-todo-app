@@ -347,9 +347,9 @@ export async function generatePraiseMessage(
 	// 6. 一般的な褒め言葉
 	candidateMessages.push(...GENERAL_PRAISE);
 
-	// 7. スコアベースのメッセージ選択
-	// スコアが-2以下（複数回dislike）のメッセージは除外
-	const EXCLUSION_THRESHOLD = -2;
+	// 7. スコアベースのメッセージ選択（緩やかな重み付け）
+	// スコアが-3以下（3回以上dislike）のメッセージのみ除外
+	const EXCLUSION_THRESHOLD = -3;
 	const filteredMessages = candidateMessages.filter(
 		(msg) => !messageScores[msg] || messageScores[msg] > EXCLUSION_THRESHOLD
 	);
@@ -360,28 +360,50 @@ export async function generatePraiseMessage(
 		return getRandomMessage(candidateMessages);
 	}
 
-	// スコアに基づいて重み付けされた選択を行う
+	// スコアに基づいて緩やかに重み付けされた選択を行う
 	const weightedMessages: string[] = [];
 	filteredMessages.forEach((msg) => {
 		const score = messageScores[msg] || 0;
 
-		// スコアに応じて出現頻度を調整
-		if (score > 0) {
-			// 正のスコア: スコア × 3回追加（高確率）
-			const weight = Math.min(score * 3, 10); // 最大10回まで
+		// スコアに応じて出現頻度を調整（多様性を重視）
+		if (score >= 3) {
+			// スコア+3以上: × 2倍（最大5倍まで）
+			const weight = Math.min(score * 2, 5);
 			for (let i = 0; i < weight; i++) {
 				weightedMessages.push(msg);
 			}
-			console.log(`👍 高評価メッセージ: "${msg}" (スコア: ${score}, 重み: ${weight})`);
-		} else if (score === 0) {
-			// 無反応: 1回追加（通常確率）
+			console.log(
+				`👍👍 大人気メッセージ: "${msg}" (スコア: ${score}, 重み: ${weight})`
+			);
+		} else if (score === 2) {
+			// スコア+2: × 1.8倍（約2回）
 			weightedMessages.push(msg);
-		} else {
-			// 負のスコア（-1のみ）: 0.5回の確率で追加（低確率）
+			if (Math.random() < 0.8) {
+				weightedMessages.push(msg);
+			}
+			console.log(`👍 人気メッセージ: "${msg}" (スコア: ${score}, 重み: ~1.8)`);
+		} else if (score === 1) {
+			// スコア+1: × 1.5倍（約1.5回）
+			weightedMessages.push(msg);
 			if (Math.random() < 0.5) {
 				weightedMessages.push(msg);
 			}
-			console.log(`👎 低評価メッセージ: "${msg}" (スコア: ${score})`);
+			console.log(`👍 好評メッセージ: "${msg}" (スコア: ${score}, 重み: ~1.5)`);
+		} else if (score === 0) {
+			// 無反応: 1回（基準）
+			weightedMessages.push(msg);
+		} else if (score === -1) {
+			// スコア-1: × 0.8倍（80%の確率）
+			if (Math.random() < 0.8) {
+				weightedMessages.push(msg);
+			}
+			console.log(`👎 やや低評価: "${msg}" (スコア: ${score}, 重み: ~0.8)`);
+		} else if (score === -2) {
+			// スコア-2: × 0.5倍（50%の確率）
+			if (Math.random() < 0.5) {
+				weightedMessages.push(msg);
+			}
+			console.log(`👎👎 低評価: "${msg}" (スコア: ${score}, 重み: ~0.5)`);
 		}
 	});
 
@@ -392,9 +414,7 @@ export async function generatePraiseMessage(
 			: getRandomMessage(filteredMessages);
 
 	const score = messageScores[selectedMessage] || 0;
-	console.log(
-		`💬 選択された褒め言葉: "${selectedMessage}" (スコア: ${score})`
-	);
+	console.log(`💬 選択された褒め言葉: "${selectedMessage}" (スコア: ${score})`);
 
 	return selectedMessage;
 }
