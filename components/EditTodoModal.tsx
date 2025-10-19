@@ -178,11 +178,9 @@ export default function EditTodoModal({
 								<TextInput
 									className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
 									style={{
-										lineHeight: 32,
-										paddingTop: 8,
-										paddingBottom: 8,
-										paddingLeft: 12,
-										paddingRight: 12,
+										lineHeight: 24,
+										paddingVertical: 10,
+										paddingHorizontal: 12,
 									}}
 									placeholder="タイトル"
 									placeholderTextColor="#9ca3af"
@@ -201,12 +199,10 @@ export default function EditTodoModal({
 								<TextInput
 									className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
 									style={{
-										lineHeight: 32,
-										minHeight: 140,
-										paddingTop: 8,
-										paddingBottom: 8,
-										paddingLeft: 12,
-										paddingRight: 12,
+										lineHeight: 24,
+										minHeight: 120,
+										paddingVertical: 10,
+										paddingHorizontal: 12,
 									}}
 									placeholder="内容（任意）"
 									placeholderTextColor="#9ca3af"
