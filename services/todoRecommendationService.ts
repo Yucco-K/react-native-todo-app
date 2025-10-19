@@ -332,9 +332,29 @@ export async function generateTodoRecommendations(): Promise<
 		const recommendations: TodoRecommendation[] = [];
 		const now = Date.now();
 
-		// データが少ない場合は空の配列を返す
+		// データが少ない場合（初回ユーザー）は、人気カテゴリからランダムに提案
 		if (Object.keys(frequentCategories).length === 0) {
-			return [];
+			const popularCategories: TodoCategory[] = [
+				"work",
+				"shopping",
+				"housework",
+			];
+			const result: TodoRecommendation[] = [];
+
+			for (const cat of popularCategories) {
+				const templates = CATEGORY_TEMPLATES[cat] || [];
+				if (templates.length > 0) {
+					const title = templates[Math.floor(Math.random() * templates.length)];
+					result.push({
+						title,
+						category: cat,
+						message: `はじめてのTODO、${title}はいかがですか？`,
+					});
+				}
+			}
+
+			console.log(`💡 初回ユーザー向けおすすめ: ${result.length}件`);
+			return result.slice(0, 3);
 		}
 
 		// 0. 周期的なタスクを優先的に提案（時間パターン分析）
@@ -451,17 +471,20 @@ export async function generateTodoRecommendations(): Promise<
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
 		if (recommendations.length < 3) {
 			const sortedCategories = Object.entries(frequentCategories)
-				.sort(([, a], [, b]) => b - a)
-				.slice(0, 2);
+				.sort(([, a], [, b]) => b - a);
 
+			// 全カテゴリを試して3件埋める
 			for (const [category, _count] of sortedCategories) {
 				if (recommendations.length >= 3) break;
 
 				const cat = category as TodoCategory;
 				const templates = CATEGORY_TEMPLATES[cat] || [];
 
-				if (templates.length > 0) {
-					const title = templates[Math.floor(Math.random() * templates.length)];
+				// そのカテゴリから複数提案可能にする
+				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
+
+				for (const title of shuffledTemplates) {
+					if (recommendations.length >= 3) break;
 
 					// 既に提案済みかチェック
 					if (recommendedTitles.has(title.toLowerCase().trim())) continue;
@@ -485,11 +508,46 @@ export async function generateTodoRecommendations(): Promise<
 			}
 		}
 
+		// 2. それでも3件に満たない場合、全カテゴリから選択（最近追加チェックなし）
+		if (recommendations.length < 3) {
+			const allCategories = Object.keys(CATEGORY_TEMPLATES) as TodoCategory[];
+			const shuffledCategories = [...allCategories].sort(
+				() => Math.random() - 0.5
+			);
+
+			for (const cat of shuffledCategories) {
+				if (recommendations.length >= 3) break;
+
+				const templates = CATEGORY_TEMPLATES[cat] || [];
+				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
+
+				for (const title of shuffledTemplates) {
+					if (recommendations.length >= 3) break;
+
+					// 既に提案済みかチェック（これだけは重複防止）
+					if (recommendedTitles.has(title.toLowerCase().trim())) continue;
+
+					recommendations.push({
+						title,
+						category: cat,
+						message: generateFriendlyMessage(cat, title),
+					});
+					recommendedTitles.add(title.toLowerCase().trim());
+				}
+			}
+		}
+
 		console.log(
 			`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`
 		);
 
-		// 最大3件に制限
+		// 常に3件を保証（万が一に備えて）
+		if (recommendations.length < 3) {
+			console.warn(
+				`⚠️ おすすめが${recommendations.length}件しか生成できませんでした`
+			);
+		}
+
 		return recommendations.slice(0, 3);
 	} catch (error) {
 		console.error("おすすめTODO生成エラー:", error);
