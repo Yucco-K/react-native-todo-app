@@ -302,16 +302,33 @@ service cloud.firestore {
 
 ### Firestore Indexes（必須）
 
+アプリの各機能に必要な複合インデックスを設定してください。
+
+#### インデックス1: My List/Shared List表示用
 ```
 Collection: todos
-Fields: userId (Ascending), shared (Ascending), createdAt (Descending)
+Fields:
+  - shared (Ascending)
+  - userId (Ascending)
+  - createdAt (Descending)
 ```
 
-Firebase Consoleで以下のURLから作成：
+#### インデックス2: おすすめTODO機能用
+```
+Collection: todos
+Fields:
+  - userId (Ascending)
+  - createdAt (Descending)
+  - __name__ (Descending)
+```
 
-```
-https://console.firebase.google.com/project/[PROJECT_ID]/firestore/indexes
-```
+**作成方法**:
+1. Firebase Console → Firestore Database → Indexesタブ
+2. 「Add index」をクリック
+3. 上記の設定で作成
+4. または、アプリ実行時のエラーメッセージ内のリンクをクリックして自動作成
+
+**注意**: インデックス作成には数分かかります。Status が「Enabled」になるまで待ってください。
 
 ---
 
@@ -483,7 +500,23 @@ react-native-todo-app/
 FirebaseError: The query requires an index.
 ```
 
-→ エラーメッセージのリンクから Firebase Console でインデックスを作成
+**対処法**:
+1. **エラーメッセージ内のリンクをクリック**（最も確実）
+   - Firebaseが必要なインデックスを自動設定してくれます
+   - 「Save」をクリックしてインデックスを作成
+   
+2. **手動で作成**:
+   - Firebase Console → Firestore Database → Indexesタブ
+   - 「Add index」から上記の必須インデックスを作成
+   
+3. **インデックス作成後**:
+   - Status が「Building」→「Enabled」になるまで待つ（1-5分）
+   - アプリを完全にリロード（Expo Goを再起動）
+   - キャッシュをクリア: `npx expo start --clear`
+
+**特に「おすすめTODO生成エラー」が出る場合**:
+- インデックス2（userId + createdAt）が必要です
+- エラーメッセージのURLから自動作成が最も確実です
 
 ### プッシュ通知が届かない
 

@@ -14,6 +14,9 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 - **AI カテゴリ推測**：OpenAI APIで自動カテゴリ分類
 - **褒め言葉トースト**：タスク完了時にパーソナライズされた褒め言葉を表示
 - **おすすめTODO**：時間帯・曜日・周期を分析した自動提案
+  - 過去のTODO履歴から行動パターンを学習
+  - 使い込むほど精度が向上
+  - ワンタップでタイトルとカテゴリを自動入力
 
 ## 技術スタック
 
@@ -52,9 +55,13 @@ npm install
 ### 2. Firebase設定
 
 - [Firebase Console](https://console.firebase.google.com/) でプロジェクト作成
-- Firestore Database を有効化
-- Authentication でメール/パスワードを有効化
-- セキュリティルールを設定（詳細は `SPECIFICATION.md`）
+- **Firestore Database を有効化**
+- **Authentication でメール/パスワードを有効化**
+- **セキュリティルールを設定**（詳細は `SPECIFICATION.md`）
+- **Firestore Indexes を作成**（必須）:
+  - インデックス1: `shared` + `userId` + `createdAt`（My List/Shared List用）
+  - インデックス2: `userId` + `createdAt`（おすすめTODO用）
+  - 作成方法: アプリ起動時のエラーメッセージ内のリンクから自動作成が最も簡単
 
 ### 3. 起動
 
