@@ -306,12 +306,13 @@ export default function AddTodoModal({
 								{/* タイトル入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
+										className="border-2 border-gray-300 rounded-md text-lg"
 										style={{
-											lineHeight: 28,
-											paddingVertical: 12,
+											fontFamily: "System",
+											lineHeight: undefined,
+											paddingVertical: 14,
 											paddingHorizontal: 12,
-											height: 52,
+											fontSize: 18,
 										}}
 										placeholder="タイトル"
 										value={title}
@@ -328,12 +329,14 @@ export default function AddTodoModal({
 								{/* 内容入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
+										className="border-2 border-gray-300 rounded-md text-lg"
 										style={{
-											lineHeight: 28,
-											minHeight: 130,
-											paddingVertical: 12,
+											fontFamily: "System",
+											lineHeight: undefined,
+											minHeight: 120,
+											paddingVertical: 14,
 											paddingHorizontal: 12,
+											fontSize: 18,
 										}}
 										placeholder="内容（任意）"
 										value={content}
