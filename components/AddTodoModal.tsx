@@ -264,21 +264,9 @@ export default function AddTodoModal({
 									</View>
 								) : recommendations.length > 0 ? (
 									<View className="mb-4">
-										<View className="flex-row items-center justify-between mb-2">
-											<Text className="text-gray-700 font-noto-bold text-lg">
-												💡 おすすめTODO（タップで追加）
-											</Text>
-											<TouchableOpacity
-												onPress={handleNextRecommendations}
-												className="flex-row items-center px-3 py-1 bg-gray-100 rounded-full"
-												activeOpacity={0.7}
-											>
-												<Ionicons name="refresh" size={16} color="#6b7280" />
-												<Text className="ml-1 text-gray-600 font-noto-regular text-sm">
-													次の候補
-												</Text>
-											</TouchableOpacity>
-										</View>
+										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+											💡 おすすめTODO（タップで追加）
+										</Text>
 										{recommendations.map((rec) => (
 											<TouchableOpacity
 												key={`${rec.title}-${rec.category}`}
@@ -301,6 +289,17 @@ export default function AddTodoModal({
 												</View>
 											</TouchableOpacity>
 										))}
+										{/* 次の候補ボタン */}
+										<TouchableOpacity
+											onPress={handleNextRecommendations}
+											className="flex-row items-center justify-center px-5 py-3 bg-gray-100 rounded-lg border border-gray-300"
+											activeOpacity={0.7}
+										>
+											<Ionicons name="refresh" size={20} color="#6b7280" />
+											<Text className="ml-2 text-gray-700 font-noto-bold text-base">
+												次の候補を見る
+											</Text>
+										</TouchableOpacity>
 									</View>
 								) : null}
 
