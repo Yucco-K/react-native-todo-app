@@ -30,6 +30,7 @@ export async function predictCategory(
 - shopping: 買い物関連のタスク（購入、注文、買い出しなど）
 - personal: プライベート関連のタスク（趣味、運動、旅行、映画など）
 - study: 勉強・学習関連のタスク（読書、資格勉強、学習、復習など）
+- school: 学校関連のタスク（授業、宿題、テスト、提出物など）
 - housework: 家事関連のタスク（掃除、洗濯、料理、片付けなど）
 - other: その他のタスク
 		`.trim();
@@ -44,7 +45,7 @@ export async function predictCategory(
 利用可能なカテゴリ:
 ${categoryDescriptions}
 
-カテゴリ名（work, shopping, personal, study, housework, other）のみを返してください。
+カテゴリ名（work, shopping, personal, study, school, housework, other）のみを返してください。
 他の説明は不要です。
 		`.trim();
 
@@ -74,6 +75,7 @@ ${categoryDescriptions}
 			"shopping",
 			"personal",
 			"study",
+			"school",
 			"housework",
 			"other",
 		];

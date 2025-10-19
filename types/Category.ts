@@ -3,6 +3,7 @@ export type TodoCategory =
 	| "shopping"
 	| "personal"
 	| "study"
+	| "school"
 	| "housework"
 	| "other";
 
@@ -11,6 +12,7 @@ export const TODO_CATEGORIES = {
 	shopping: "買い物",
 	personal: "プライベート",
 	study: "勉強",
+	school: "学校",
 	housework: "家事",
 	other: "その他",
 } as const;
@@ -24,6 +26,7 @@ export const CATEGORY_OPTIONS: {
 	{ value: "shopping", label: "買い物", icon: "🛒" },
 	{ value: "personal", label: "プライベート", icon: "🎯" },
 	{ value: "study", label: "勉強", icon: "📚" },
+	{ value: "school", label: "学校", icon: "🏫" },
 	{ value: "housework", label: "家事", icon: "🏠" },
 	{ value: "other", label: "その他", icon: "📝" },
 ];
