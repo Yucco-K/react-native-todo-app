@@ -1,4 +1,4 @@
-import type { TodoCategory } from "./Category";
+import type { TodoCategory } from "@/types/Category";
 
 type Todo = {
 	id: string;

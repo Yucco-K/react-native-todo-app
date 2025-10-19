@@ -336,8 +336,8 @@ export function generatePraiseMessage(
 	}
 
 	// 5. カテゴリ別の褒め言葉
-	if (todo.category && CATEGORY_PRAISE[todo.category]) {
-		candidateMessages.push(...CATEGORY_PRAISE[todo.category]);
+	if (todo.category && CATEGORY_PRAISE[todo.category as TodoCategory]) {
+		candidateMessages.push(...CATEGORY_PRAISE[todo.category as TodoCategory]);
 	}
 
 	// 6. 一般的な褒め言葉
