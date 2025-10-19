@@ -28,10 +28,55 @@ export const savePraiseFeedback = async (
 			createdAt: new Date(),
 		});
 
-		console.log(`👍 フィードバック保存: ${feedbackType} (カテゴリ: ${category})`);
+		console.log(
+			`👍 フィードバック保存: ${feedbackType} (カテゴリ: ${category})`
+		);
 	} catch (error) {
 		console.error("Error saving praise feedback:", error);
 		throw error;
+	}
+};
+
+/**
+ * メッセージごとのスコアを計算
+ * スコア = like数 - dislike数
+ */
+export const getMessageScores = async (): Promise<Record<string, number>> => {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			return {};
+		}
+
+		const q = query(
+			collection(db, COLLECTION_NAME),
+			where("userId", "==", userId)
+		);
+		const querySnapshot = await getDocs(q);
+
+		const messageScores: Record<string, number> = {};
+
+		querySnapshot.forEach((doc) => {
+			const data = doc.data();
+			const feedbackType = data.feedbackType as FeedbackType;
+			const message = data.message as string;
+
+			if (!messageScores[message]) {
+				messageScores[message] = 0;
+			}
+
+			// like: +1, dislike: -1
+			messageScores[message] += feedbackType === "like" ? 1 : -1;
+		});
+
+		console.log(
+			`📊 メッセージスコア: ${Object.keys(messageScores).length}件のメッセージ`
+		);
+		
+		return messageScores;
+	} catch (error) {
+		console.error("Error getting message scores:", error);
+		return {};
 	}
 };
 
@@ -99,7 +144,9 @@ export const getUserPraiseStats = async (): Promise<{
 			}
 		});
 
-		console.log(`📊 フィードバック統計: Like ${totalLikes}件, Dislike ${totalDislikes}件`);
+		console.log(
+			`📊 フィードバック統計: Like ${totalLikes}件, Dislike ${totalDislikes}件`
+		);
 
 		return {
 			totalLikes,
@@ -114,4 +161,3 @@ export const getUserPraiseStats = async (): Promise<{
 		throw error;
 	}
 };
-

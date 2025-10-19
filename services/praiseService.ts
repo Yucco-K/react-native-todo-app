@@ -1,6 +1,6 @@
 import type { TodoCategory } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
-import { getUserPraiseStats } from "./praiseFeedbackService";
+import { getMessageScores } from "./praiseFeedbackService";
 
 // キーワードベースの褒め言葉マップ
 const KEYWORD_PRAISE_MAP: Record<string, string[]> = {
@@ -280,8 +280,8 @@ export async function generatePraiseMessage(
 	const now = new Date();
 	const candidateMessages: string[] = [];
 
-	// ユーザーのフィードバック統計を取得
-	const feedbackStats = await getUserPraiseStats();
+	// メッセージごとのスコアを取得（like: +1, dislike: -1）
+	const messageScores = await getMessageScores();
 
 	// createdAtがない場合は現在時刻を使用（新しいタスク扱い）
 	let createdAt = now;
@@ -347,37 +347,54 @@ export async function generatePraiseMessage(
 	// 6. 一般的な褒め言葉
 	candidateMessages.push(...GENERAL_PRAISE);
 
-	// 7. ユーザーフィードバックを考慮してメッセージを選択
-	// dislikeされたメッセージは除外し、likeされたメッセージを優先
+	// 7. スコアベースのメッセージ選択
+	// スコアが-2以下（複数回dislike）のメッセージは除外
+	const EXCLUSION_THRESHOLD = -2;
 	const filteredMessages = candidateMessages.filter(
-		(msg) => !feedbackStats.dislikedMessages.includes(msg)
+		(msg) => !messageScores[msg] || messageScores[msg] > EXCLUSION_THRESHOLD
 	);
 
-	// likeされたメッセージが候補にあれば、それを優先的に選択
-	const likedCandidates = filteredMessages.filter((msg) =>
-		feedbackStats.likedMessages.includes(msg)
-	);
-
-	let selectedMessage: string;
-	if (likedCandidates.length > 0) {
-		// likeされたメッセージから選択（80%の確率）
-		if (Math.random() < 0.8) {
-			selectedMessage = getRandomMessage(likedCandidates);
-			console.log(`👍 ユーザーが好むメッセージを選択: "${selectedMessage}"`);
-		} else {
-			// 20%の確率で新しいメッセージを提案
-			selectedMessage = getRandomMessage(
-				filteredMessages.length > 0 ? filteredMessages : candidateMessages
-			);
-			console.log(`🎲 新しいメッセージを提案: "${selectedMessage}"`);
-		}
-	} else {
-		// dislikeされていないメッセージから選択
-		selectedMessage = getRandomMessage(
-			filteredMessages.length > 0 ? filteredMessages : candidateMessages
-		);
-		console.log(`💬 選択された褒め言葉: "${selectedMessage}"`);
+	if (filteredMessages.length === 0) {
+		// すべてのメッセージが除外された場合は、候補から選択
+		console.log("⚠️ すべてのメッセージが除外されたため、候補から選択");
+		return getRandomMessage(candidateMessages);
 	}
+
+	// スコアに基づいて重み付けされた選択を行う
+	const weightedMessages: string[] = [];
+	filteredMessages.forEach((msg) => {
+		const score = messageScores[msg] || 0;
+
+		// スコアに応じて出現頻度を調整
+		if (score > 0) {
+			// 正のスコア: スコア × 3回追加（高確率）
+			const weight = Math.min(score * 3, 10); // 最大10回まで
+			for (let i = 0; i < weight; i++) {
+				weightedMessages.push(msg);
+			}
+			console.log(`👍 高評価メッセージ: "${msg}" (スコア: ${score}, 重み: ${weight})`);
+		} else if (score === 0) {
+			// 無反応: 1回追加（通常確率）
+			weightedMessages.push(msg);
+		} else {
+			// 負のスコア（-1のみ）: 0.5回の確率で追加（低確率）
+			if (Math.random() < 0.5) {
+				weightedMessages.push(msg);
+			}
+			console.log(`👎 低評価メッセージ: "${msg}" (スコア: ${score})`);
+		}
+	});
+
+	// 重み付けされたメッセージからランダムに選択
+	const selectedMessage =
+		weightedMessages.length > 0
+			? getRandomMessage(weightedMessages)
+			: getRandomMessage(filteredMessages);
+
+	const score = messageScores[selectedMessage] || 0;
+	console.log(
+		`💬 選択された褒め言葉: "${selectedMessage}" (スコア: ${score})`
+	);
 
 	return selectedMessage;
 }
