@@ -178,39 +178,41 @@ export default function AddTodoModal({
 								style={{ maxHeight: 400 }}
 								showsVerticalScrollIndicator={false}
 							>
-								{/* タイトル入力 */}
-								<View className="mb-3">
-									<TextInput
-										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-										placeholder="タイトル"
-										value={title}
-										onChangeText={setTitle}
-										autoFocus={true}
-									/>
-									{errors.title && (
-										<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-											{errors.title}
-										</Text>
-									)}
-								</View>
+							{/* タイトル入力 */}
+							<View className="mb-3">
+								<TextInput
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+									style={{ lineHeight: 24 }}
+									placeholder="タイトル"
+									value={title}
+									onChangeText={setTitle}
+									autoFocus={true}
+								/>
+								{errors.title && (
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+										{errors.title}
+									</Text>
+								)}
+							</View>
 
-								{/* 内容入力 */}
-								<View className="mb-3">
-									<TextInput
-										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-										placeholder="内容（任意）"
-										value={content}
-										onChangeText={setContent}
-										multiline
-										numberOfLines={4}
-										textAlignVertical="top"
-									/>
-									{errors.content && (
-										<Text className="text-red-500 text-lg mt-1 font-noto-regular">
-											{errors.content}
-										</Text>
-									)}
-								</View>
+							{/* 内容入力 */}
+							<View className="mb-3">
+								<TextInput
+									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
+									style={{ lineHeight: 24, minHeight: 100 }}
+									placeholder="内容（任意）"
+									value={content}
+									onChangeText={setContent}
+									multiline
+									numberOfLines={4}
+									textAlignVertical="top"
+								/>
+								{errors.content && (
+									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
+										{errors.content}
+									</Text>
+								)}
+							</View>
 
 								{/* カテゴリ選択 */}
 								<View className="mb-3">
@@ -254,31 +256,31 @@ export default function AddTodoModal({
 										))}
 									</ScrollView>
 
-								{/* AI推測ボタン */}
-								<TouchableOpacity
-									onPress={handlePredictCategory}
-									disabled={isPredicting || !title.trim()}
-									className={`mt-3 flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
-										isPredicting || !title.trim()
-											? "bg-gray-100 border-gray-300"
-											: "bg-purple-50 border-purple-500"
-									}`}
-								>
-									{isPredicting ? (
-										<ActivityIndicator size="small" color="#9333ea" />
-									) : (
-										<Ionicons name="sparkles" size={18} color="#9333ea" />
-									)}
-									<Text
-										className={`ml-2 font-noto-bold text-base ${
+									{/* AI推測ボタン */}
+									<TouchableOpacity
+										onPress={handlePredictCategory}
+										disabled={isPredicting || !title.trim()}
+										className={`mt-3 flex-row items-center justify-center py-2 px-4 rounded-md border-2 ${
 											isPredicting || !title.trim()
-												? "text-gray-400"
-												: "text-purple-600"
+												? "bg-gray-100 border-gray-300"
+												: "bg-purple-50 border-purple-500"
 										}`}
 									>
-										{isPredicting ? "AI推測中..." : "AIでカテゴリを推測"}
-									</Text>
-								</TouchableOpacity>
+										{isPredicting ? (
+											<ActivityIndicator size="small" color="#9333ea" />
+										) : (
+											<Ionicons name="sparkles" size={18} color="#9333ea" />
+										)}
+										<Text
+											className={`ml-2 font-noto-bold text-base ${
+												isPredicting || !title.trim()
+													? "text-gray-400"
+													: "text-purple-600"
+											}`}
+										>
+											{isPredicting ? "AI推測中..." : "AIでカテゴリを推測"}
+										</Text>
+									</TouchableOpacity>
 								</View>
 							</ScrollView>
 
