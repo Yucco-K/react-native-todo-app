@@ -306,8 +306,14 @@ export default function AddTodoModal({
 								{/* タイトル入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-										style={{ lineHeight: 28, paddingTop: 12, paddingBottom: 12 }}
+										className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
+										style={{
+											lineHeight: 32,
+											paddingTop: 16,
+											paddingBottom: 16,
+											paddingLeft: 12,
+											paddingRight: 12,
+										}}
 										placeholder="タイトル"
 										value={title}
 										onChangeText={setTitle}
@@ -323,8 +329,15 @@ export default function AddTodoModal({
 								{/* 内容入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-										style={{ lineHeight: 28, minHeight: 120, paddingTop: 12, paddingBottom: 12 }}
+										className="border-2 border-gray-300 rounded-md text-lg font-noto-regular"
+										style={{
+											lineHeight: 32,
+											minHeight: 140,
+											paddingTop: 16,
+											paddingBottom: 16,
+											paddingLeft: 12,
+											paddingRight: 12,
+										}}
 										placeholder="内容（任意）"
 										value={content}
 										onChangeText={setContent}
