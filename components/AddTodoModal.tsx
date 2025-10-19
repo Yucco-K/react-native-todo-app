@@ -169,10 +169,10 @@ export default function AddTodoModal({
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View className="bg-white rounded-lg p-6 w-11/12 max-h-5/6">
+						<View className="bg-white rounded-lg p-6 w-11/12" style={{ maxHeight: '80%' }}>
 							<Text className="text-3xl font-noto-bold mb-4">Todo追加</Text>
 
-							<ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+							<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
 								{/* タイトル入力 */}
 								<View className="mb-3">
 									<TextInput
