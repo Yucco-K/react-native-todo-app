@@ -213,6 +213,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				borderWidth: 3,
 				borderColor: theme.border,
 			}}
+			pointerEvents="box-none"
 		>
 			{/* フィードバックボタン（左端） */}
 			<View
@@ -222,11 +223,14 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 					top: "50%",
 					transform: [{ translateY: -40 }],
 					gap: 12,
+					zIndex: 10,
 				}}
+				pointerEvents="box-none"
 			>
 				{/* ライクボタン */}
 				<TouchableOpacity
 					onPress={() => handleFeedback("like")}
+					activeOpacity={0.7}
 					style={{
 						width: 48,
 						height: 48,
@@ -240,6 +244,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						shadowRadius: 4,
 						elevation: 3,
 					}}
+					pointerEvents="auto"
 				>
 					<Ionicons
 						name={feedback === "like" ? "thumbs-up" : "thumbs-up-outline"}
@@ -251,6 +256,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				{/* ディスライクボタン */}
 				<TouchableOpacity
 					onPress={() => handleFeedback("dislike")}
+					activeOpacity={0.7}
 					style={{
 						width: 48,
 						height: 48,
@@ -264,9 +270,12 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 						shadowRadius: 4,
 						elevation: 3,
 					}}
+					pointerEvents="auto"
 				>
 					<Ionicons
-						name={feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"}
+						name={
+							feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"
+						}
 						size={24}
 						color={feedback === "dislike" ? "white" : "#ef4444"}
 					/>
