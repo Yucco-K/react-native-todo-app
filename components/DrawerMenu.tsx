@@ -57,7 +57,7 @@ export function DrawerMenu({
 						{/* ヘッダー */}
 						<View className="bg-blue-600 p-6 pt-16">
 							<Text className="text-white text-2xl font-noto-bold">
-								組織管理
+								グループ設定
 							</Text>
 						</View>
 
@@ -85,15 +85,15 @@ export function DrawerMenu({
 								</Text>
 							</TouchableOpacity>
 
-							{/* 組織一覧 */}
+							{/* グループ一覧 */}
 							<View className="mt-4">
 								<Text className="text-gray-500 text-sm font-noto-bold mb-2 px-2">
-									所属組織
+									所属グループ
 								</Text>
 
 								{organizations.length === 0 ? (
 									<Text className="text-gray-400 text-sm font-noto-regular px-2 py-4">
-										所属している組織がありません
+										所属しているグループがありません
 									</Text>
 								) : (
 									organizations.map((org) => (
@@ -153,7 +153,7 @@ export function DrawerMenu({
 								>
 									<Ionicons name="add-circle" size={24} color="#22c55e" />
 									<Text className="ml-3 text-green-700 text-lg font-noto-bold">
-										組織を作成
+										グループを作成
 									</Text>
 								</TouchableOpacity>
 
@@ -166,7 +166,7 @@ export function DrawerMenu({
 								>
 									<Ionicons name="enter" size={24} color="#3b82f6" />
 									<Text className="ml-3 text-blue-700 text-lg font-noto-bold">
-										組織に参加
+										グループに参加
 									</Text>
 								</TouchableOpacity>
 

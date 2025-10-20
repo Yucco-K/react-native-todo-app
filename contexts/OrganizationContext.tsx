@@ -5,9 +5,9 @@ import React, {
 	useEffect,
 	useState,
 } from "react";
-import { useAuth } from "./AuthContext";
 import { getMyOrganizations } from "../services/organizationService";
 import type { Organization } from "../types/Organization";
+import { useAuth } from "./AuthContext";
 
 type OrganizationContextType = {
 	organizations: Organization[];

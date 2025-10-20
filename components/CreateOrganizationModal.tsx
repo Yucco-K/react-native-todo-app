@@ -30,7 +30,7 @@ export function CreateOrganizationModal({
 			Toast.show({
 				type: "error",
 				text1: "入力エラー",
-				text2: "組織名を入力してください",
+				text2: "グループ名を入力してください",
 			});
 			return;
 		}
@@ -42,7 +42,7 @@ export function CreateOrganizationModal({
 
 			Toast.show({
 				type: "success",
-				text1: "組織作成完了",
+				text1: "グループ作成完了",
 				text2: `「${name}」を作成しました`,
 			});
 
@@ -53,7 +53,7 @@ export function CreateOrganizationModal({
 			Toast.show({
 				type: "error",
 				text1: "作成失敗",
-				text2: "組織の作成に失敗しました",
+				text2: "グループの作成に失敗しました",
 			});
 		} finally {
 			setIsLoading(false);
@@ -76,11 +76,11 @@ export function CreateOrganizationModal({
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
-							<Text className="text-3xl font-noto-bold mb-4">組織を作成</Text>
+							<Text className="text-3xl font-noto-bold mb-4">グループを作成</Text>
 
 							<View className="mb-4">
 								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-									組織名
+									グループ名
 								</Text>
 								<TextInput
 									className="border-2 border-gray-300 rounded-md text-lg"

@@ -270,7 +270,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 }
 
 /**
- * 組織への招待通知
+ * グループへの招待通知
  */
 export async function notifyInvitation(
 	invitedUserId: string,
@@ -296,7 +296,7 @@ export async function notifyInvitation(
 	const message = {
 		to: pushToken,
 		sound: "default",
-		title: "組織への招待",
+		title: "グループへの招待",
 		body: `${inviterName} があなたを「${orgName}」に招待しました`,
 		data: {
 			type: "organization_invitation",

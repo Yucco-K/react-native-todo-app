@@ -108,9 +108,9 @@ export default function MyListScreen() {
 					</View>
 
 					<TodoTable
-					refresh={refreshTrigger}
-					organizationId={selectedOrganization?.id || null}
-				/>
+						refresh={refreshTrigger}
+						organizationId={selectedOrganization?.id || null}
+					/>
 
 					{/* Floating Action Button */}
 					<TouchableOpacity

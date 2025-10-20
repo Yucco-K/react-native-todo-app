@@ -167,7 +167,7 @@ export function OrganizationSettingsModal({
 	const handleLeaveOrganization = () => {
 		if (!organization) return;
 
-		Alert.alert("組織から退出", `「${organization.name}」から退出しますか？`, [
+		Alert.alert("グループから退出", `「${organization.name}」から退出しますか？`, [
 			{ text: "キャンセル", style: "cancel" },
 			{
 				text: "退出",
@@ -181,7 +181,7 @@ export function OrganizationSettingsModal({
 						Toast.show({
 							type: "success",
 							text1: "退出完了",
-							text2: "組織から退出しました",
+							text2: "グループから退出しました",
 						});
 
 						onClose();
@@ -190,7 +190,7 @@ export function OrganizationSettingsModal({
 						Toast.show({
 							type: "error",
 							text1: "退出失敗",
-							text2: error.message || "組織からの退出に失敗しました",
+							text2: error.message || "グループからの退出に失敗しました",
 						});
 					}
 				},
@@ -202,7 +202,7 @@ export function OrganizationSettingsModal({
 		if (!organization) return;
 
 		Alert.alert(
-			"組織を削除",
+			"グループを削除",
 			`「${organization.name}」を削除しますか？この操作は取り消せません。`,
 			[
 				{ text: "キャンセル", style: "cancel" },
@@ -218,7 +218,7 @@ export function OrganizationSettingsModal({
 							Toast.show({
 								type: "success",
 								text1: "削除完了",
-								text2: "組織を削除しました",
+								text2: "グループを削除しました",
 							});
 
 							onClose();
@@ -227,7 +227,7 @@ export function OrganizationSettingsModal({
 							Toast.show({
 								type: "error",
 								text1: "削除失敗",
-								text2: "組織の削除に失敗しました",
+								text2: "グループの削除に失敗しました",
 							});
 						}
 					},
@@ -379,7 +379,7 @@ export function OrganizationSettingsModal({
 										onPress={handleLeaveOrganization}
 									>
 										<Text className="text-white text-center text-lg font-noto-bold">
-											組織から退出
+											グループから退出
 										</Text>
 									</TouchableOpacity>
 								)}
@@ -390,7 +390,7 @@ export function OrganizationSettingsModal({
 										onPress={handleDeleteOrganization}
 									>
 										<Text className="text-white text-center text-lg font-noto-bold">
-											組織を削除
+											グループを削除
 										</Text>
 									</TouchableOpacity>
 								)}

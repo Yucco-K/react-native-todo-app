@@ -40,7 +40,7 @@ export function JoinOrganizationModal({
 			const org = await joinByInviteCode(inviteCode.trim().toUpperCase());
 			await refreshOrganizations();
 
-			// 参加した組織を選択
+			// 参加したグループを選択
 			selectOrganization(org);
 
 			Toast.show({
@@ -56,7 +56,7 @@ export function JoinOrganizationModal({
 			Toast.show({
 				type: "error",
 				text1: "参加失敗",
-				text2: error.message || "組織への参加に失敗しました",
+				text2: error.message || "グループへの参加に失敗しました",
 			});
 		} finally {
 			setIsLoading(false);
@@ -79,7 +79,7 @@ export function JoinOrganizationModal({
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
-							<Text className="text-3xl font-noto-bold mb-4">組織に参加</Text>
+							<Text className="text-3xl font-noto-bold mb-4">グループに参加</Text>
 
 							<View className="mb-4">
 								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
@@ -103,7 +103,7 @@ export function JoinOrganizationModal({
 									autoFocus
 								/>
 								<Text className="text-gray-500 text-sm font-noto-regular mt-2">
-									組織の管理者から招待コードを教えてもらってください
+									グループの管理者から招待コードを教えてもらってください
 								</Text>
 							</View>
 

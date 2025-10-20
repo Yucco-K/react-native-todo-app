@@ -64,7 +64,7 @@ export function InvitationListModal({
 			Toast.show({
 				type: "success",
 				text1: "参加完了",
-				text2: "組織に参加しました",
+				text2: "グループに参加しました",
 			});
 
 			// 招待一覧を再取得
@@ -74,7 +74,7 @@ export function InvitationListModal({
 			Toast.show({
 				type: "error",
 				text1: "参加失敗",
-				text2: "組織への参加に失敗しました",
+				text2: "グループへの参加に失敗しました",
 			});
 		} finally {
 			setProcessingId(null);
@@ -148,7 +148,7 @@ export function InvitationListModal({
 											{invitation.organizationName}
 										</Text>
 										<Text className="text-sm text-gray-600 font-noto-regular mb-4">
-											組織への招待が届いています
+											グループへの招待が届いています
 										</Text>
 
 										<View className="flex-row space-x-2">

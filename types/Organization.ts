@@ -1,4 +1,4 @@
-export type Organization = {
+export type Group = {
 	id: string;
 	name: string;
 	ownerId: string;
