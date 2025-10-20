@@ -132,8 +132,8 @@ export default function EditTodoModal({
 				shared: todo.shared,
 			});
 
-			// 共有Todoの場合は通知を送信
-			if (todo.shared) {
+			// 組織のTodoの場合は通知を送信
+			if (todo.organizationId) {
 				try {
 					await notifyTodoUpdated(title);
 				} catch (error) {

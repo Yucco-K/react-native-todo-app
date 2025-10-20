@@ -9,7 +9,6 @@ import {
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
 	toggleTodoComplete,
-	toggleTodoShared,
 } from "@/services/todoService";
 import {
 	getUserStats,
@@ -32,12 +31,12 @@ import TodoItem from "./ui/TodoItem";
 
 type TodoTableProps = {
 	refresh?: number;
-	isShared?: boolean;
+	organizationId?: string | null;
 };
 
 export default function TodoTable({
 	refresh,
-	isShared = false,
+	organizationId = null,
 }: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
@@ -53,7 +52,7 @@ export default function TodoTable({
 			const deletedCount = await deleteExpiredCompletedTodos();
 
 			// Todoリストを取得
-			const todos = await getTodosService(isShared);
+			const todos = await getTodosService(organizationId);
 			setData(todos);
 
 			// 削除があった場合はログ出力（本番環境ではトーストを表示しない）
@@ -101,7 +100,7 @@ export default function TodoTable({
 		} finally {
 			setLoading(false);
 		}
-	}, [isShared]);
+	}, [organizationId]);
 
 	const handleEdit = (todo: Todo) => {
 		setEditingTodo(todo);
@@ -165,8 +164,8 @@ export default function TodoTable({
 				// ユーザー統計を更新
 				await incrementCompletedTaskCount();
 
-				// 共有Todoの場合はプッシュ通知を送信（他のユーザーに通知）
-				if (todo.shared) {
+				// 組織のTodoの場合はプッシュ通知を送信（他のユーザーに通知）
+				if (todo.organizationId) {
 					try {
 						await notifyTodoCompleted(todo.title);
 					} catch (error) {
@@ -187,29 +186,6 @@ export default function TodoTable({
 		}
 	};
 
-	const toggleShare = async (id: string, currentShared: boolean) => {
-		try {
-			await toggleTodoShared(id, currentShared);
-
-			// Toast.show({
-			// 	type: "success",
-			// 	text1: currentShared ? "個人用に変更" : "共有に変更",
-			// 	text2: currentShared ? "My Listに移動しました" : "Sharedに移動しました",
-			// 	visibilityTime: 3000,
-			// });
-
-			// グローバルにリフレッシュをトリガー（両方のタブで即座に反映）
-			triggerRefresh();
-		} catch (error) {
-			console.error(error);
-			Toast.show({
-				type: "error",
-				text1: "更新失敗",
-				text2: "共有状態の更新に失敗しました",
-			});
-		}
-	};
-
 	const deleteTodo = async (id: string) => {
 		try {
 			// 削除前にTodoの情報を取得（通知用）
@@ -217,8 +193,8 @@ export default function TodoTable({
 
 			await deleteTodoService(id);
 
-			// 共有Todoの場合は通知を送信
-			if (todo?.shared) {
+			// 組織のTodoの場合は通知を送信
+			if (todo?.organizationId) {
 				try {
 					await notifyTodoDeleted(todo.title);
 				} catch (error) {
@@ -270,12 +246,10 @@ export default function TodoTable({
 			) : data.length === 0 ? (
 				<View className="py-8 items-center">
 					<Text className="text-gray-400 font-noto-regular text-xl">
-						{isShared ? "共有Todoはまだありません" : "Todoはまだありません"}
+						Todoはまだありません
 					</Text>
 					<Text className="text-gray-400 font-noto-regular text-lg mt-2">
-						{isShared
-							? "上のフォームから共有Todoを作成できます"
-							: "上のフォームから新しいTodoを作成できます"}
+						右下のボタンから新しいTodoを作成できます
 					</Text>
 				</View>
 			) : (
@@ -285,10 +259,8 @@ export default function TodoTable({
 						<TodoItem
 							{...item}
 							onToggleComplete={toggleComplete}
-							onToggleShared={toggleShare}
 							onEdit={handleEdit}
 							onDelete={deleteTodo}
-							showShareToggle={!isShared}
 						/>
 					)}
 					keyExtractor={(item) => item.id.toString()}
@@ -307,10 +279,8 @@ export default function TodoTable({
 				onClose={() => setIsSearchModalVisible(false)}
 				data={data}
 				onToggleComplete={toggleComplete}
-				onToggleShared={toggleShare}
 				onEdit={handleEdit}
 				onDelete={deleteTodo}
-				showShareToggle={!isShared}
 			/>
 		</View>
 	);

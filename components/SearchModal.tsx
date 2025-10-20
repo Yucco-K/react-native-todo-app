@@ -21,10 +21,8 @@ type SearchModalProps = {
 	onClose: () => void;
 	data: Todo[];
 	onToggleComplete: (id: string) => void;
-	onToggleShared: (id: string, currentShared: boolean) => void;
 	onEdit: (todo: Todo) => void;
 	onDelete: (id: string) => void;
-	showShareToggle: boolean;
 };
 
 export default function SearchModal({
@@ -32,10 +30,8 @@ export default function SearchModal({
 	onClose,
 	data,
 	onToggleComplete,
-	onToggleShared,
 	onEdit,
 	onDelete,
-	showShareToggle,
 }: SearchModalProps) {
 	const [searchText, setSearchText] = useState("");
 	const [filterType, setFilterType] = useState<FilterType>("all");
@@ -241,10 +237,8 @@ export default function SearchModal({
 										<TodoItem
 											{...item}
 											onToggleComplete={onToggleComplete}
-											onToggleShared={onToggleShared}
 											onEdit={onEdit}
 											onDelete={onDelete}
-											showShareToggle={showShareToggle}
 										/>
 									</View>
 								)}

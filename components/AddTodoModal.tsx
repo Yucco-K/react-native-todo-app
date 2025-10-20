@@ -38,14 +38,14 @@ type AddTodoModalProps = {
 	visible: boolean;
 	onClose: () => void;
 	onSave: () => void;
-	isShared?: boolean;
+	organizationId?: string | null;
 };
 
 export default function AddTodoModal({
 	visible,
 	onClose,
 	onSave,
-	isShared = false,
+	organizationId = null,
 }: AddTodoModalProps) {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
@@ -149,10 +149,10 @@ export default function AddTodoModal({
 		setErrors({});
 		setIsLoading(true);
 		try {
-			await createTodo(title, content, category, isShared);
+			await createTodo(title, content, category, organizationId);
 
-			// 共有Todoの場合は通知を送信
-			if (isShared) {
+			// 組織のTodoの場合は通知を送信
+			if (organizationId) {
 				try {
 					await notifyTodoAdded(title);
 				} catch (error) {
@@ -207,11 +207,11 @@ export default function AddTodoModal({
 				recommendation.title,
 				"", // 内容は空
 				recommendation.category,
-				isShared
+				organizationId
 			);
 
-			// 共有Todoの場合は通知を送信
-			if (isShared) {
+			// 組織のTodoの場合は通知を送信
+			if (organizationId) {
 				try {
 					await notifyTodoAdded(recommendation.title);
 				} catch (error) {
