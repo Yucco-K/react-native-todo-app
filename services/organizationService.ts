@@ -191,17 +191,27 @@ export async function inviteByEmail(
 	}
 
 	// 招待されるユーザーを検索
+	console.log("🔍 ユーザーを検索中:", { email });
 	const usersQuery = query(
 		collection(db, "users"),
 		where("email", "==", email)
 	);
 	const usersSnapshot = await getDocs(usersQuery);
 
+	console.log("📊 検索結果:", {
+		件数: usersSnapshot.size,
+		見つかったユーザー: usersSnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data(),
+		})),
+	});
+
 	if (usersSnapshot.empty) {
 		throw new Error("指定されたメールアドレスのユーザーが見つかりません");
 	}
 
 	const invitedUserId = usersSnapshot.docs[0].id;
+	console.log("✅ 招待対象ユーザー:", { invitedUserId, email });
 
 	// 既にメンバーかチェック
 	if (orgData.members.includes(invitedUserId)) {
