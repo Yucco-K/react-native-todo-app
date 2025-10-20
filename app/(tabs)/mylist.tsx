@@ -24,6 +24,11 @@ export default function MyListScreen() {
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
 	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
+	// ログインしていない場合は何も表示しない
+	if (!user) {
+		return null;
+	}
+
 	const handleSave = () => {
 		triggerRefresh();
 	};
