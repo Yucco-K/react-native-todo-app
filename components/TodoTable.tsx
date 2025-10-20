@@ -219,10 +219,8 @@ export default function TodoTable({
 	};
 
 	useEffect(() => {
-		if (refresh !== undefined) {
-			getTodos();
-		}
-	}, [refresh, getTodos]);
+		getTodos();
+	}, [refresh, organizationId, getTodos]);
 
 	return (
 		<View className="flex-1">

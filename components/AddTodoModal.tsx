@@ -229,14 +229,6 @@ export default function AddTodoModal({
 				}
 			}
 
-			// 成功フィードバック
-			Toast.show({
-				type: "success",
-				text1: "追加しました",
-				text2: `「${recommendation.title}」をリストに追加`,
-				visibilityTime: 2000,
-			});
-
 			// 保存後のコールバックを呼び出す
 			console.log("🔄 リスト更新をトリガー");
 			onSave?.();
