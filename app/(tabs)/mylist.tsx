@@ -24,6 +24,11 @@ export default function MyListScreen() {
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
 	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
+	console.log("📱 MyListScreen: レンダリング", {
+		selectedOrganization: selectedOrganization?.name || "My List",
+		organizationId: selectedOrganization?.id || null,
+	});
+
 	// ログインしていない場合は何も表示しない
 	if (!user) {
 		return null;
