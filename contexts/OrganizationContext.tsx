@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	useState,
 } from "react";
+import { useAuth } from "./AuthContext";
 import { getMyOrganizations } from "../services/organizationService";
 import type { Organization } from "../types/Organization";
 
@@ -21,12 +22,18 @@ const OrganizationContext = createContext<OrganizationContextType | undefined>(
 );
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
+	const { user } = useAuth();
 	const [organizations, setOrganizations] = useState<Organization[]>([]);
 	const [selectedOrganization, setSelectedOrganization] =
 		useState<Organization | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const refreshOrganizations = async () => {
+		// ログインしていない場合は何もしない
+		if (!user) {
+			return;
+		}
+
 		setIsLoading(true);
 		try {
 			const orgs = await getMyOrganizations();
@@ -50,10 +57,16 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 		setSelectedOrganization(org);
 	};
 
-	// 初回ロード
+	// ユーザーがログインしている場合のみ組織を取得
 	useEffect(() => {
-		refreshOrganizations();
-	}, []);
+		if (user) {
+			refreshOrganizations();
+		} else {
+			// ログアウト時は状態をクリア
+			setOrganizations([]);
+			setSelectedOrganization(null);
+		}
+	}, [user]);
 
 	return (
 		<OrganizationContext.Provider
