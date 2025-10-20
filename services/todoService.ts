@@ -102,13 +102,9 @@ export const createTodo = async (
 			category,
 			completed: false,
 			shared: !!organizationId, // 互換性のため残す
+			organizationId: organizationId || null, // 常にフィールドを保存
 			createdAt: new Date(),
 		};
-
-		// organizationIdがある場合のみ追加
-		if (organizationId) {
-			todoData.organizationId = organizationId;
-		}
 
 		const docRef = await addDoc(collection(db, COLLECTION_NAME), todoData);
 		console.log("✅ Firestore保存成功:", {
