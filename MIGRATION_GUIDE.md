@@ -40,12 +40,12 @@ Firebase Consoleでは直接一括削除はできないため、以下のいず�
 
 ```typescript
 import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  where,
+	collection,
+	deleteDoc,
+	doc,
+	getDocs,
+	query,
+	where,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
@@ -53,26 +53,23 @@ import { db } from "../config/firebase";
  * 既存の共有Todoを削除
  */
 export async function deleteSharedTodos(): Promise<number> {
-  try {
-    const q = query(
-      collection(db, "todos"),
-      where("shared", "==", true)
-    );
-    
-    const querySnapshot = await getDocs(q);
-    let deletedCount = 0;
+	try {
+		const q = query(collection(db, "todos"), where("shared", "==", true));
 
-    for (const docSnapshot of querySnapshot.docs) {
-      await deleteDoc(doc(db, "todos", docSnapshot.id));
-      deletedCount++;
-    }
+		const querySnapshot = await getDocs(q);
+		let deletedCount = 0;
 
-    console.log(`🗑️ ${deletedCount}件の共有Todoを削除しました`);
-    return deletedCount;
-  } catch (error) {
-    console.error("共有Todo削除エラー:", error);
-    throw error;
-  }
+		for (const docSnapshot of querySnapshot.docs) {
+			await deleteDoc(doc(db, "todos", docSnapshot.id));
+			deletedCount++;
+		}
+
+		console.log(`🗑️ ${deletedCount}件の共有Todoを削除しました`);
+		return deletedCount;
+	} catch (error) {
+		console.error("共有Todo削除エラー:", error);
+		throw error;
+	}
 }
 ```
 
@@ -85,11 +82,11 @@ export async function deleteSharedTodos(): Promise<number> {
 **または**、開発者ツールのコンソールから直接実行:
 
 ```typescript
-import { deleteSharedTodos } from './services/migrationService';
+import { deleteSharedTodos } from "./services/migrationService";
 
 // 実行
 deleteSharedTodos().then(() => {
-  console.log('移行完了');
+	console.log("移行完了");
 });
 ```
 
@@ -107,19 +104,21 @@ deleteSharedTodos().then(() => {
 移行を実施する前に、ユーザーに以下を通知することを推奨します:
 
 > 【重要なお知らせ】
-> 
+>
 > Todo共有機能が「組織」機能にアップグレードされました。
-> 
+>
 > **変更点:**
+>
 > - 複数の組織（家族、仕事チームなど）を作成できます
 > - 組織ごとにTodoを管理できます
 > - 既存の共有Todoは削除されますので、必要に応じて再度作成してください
-> 
+>
 > **新機能の使い方:**
+>
 > 1. ドロワーメニュー（左上のメニューボタン）を開く
 > 2. 「組織を作成」をタップ
 > 3. 招待コードを共有して、メンバーを招待
-> 
+>
 > ご不便をおかけしますが、より便利な機能をお楽しみください。
 
 ## トラブルシューティング
@@ -140,4 +139,3 @@ deleteSharedTodos().then(() => {
 - `organizationId`が正しく保存されているか確認してください
 - Firebase Consoleで該当するTodoドキュメントを確認してください
 - ユーザーが組織のメンバーに含まれているか確認してください
-
