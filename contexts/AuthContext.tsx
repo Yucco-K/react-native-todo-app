@@ -5,8 +5,9 @@ import {
 	signOut,
 	type User,
 } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import {
 	registerForPushNotificationsAsync,
 	savePushToken,
@@ -69,11 +70,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const signUp = async (email: string, password: string) => {
-		await createUserWithEmailAndPassword(auth, email, password);
+		const userCredential = await createUserWithEmailAndPassword(
+			auth,
+			email,
+			password
+		);
+		const userId = userCredential.user.uid;
+
+		// Firestoreのusersコレクションにユーザー情報を保存
+		await setDoc(doc(db, "users", userId), {
+			email: email,
+			createdAt: new Date(),
+		});
+
+		console.log("✅ ユーザー情報をFirestoreに保存:", { userId, email });
 	};
 
 	const signIn = async (email: string, password: string) => {
-		await signInWithEmailAndPassword(auth, email, password);
+		const userCredential = await signInWithEmailAndPassword(
+			auth,
+			email,
+			password
+		);
+		const userId = userCredential.user.uid;
+		const userEmail = userCredential.user.email;
+
+		// 既存ユーザーの場合、usersコレクションにドキュメントがなければ作成
+		if (userEmail) {
+			const userDocRef = doc(db, "users", userId);
+			const userDocSnap = await getDoc(userDocRef);
+
+			if (!userDocSnap.exists()) {
+				await setDoc(userDocRef, {
+					email: userEmail,
+					createdAt: new Date(),
+				});
+				console.log("✅ 既存ユーザーの情報をFirestoreに保存:", {
+					userId,
+					email: userEmail,
+				});
+			}
+		}
 	};
 
 	const logout = async () => {
