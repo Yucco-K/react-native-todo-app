@@ -290,7 +290,10 @@ export function OrganizationSettingsModal({
 							{isOwner && (
 								<View className="mb-6">
 									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-										メールアドレスで招待
+										メンバーを招待
+									</Text>
+									<Text className="text-gray-600 font-noto-regular text-sm mb-2">
+										登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
 									</Text>
 									<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 										<View>

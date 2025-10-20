@@ -62,7 +62,6 @@ export default function MyListScreen() {
 				<View className="flex-1 px-4 pt-4">
 					<View className="flex-row justify-between items-center mb-4">
 						<View className="flex-1">
-							<Text className="text-3xl font-noto-bold">My List</Text>
 							{nickname ? (
 								<TouchableOpacity
 									onPress={() => setIsNicknameModalVisible(true)}
