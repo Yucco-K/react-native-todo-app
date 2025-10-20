@@ -17,21 +17,36 @@ import type { Todo } from "../types/Todo";
 const COLLECTION_NAME = "todos";
 
 /**
- * Todoを取得（自分のTodoまたは共有Todo）
+ * Todoを取得（組織IDでフィルタリング）
+ * @param organizationId - 組織ID（nullの場合は個人用Todoのみ取得）
  */
-export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
+export const getTodos = async (
+	organizationId: string | null = null
+): Promise<Todo[]> => {
 	try {
 		const userId = auth.currentUser?.uid;
 		if (!userId) {
 			throw new Error("ユーザーがログインしていません");
 		}
 
-		const q = query(
-			collection(db, COLLECTION_NAME),
-			where("userId", "==", userId),
-			where("shared", "==", isShared),
-			orderBy("createdAt", "desc")
-		);
+		let q;
+		if (organizationId) {
+			// 組織のTodoを取得
+			q = query(
+				collection(db, COLLECTION_NAME),
+				where("organizationId", "==", organizationId),
+				orderBy("createdAt", "desc")
+			);
+		} else {
+			// 個人用Todoを取得（organizationIdが存在しない）
+			q = query(
+				collection(db, COLLECTION_NAME),
+				where("userId", "==", userId),
+				where("organizationId", "==", null),
+				orderBy("createdAt", "desc")
+			);
+		}
+
 		const querySnapshot = await getDocs(q);
 
 		const todos: Todo[] = [];
@@ -43,7 +58,8 @@ export const getTodos = async (isShared: boolean = false): Promise<Todo[]> => {
 				title: data.title,
 				content: data.content,
 				completed: data.completed,
-				shared: data.shared,
+				shared: data.shared || false,
+				organizationId: data.organizationId,
 				category: data.category || "other",
 				createdAt: data.createdAt?.toDate(),
 				completedAt: data.completedAt?.toDate(),
@@ -65,7 +81,7 @@ export const createTodo = async (
 	title: string,
 	content: string,
 	category: TodoCategory = "other",
-	isShared: boolean = false
+	organizationId: string | null = null
 ): Promise<string> => {
 	try {
 		const userId = auth.currentUser?.uid;
@@ -73,15 +89,22 @@ export const createTodo = async (
 			throw new Error("ユーザーがログインしていません");
 		}
 
-		const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+		const todoData: any = {
 			userId,
 			title,
 			content,
 			category,
 			completed: false,
-			shared: isShared,
+			shared: !!organizationId, // 互換性のため残す
 			createdAt: new Date(),
-		});
+		};
+
+		// organizationIdがある場合のみ追加
+		if (organizationId) {
+			todoData.organizationId = organizationId;
+		}
+
+		const docRef = await addDoc(collection(db, COLLECTION_NAME), todoData);
 		return docRef.id;
 	} catch (error) {
 		console.error("Error creating todo:", error);

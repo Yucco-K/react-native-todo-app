@@ -17,6 +17,7 @@ import {
 import Toast from "react-native-toast-message";
 import { auth } from "../config/firebase";
 import { useOrganization } from "../contexts/OrganizationContext";
+import { getCurrentUserDisplayName } from "../services/notificationService";
 import {
 	deleteOrganization,
 	getOrganizationMembers,
@@ -24,8 +25,6 @@ import {
 	leaveOrganization,
 	removeMember,
 } from "../services/organizationService";
-import { getCurrentUserDisplayName } from "../services/notificationService";
-import { notifyInvitation } from "../services/notificationService";
 import type { Organization } from "../types/Organization";
 
 type OrganizationSettingsModalProps = {
@@ -168,39 +167,35 @@ export function OrganizationSettingsModal({
 	const handleLeaveOrganization = () => {
 		if (!organization) return;
 
-		Alert.alert(
-			"組織から退出",
-			`「${organization.name}」から退出しますか？`,
-			[
-				{ text: "キャンセル", style: "cancel" },
-				{
-					text: "退出",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							await leaveOrganization(organization.id);
-							await refreshOrganizations();
-							selectOrganization(null);
+		Alert.alert("組織から退出", `「${organization.name}」から退出しますか？`, [
+			{ text: "キャンセル", style: "cancel" },
+			{
+				text: "退出",
+				style: "destructive",
+				onPress: async () => {
+					try {
+						await leaveOrganization(organization.id);
+						await refreshOrganizations();
+						selectOrganization(null);
 
-							Toast.show({
-								type: "success",
-								text1: "退出完了",
-								text2: "組織から退出しました",
-							});
+						Toast.show({
+							type: "success",
+							text1: "退出完了",
+							text2: "組織から退出しました",
+						});
 
-							onClose();
-						} catch (error: any) {
-							console.error("Error leaving organization:", error);
-							Toast.show({
-								type: "error",
-								text1: "退出失敗",
-								text2: error.message || "組織からの退出に失敗しました",
-							});
-						}
-					},
+						onClose();
+					} catch (error: any) {
+						console.error("Error leaving organization:", error);
+						Toast.show({
+							type: "error",
+							text1: "退出失敗",
+							text2: error.message || "組織からの退出に失敗しました",
+						});
+					}
 				},
-			]
-		);
+			},
+		]);
 	};
 
 	const handleDeleteOrganization = () => {
@@ -255,7 +250,10 @@ export function OrganizationSettingsModal({
 					className="flex-1 justify-center items-center"
 					onPress={(e) => e.stopPropagation()}
 				>
-					<View className="bg-white rounded-lg w-5/6 max-w-md" style={{ maxHeight: "90%" }}>
+					<View
+						className="bg-white rounded-lg w-5/6 max-w-md"
+						style={{ maxHeight: "90%" }}
+					>
 						{/* ヘッダー */}
 						<View className="border-b border-gray-200 p-6 flex-row items-center justify-between">
 							<Text className="text-2xl font-noto-bold flex-1">
@@ -357,18 +355,17 @@ export function OrganizationSettingsModal({
 												)}
 											</View>
 
-											{isOwner &&
-												member.userId !== organization.ownerId && (
-													<TouchableOpacity
-														onPress={() => handleRemoveMember(member)}
-													>
-														<Ionicons
-															name="remove-circle-outline"
-															size={24}
-															color="#ef4444"
-														/>
-													</TouchableOpacity>
-												)}
+											{isOwner && member.userId !== organization.ownerId && (
+												<TouchableOpacity
+													onPress={() => handleRemoveMember(member)}
+												>
+													<Ionicons
+														name="remove-circle-outline"
+														size={24}
+														color="#ef4444"
+													/>
+												</TouchableOpacity>
+											)}
 										</View>
 									))
 								)}
@@ -405,4 +402,3 @@ export function OrganizationSettingsModal({
 		</Modal>
 	);
 }
-

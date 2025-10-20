@@ -2,6 +2,7 @@ import AddTodoModal from "@/components/AddTodoModal";
 import NicknameModal from "@/components/NicknameModal";
 import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOrganization } from "@/contexts/OrganizationContext";
 import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -18,6 +19,7 @@ import Toast from "react-native-toast-message";
 
 export default function MyListScreen() {
 	const { user, nickname, logout, updateNickname } = useAuth();
+	const { selectedOrganization } = useOrganization();
 	const { refreshTrigger, triggerRefresh } = useTodoRefresh();
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
 	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -100,7 +102,10 @@ export default function MyListScreen() {
 						</TouchableHighlight>
 					</View>
 
-					<TodoTable refresh={refreshTrigger} isShared={false} />
+					<TodoTable
+					refresh={refreshTrigger}
+					organizationId={selectedOrganization?.id || null}
+				/>
 
 					{/* Floating Action Button */}
 					<TouchableOpacity
@@ -117,7 +122,7 @@ export default function MyListScreen() {
 				visible={isAddModalVisible}
 				onClose={() => setIsAddModalVisible(false)}
 				onSave={handleSave}
-				isShared={false}
+				organizationId={selectedOrganization?.id || null}
 			/>
 
 			<NicknameModal
