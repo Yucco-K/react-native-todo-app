@@ -268,3 +268,63 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 		// 本人は除外（本人は画面でトーストを見ている）
 	);
 }
+
+/**
+ * 組織への招待通知
+ */
+export async function notifyInvitation(
+	invitedUserId: string,
+	orgName: string,
+	inviterName: string
+): Promise<void> {
+	// 招待されたユーザーのプッシュトークンを取得
+	const userDoc = await getDoc(doc(db, "users", invitedUserId));
+	if (!userDoc.exists()) {
+		console.error("User not found:", invitedUserId);
+		return;
+	}
+
+	const userData = userDoc.data();
+	const pushToken = userData.pushToken;
+
+	if (!pushToken) {
+		console.log("User has no push token:", invitedUserId);
+		return;
+	}
+
+	// プッシュ通知を送信
+	const message = {
+		to: pushToken,
+		sound: "default",
+		title: "組織への招待",
+		body: `${inviterName} があなたを「${orgName}」に招待しました`,
+		data: {
+			type: "organization_invitation",
+			organizationName: orgName,
+		},
+	};
+
+	try {
+		const response = await fetch("https://exp.host/--/api/v2/push/send", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Accept-encoding": "gzip, deflate",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(message),
+		});
+
+		if (!response.ok) {
+			const errorBody = await response.text();
+			throw new Error(
+				`Push notification failed: ${response.status} (body: ${errorBody})`
+			);
+		}
+
+		console.log("Invitation notification sent");
+	} catch (error) {
+		console.error("Error sending invitation notification:", error);
+		throw error;
+	}
+}
