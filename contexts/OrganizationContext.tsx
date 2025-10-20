@@ -1,12 +1,12 @@
 import React, {
 	createContext,
+	type ReactNode,
 	useContext,
 	useEffect,
 	useState,
-	type ReactNode,
 } from "react";
-import type { Organization } from "../types/Organization";
 import { getMyOrganizations } from "../services/organizationService";
+import type { Organization } from "../types/Organization";
 
 type OrganizationContextType = {
 	organizations: Organization[];
@@ -79,4 +79,3 @@ export function useOrganization() {
 	}
 	return context;
 }
-

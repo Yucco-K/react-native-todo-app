@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import {
 	Modal,
 	Pressable,
@@ -65,9 +65,7 @@ export function DrawerMenu({
 							{/* MyList */}
 							<TouchableOpacity
 								className={`flex-row items-center p-4 rounded-lg mb-2 ${
-									selectedOrganization === null
-										? "bg-blue-100"
-										: "bg-gray-50"
+									selectedOrganization === null ? "bg-blue-100" : "bg-gray-50"
 								}`}
 								onPress={handleSelectMyList}
 							>
@@ -192,4 +190,3 @@ export function DrawerMenu({
 		</Modal>
 	);
 }
-

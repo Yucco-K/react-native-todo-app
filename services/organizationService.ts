@@ -360,7 +360,9 @@ export async function leaveOrganization(orgId: string): Promise<void> {
 
 	// オーナーは退出できない
 	if (orgData.ownerId === userId) {
-		throw new Error("オーナーは組織から退出できません。組織を削除してください。");
+		throw new Error(
+			"オーナーは組織から退出できません。組織を削除してください。"
+		);
 	}
 
 	// メンバーから削除
@@ -405,4 +407,3 @@ export async function deleteOrganization(orgId: string): Promise<void> {
 	);
 	await Promise.all(deletePromises);
 }
-

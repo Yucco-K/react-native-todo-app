@@ -178,7 +178,7 @@ export async function sendPushNotification(
 /**
  * 現在のユーザーの表示名を取得（ニックネーム優先）
  */
-async function getCurrentUserDisplayName(): Promise<string> {
+export async function getCurrentUserDisplayName(): Promise<string> {
 	const userId = auth.currentUser?.uid;
 	if (!userId) {
 		return "不明なユーザー";

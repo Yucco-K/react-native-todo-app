@@ -3,6 +3,7 @@ import "../global.css";
 
 import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
 import {
 	NotoSansJP_400Regular,
@@ -80,10 +81,12 @@ export default function RootLayout() {
 
 	return (
 		<AuthProvider>
-			<TodoRefreshProvider>
-				<RootLayoutNav />
-				<Toast position="top" topOffset={100} config={toastConfig} />
-			</TodoRefreshProvider>
+			<OrganizationProvider>
+				<TodoRefreshProvider>
+					<RootLayoutNav />
+					<Toast position="top" topOffset={100} config={toastConfig} />
+				</TodoRefreshProvider>
+			</OrganizationProvider>
 		</AuthProvider>
 	);
 }
