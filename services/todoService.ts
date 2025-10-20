@@ -67,6 +67,12 @@ export const getTodos = async (
 			});
 		});
 
+		console.log("📋 Todo取得結果:", {
+			organizationId: organizationId || "null (マイリスト)",
+			取得件数: todos.length,
+			タイトル一覧: todos.map((t) => t.title),
+		});
+
 		return todos;
 	} catch (error) {
 		console.error("Error getting todos:", error);
@@ -105,6 +111,12 @@ export const createTodo = async (
 		}
 
 		const docRef = await addDoc(collection(db, COLLECTION_NAME), todoData);
+		console.log("✅ Firestore保存成功:", {
+			id: docRef.id,
+			title: todoData.title,
+			category: todoData.category,
+			organizationId: todoData.organizationId || "null (マイリスト)",
+		});
 		return docRef.id;
 	} catch (error) {
 		console.error("Error creating todo:", error);
