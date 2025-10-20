@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
 
-		// 既存ユーザーの場合、usersコレクションにドキュメントがなければ作成
+		// 既存ユーザーの場合、usersコレクションにドキュメントがなければ作成、あれば更新
 		if (userEmail) {
 			const userDocRef = doc(db, "users", userId);
 			const userDocSnap = await getDoc(userDocRef);
@@ -105,10 +105,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 					email: userEmail,
 					createdAt: new Date(),
 				});
-				console.log("✅ 既存ユーザーの情報をFirestoreに保存:", {
+				console.log("✅ ユーザー情報を新規作成:", {
 					userId,
 					email: userEmail,
 				});
+			} else {
+				// 既存ドキュメントのemailフィールドがundefinedの場合は更新
+				const existingEmail = userDocSnap.data()?.email;
+				if (!existingEmail) {
+					await setDoc(
+						userDocRef,
+						{
+							email: userEmail,
+						},
+						{ merge: true }
+					);
+					console.log("✅ ユーザー情報を更新（email追加）:", {
+						userId,
+						email: userEmail,
+					});
+				}
 			}
 		}
 	};
