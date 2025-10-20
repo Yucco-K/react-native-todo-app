@@ -5,7 +5,7 @@ import { createTodo } from "@/services/todoService";
 import type { TodoCategory } from "@/types/Category";
 import { CATEGORY_OPTIONS } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -65,7 +65,7 @@ export default function AddTodoModal({
 	);
 
 	// おすすめTODOを取得
-	const fetchRecommendations = async () => {
+	const fetchRecommendations = useCallback(async () => {
 		setIsLoadingRecommendations(true);
 		try {
 			const newRecs = await generateTodoRecommendations(shownRecommendations);
@@ -79,7 +79,7 @@ export default function AddTodoModal({
 		} finally {
 			setIsLoadingRecommendations(false);
 		}
-	};
+	}, [shownRecommendations]);
 
 	// モーダルが開いたら初回のおすすめを取得
 	useEffect(() => {
@@ -87,7 +87,7 @@ export default function AddTodoModal({
 			setShownRecommendations([]); // リセット
 			fetchRecommendations();
 		}
-	}, [visible]);
+	}, [visible, fetchRecommendations]);
 
 	// 次の候補を取得
 	const handleNextRecommendations = () => {

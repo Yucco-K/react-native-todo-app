@@ -1,4 +1,3 @@
-import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import {
 	notifyTodoCompleted,
 	notifyTodoDeleted,
@@ -43,7 +42,6 @@ export default function TodoTable({
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-	const { triggerRefresh } = useTodoRefresh();
 
 	const getTodos = useCallback(async () => {
 		setLoading(true);
