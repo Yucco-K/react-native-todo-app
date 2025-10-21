@@ -19,6 +19,7 @@ import Toast from "react-native-toast-message";
 LogBox.ignoreLogs([
 	"指定されたメールアドレスのユーザーが見つかりません",
 	"Error inviting by email",
+	"Internal React error: Expected static flag was missing",
 ]);
 
 SplashScreen.preventAutoHideAsync();
