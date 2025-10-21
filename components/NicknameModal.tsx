@@ -72,14 +72,17 @@ export default function NicknameModal({
 	return (
 		<Modal
 			visible={visible}
-			transparent={true}
-			animationType="fade"
+			transparent
+			animationType="slide"
 			onRequestClose={onClose}
 		>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
+						<View
+							className="bg-white rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%" }}
+						>
 							<Text className="text-3xl font-noto-bold mb-4">
 								ニックネーム設定
 							</Text>
@@ -103,15 +106,15 @@ export default function NicknameModal({
 								</Text>
 							</View>
 
-							<View className="flex-row justify-end space-x-2">
+							<View className="flex-row justify-end mt-4 space-x-2">
 								<TouchableHighlight
 									onPress={onClose}
 									disabled={isLoading}
-									activeOpacity={0.5}
-									className="bg-gray-300 rounded-md px-4 py-3 mr-2"
+									activeOpacity={0.7}
+									className="flex-1 bg-gray-300 rounded-md py-3 mr-2"
 									underlayColor="#d1d5db"
 								>
-									<Text className="text-gray-700 font-noto-bold text-lg">
+									<Text className="text-gray-700 font-noto-bold text-lg text-center">
 										キャンセル
 									</Text>
 								</TouchableHighlight>
@@ -119,14 +122,14 @@ export default function NicknameModal({
 								<TouchableHighlight
 									onPress={handleSave}
 									disabled={isLoading}
-									activeOpacity={0.5}
-									className="bg-blue-500 rounded-md px-4 py-3"
+									activeOpacity={0.7}
+									className="flex-1 bg-blue-500 rounded-md py-3"
 									underlayColor="#3b82f6"
 								>
 									{isLoading ? (
-										<ActivityIndicator size="small" color="#ffffff" />
+										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg">
+										<Text className="text-white font-noto-bold text-lg text-center">
 											保存
 										</Text>
 									)}

@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Modal,
-	Pressable,
 	ScrollView,
 	Text,
-	TouchableOpacity,
+	TouchableHighlight,
+	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
@@ -109,84 +109,99 @@ export function InvitationListModal({
 		<Modal
 			visible={visible}
 			transparent
-			animationType="fade"
+			animationType="slide"
 			onRequestClose={onClose}
 		>
-			<Pressable className="flex-1 bg-black/50" onPress={onClose}>
-				<Pressable
-					className="flex-1 justify-center items-center"
-					onPress={(e) => e.stopPropagation()}
-				>
-					<View className="bg-white rounded-lg w-5/6 max-w-md max-h-3/4">
-						{/* ヘッダー */}
-						<View className="border-b border-gray-200 p-6 flex-row items-center justify-between">
-							<Text className="text-3xl font-noto-bold">招待一覧</Text>
-							<TouchableOpacity onPress={onClose}>
-								<Ionicons name="close" size={28} color="#6b7280" />
-							</TouchableOpacity>
-						</View>
+			<TouchableWithoutFeedback onPress={onClose}>
+				<View className="flex-1 justify-center items-center bg-black/50">
+					<TouchableWithoutFeedback>
+						<View
+							className="bg-white rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%" }}
+						>
+							<Text className="text-3xl font-noto-bold mb-4">招待一覧</Text>
 
-						{/* コンテンツ */}
-						<ScrollView className="p-6">
-							{isLoading ? (
-								<View className="py-8">
-									<ActivityIndicator size="large" color="#3b82f6" />
-								</View>
-							) : invitations.length === 0 ? (
-								<View className="py-8">
-									<Text className="text-center text-gray-500 text-lg font-noto-regular">
-										招待はありません
-									</Text>
-								</View>
-							) : (
-								invitations.map((invitation) => (
-									<View
-										key={invitation.id}
-										className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-300"
-									>
-										<Text className="text-xl font-noto-bold text-gray-800 mb-2">
-											{invitation.organizationName}
-										</Text>
-										<Text className="text-sm text-gray-600 font-noto-regular mb-4">
-											グループへの招待が届いています
-										</Text>
-
-										<View className="flex-row space-x-2">
-											<TouchableOpacity
-												className={`flex-1 px-4 py-3 rounded-md ${
-													processingId === invitation.id
-														? "bg-green-300"
-														: "bg-green-600"
-												}`}
-												onPress={() => handleAccept(invitation.id)}
-												disabled={processingId !== null}
-											>
-												<Text className="text-white text-center text-lg font-noto-bold">
-													承認
-												</Text>
-											</TouchableOpacity>
-
-											<TouchableOpacity
-												className={`flex-1 px-4 py-3 rounded-md ${
-													processingId === invitation.id
-														? "bg-gray-300"
-														: "bg-gray-500"
-												}`}
-												onPress={() => handleDecline(invitation.id)}
-												disabled={processingId !== null}
-											>
-												<Text className="text-white text-center text-lg font-noto-bold">
-													拒否
-												</Text>
-											</TouchableOpacity>
-										</View>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
+								{isLoading ? (
+									<View className="py-8">
+										<ActivityIndicator size="large" color="#3b82f6" />
 									</View>
-								))
-							)}
-						</ScrollView>
-					</View>
-				</Pressable>
-			</Pressable>
+								) : invitations.length === 0 ? (
+									<View className="py-8">
+										<Text className="text-center text-gray-500 text-lg font-noto-regular">
+											招待はありません
+										</Text>
+									</View>
+								) : (
+									invitations.map((invitation) => (
+										<View
+											key={invitation.id}
+											className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-300"
+										>
+											<Text className="text-xl font-noto-bold text-gray-800 mb-2">
+												{invitation.organizationName}
+											</Text>
+											<Text className="text-sm text-gray-600 font-noto-regular mb-4">
+												グループへの招待が届いています
+											</Text>
+
+											<View className="flex-row space-x-2">
+												<TouchableHighlight
+													onPress={() => handleAccept(invitation.id)}
+													disabled={processingId !== null}
+													activeOpacity={0.7}
+													className="flex-1 bg-green-600 rounded-md py-3 mr-2"
+													underlayColor="#16a34a"
+												>
+													{processingId === invitation.id ? (
+														<ActivityIndicator color="white" />
+													) : (
+														<Text className="text-white text-center text-lg font-noto-bold">
+															承認
+														</Text>
+													)}
+												</TouchableHighlight>
+
+												<TouchableHighlight
+													onPress={() => handleDecline(invitation.id)}
+													disabled={processingId !== null}
+													activeOpacity={0.7}
+													className="flex-1 bg-gray-500 rounded-md py-3"
+													underlayColor="#6b7280"
+												>
+													{processingId === invitation.id ? (
+														<ActivityIndicator color="white" />
+													) : (
+														<Text className="text-white text-center text-lg font-noto-bold">
+															拒否
+														</Text>
+													)}
+												</TouchableHighlight>
+											</View>
+										</View>
+									))
+								)}
+							</ScrollView>
+
+							<View className="mt-4">
+								<TouchableHighlight
+									onPress={onClose}
+									activeOpacity={0.7}
+									className="bg-gray-300 rounded-md py-3"
+									underlayColor="#d1d5db"
+								>
+									<Text className="text-gray-700 font-noto-bold text-lg text-center">
+										閉じる
+									</Text>
+								</TouchableHighlight>
+							</View>
+						</View>
+					</TouchableWithoutFeedback>
+				</View>
+			</TouchableWithoutFeedback>
 		</Modal>
 	);
 }

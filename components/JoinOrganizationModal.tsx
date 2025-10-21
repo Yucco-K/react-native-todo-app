@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {
+	ActivityIndicator,
 	Keyboard,
 	Modal,
 	Text,
 	TextInput,
-	TouchableOpacity,
+	TouchableHighlight,
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
@@ -72,13 +73,16 @@ export function JoinOrganizationModal({
 		<Modal
 			visible={visible}
 			transparent
-			animationType="fade"
+			animationType="slide"
 			onRequestClose={handleClose}
 		>
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View className="bg-white rounded-lg p-6 w-5/6 max-w-md">
+						<View
+							className="bg-white rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%" }}
+						>
 							<Text className="text-3xl font-noto-bold mb-4">グループに参加</Text>
 
 							<View className="mb-4">
@@ -107,28 +111,34 @@ export function JoinOrganizationModal({
 								</Text>
 							</View>
 
-							<View className="flex-row justify-end space-x-2">
-								<TouchableOpacity
-									className="px-6 py-3 bg-gray-200 rounded-md"
+							<View className="flex-row justify-end mt-4 space-x-2">
+								<TouchableHighlight
 									onPress={handleClose}
 									disabled={isLoading}
+									activeOpacity={0.7}
+									className="flex-1 bg-gray-300 rounded-md py-3 mr-2"
+									underlayColor="#d1d5db"
 								>
-									<Text className="text-gray-700 text-lg font-noto-bold">
+									<Text className="text-gray-700 font-noto-bold text-lg text-center">
 										キャンセル
 									</Text>
-								</TouchableOpacity>
+								</TouchableHighlight>
 
-								<TouchableOpacity
-									className={`px-6 py-3 rounded-md ${
-										isLoading ? "bg-blue-300" : "bg-blue-600"
-									}`}
+								<TouchableHighlight
 									onPress={handleJoin}
 									disabled={isLoading}
+									activeOpacity={0.7}
+									className="flex-1 bg-blue-500 rounded-md py-3"
+									underlayColor="#3b82f6"
 								>
-									<Text className="text-white text-lg font-noto-bold">
-										{isLoading ? "参加中..." : "参加"}
-									</Text>
-								</TouchableOpacity>
+									{isLoading ? (
+										<ActivityIndicator color="white" />
+									) : (
+										<Text className="text-white font-noto-bold text-lg text-center">
+											参加
+										</Text>
+									)}
+								</TouchableHighlight>
 							</View>
 						</View>
 					</TouchableWithoutFeedback>

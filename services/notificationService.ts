@@ -109,7 +109,7 @@ async function getAllPushTokens(
 
 		const tokens: string[] = [];
 		const tokenSet = new Set<string>(); // 重複を防ぐ
-		
+
 		querySnapshot.forEach((doc) => {
 			const data = doc.data();
 			if (data.pushToken) {

@@ -6,10 +6,10 @@ import {
 	Alert,
 	Keyboard,
 	Modal,
-	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
+	TouchableHighlight,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
@@ -258,29 +258,24 @@ export function OrganizationSettingsModal({
 		<Modal
 			visible={visible}
 			transparent
-			animationType="fade"
+			animationType="slide"
 			onRequestClose={onClose}
 		>
-			<Pressable className="flex-1 bg-black/50" onPress={onClose}>
-				<Pressable
-					className="flex-1 justify-center items-center"
-					onPress={(e) => e.stopPropagation()}
-				>
-					<View
-						className="bg-white rounded-lg w-5/6 max-w-md"
-						style={{ maxHeight: "90%" }}
-					>
-						{/* ヘッダー */}
-						<View className="border-b border-gray-200 p-6 flex-row items-center justify-between">
-							<Text className="text-2xl font-noto-bold flex-1">
+			<TouchableWithoutFeedback onPress={onClose}>
+				<View className="flex-1 justify-center items-center bg-black/50">
+					<TouchableWithoutFeedback>
+						<View
+							className="bg-white rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%" }}
+						>
+							<Text className="text-3xl font-noto-bold mb-4">
 								{organization.name}
 							</Text>
-							<TouchableOpacity onPress={onClose}>
-								<Ionicons name="close" size={28} color="#6b7280" />
-							</TouchableOpacity>
-						</View>
 
-						<ScrollView className="p-6">
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
 							{/* 招待コード */}
 							<View className="mb-6">
 								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
@@ -437,10 +432,24 @@ export function OrganizationSettingsModal({
 									</TouchableOpacity>
 								)}
 							</View>
-						</ScrollView>
-					</View>
-				</Pressable>
-			</Pressable>
+							</ScrollView>
+
+							<View className="mt-4">
+								<TouchableHighlight
+									onPress={onClose}
+									activeOpacity={0.7}
+									className="bg-gray-300 rounded-md py-3"
+									underlayColor="#d1d5db"
+								>
+									<Text className="text-gray-700 font-noto-bold text-lg text-center">
+										閉じる
+									</Text>
+								</TouchableHighlight>
+							</View>
+						</View>
+					</TouchableWithoutFeedback>
+				</View>
+			</TouchableWithoutFeedback>
 		</Modal>
 	);
 }
