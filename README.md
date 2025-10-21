@@ -92,12 +92,27 @@ npx expo start
 
 ## アプリへのアクセス
 
-1. アプリを起動
+### 方法1: ローカル開発環境（WiFi必要）
+
+1. `npx expo start` でアプリを起動
 2. QRコードをスキャン
    - **iOS**: カメラアプリでスキャン
    - **Android**: Expo Goアプリでスキャン
 
 > **注意**: 開発サーバーと同じWiFiネットワークに接続している必要があります
+
+### 方法2: 公開版（どこからでもアクセス可能）
+
+**Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のURLにアクセス：
+
+```
+exp://u.expo.dev/update/1397f6de-317f-43d0-961d-a35b7eb48442
+```
+
+または、EASダッシュボードから最新版にアクセス：
+https://expo.dev/accounts/yucco-k/projects/react-native-todo-app/updates
+
+> **メリット**: WiFi制限なし、どこからでもアクセス可能、常に最新版を使用
 
 ## プロジェクト構造
 
