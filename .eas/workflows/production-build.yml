@@ -3,7 +3,7 @@ name: Production Build
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   build_ios:
@@ -12,11 +12,10 @@ jobs:
     params:
       platform: ios
       profile: production
-      
+
   build_android:
     name: Build Android Production
     type: build
     params:
       platform: android
       profile: production
-

@@ -1,0 +1,27 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    name: Run Unit Tests
+    type: generic
+    command:
+      - npm install
+      - npm run test -- --ci --coverage
+
+  lint:
+    name: Run Linter
+    type: generic
+    command:
+      - npm install
+      - npm run lint
+

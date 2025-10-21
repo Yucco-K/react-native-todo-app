@@ -100,9 +100,26 @@ npm install
 npx expo start
 ```
 
+## テスト
+
+このプロジェクトはJestとReact Native Testing Libraryを使用したテスト環境が整っています。
+
+```bash
+# すべてのテストを実行
+npm test
+
+# 監視モード（ファイル変更時に自動再実行）
+npm run test:watch
+
+# カバレッジレポート付き
+npm run test:coverage
+```
+
+詳細は[TESTING_GUIDE.md](./TESTING_GUIDE.md)をご覧ください。
+
 ## CI/CD（自動デプロイ）
 
-このプロジェクトはEAS Workflowsを使用した自動デプロイに対応しています。
+このプロジェクトはEAS Workflowsを使用した自動デプロイ・自動テストに対応しています。
 
 ### 自動OTA更新
 

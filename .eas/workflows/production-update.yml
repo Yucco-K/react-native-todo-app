@@ -6,10 +6,17 @@ on:
       - main
 
 jobs:
+  test:
+    name: Run Tests
+    type: generic
+    command:
+      - npm install
+      - npm run test -- --ci
+
   update:
     name: Deploy to Production
     type: update
+    needs: test
     params:
       branch: production
       message: "Auto-deploy: ${{ github.event.head_commit.message }}"
-

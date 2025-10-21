@@ -13,4 +13,3 @@ jobs:
     params:
       branch: preview
       message: "Preview: ${{ github.event.head_commit.message }}"
-

@@ -61,6 +61,7 @@ jobs:
 ```
 
 **使い方**:
+
 ```bash
 git add .
 git commit -m "feat: 新機能を追加"
@@ -93,6 +94,7 @@ jobs:
 ```
 
 **使い方**:
+
 ```bash
 # 新機能ブランチを作成
 git checkout -b feature/dark-mode
@@ -114,7 +116,7 @@ name: Production Build
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   build_ios:
@@ -123,7 +125,7 @@ jobs:
     params:
       platform: ios
       profile: production
-      
+
   build_android:
     name: Build Android Production
     type: build
@@ -133,6 +135,7 @@ jobs:
 ```
 
 **使い方**:
+
 ```bash
 # バージョンタグを作成
 git tag v1.0.0
@@ -184,6 +187,7 @@ feature/* (機能開発)
 ### フロー例
 
 1. **新機能開発**
+
    ```bash
    git checkout -b feature/new-feature
    # 開発作業
@@ -192,6 +196,7 @@ feature/* (機能開発)
    ```
 
 2. **開発環境へマージ**
+
    ```bash
    git checkout develop
    git merge feature/new-feature
@@ -200,6 +205,7 @@ feature/* (機能開発)
    ```
 
 3. **本番環境へリリース**
+
    ```bash
    git checkout main
    git merge develop
@@ -267,4 +273,3 @@ EAS Workflowsでビルドを実行する際は、EASのビルドクレジット�
 1. `production`ブランチが正しく設定されているか確認
 2. アプリが最新版を取得しているか確認
 3. キャッシュをクリアして再起動
-
