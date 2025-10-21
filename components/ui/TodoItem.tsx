@@ -3,21 +3,12 @@ import { TODO_CATEGORIES } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-	Modal,
-	Pressable,
-	Switch,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 
 type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
-	onToggleShared?: (id: string, currentShared: boolean) => void;
 	onEdit?: (todo: Todo) => void;
 	onDelete?: (id: string) => void;
-	showShareToggle?: boolean;
 };
 
 export default function TodoItem({
@@ -27,14 +18,11 @@ export default function TodoItem({
 	content,
 	completed,
 	shared,
+	organizationId,
 	category,
-	completedAt,
-	completedBy,
 	onToggleComplete,
-	onToggleShared,
 	onEdit,
 	onDelete,
-	showShareToggle = false,
 }: TodoItemProps) {
 	const [menuVisible, setMenuVisible] = React.useState(false);
 	const [isExpanded, setIsExpanded] = React.useState(false);
@@ -136,31 +124,6 @@ export default function TodoItem({
 				>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">
 						<View className="bg-white rounded-lg shadow-lg overflow-hidden min-w-[180px]">
-							{/* 共有トグル - 作成者のみ */}
-							{showShareToggle && isOwner && (
-								<Pressable
-									className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200"
-									onPress={(e) => {
-										e.stopPropagation();
-									}}
-								>
-									<Text className="font-noto-regular text-gray-700 text-base">
-										共有する
-									</Text>
-									<Switch
-										value={shared}
-										onValueChange={() => {
-											onToggleShared?.(id, shared);
-											setMenuVisible(false);
-										}}
-										trackColor={{ false: "#d1d5db", true: "#60a5fa" }}
-										thumbColor={shared ? "#3b82f6" : "#f3f4f6"}
-										ios_backgroundColor="#d1d5db"
-										style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-									/>
-								</Pressable>
-							)}
-
 							{/* 編集ボタン - 作成者のみ */}
 							{isOwner && (
 								<Pressable
@@ -173,6 +136,7 @@ export default function TodoItem({
 											content,
 											completed,
 											shared,
+											organizationId,
 											category,
 										});
 										setMenuVisible(false);
