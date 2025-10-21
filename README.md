@@ -21,7 +21,9 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 - Firebase認証（メール/パスワード）
 - **ニックネーム登録**：ユーザー名を設定可能
 - **カテゴリ管理**：仕事、買い物、家事、学校などのカテゴリ分類
-- **AI カテゴリ推測**：OpenAI APIで自動カテゴリ分類
+- **AI カテゴリ推測**：Firebase Cloud Functions + OpenAI APIで安全な自動カテゴリ分類
+  - **セキュリティ**: APIキーはサーバーサイドで管理（漏洩リスクなし）
+  - **レート制限**: 1ユーザー1日10回まで
 - **褒め言葉トースト**：タスク完了時にパーソナライズされた褒め言葉を表示（4秒間）
   - **フィードバック機能**：ライク👍/ディスライク👎ボタンで好みを学習
   - **スコアリングシステム**：ユーザーの反応に基づいて表示頻度を調整（多様性重視）
@@ -43,8 +45,8 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 ## 技術スタック
 
 - React Native + Expo Router
-- Firebase (Authentication, Firestore)
-- OpenAI API (GPT-3.5-turbo)
+- Firebase (Authentication, Firestore, Cloud Functions)
+- OpenAI API (GPT-3.5-turbo) - Firebase Cloud Functions経由で安全に実装
 - React Context API (テーマ管理、組織管理、Todo更新管理)
 - AsyncStorage (ユーザー設定の永続化)
 - NativeWind, Zod, expo-notifications

@@ -13,7 +13,7 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
 - グループTodo変更時の自動プッシュ通知
 - グループ管理機能（作成、招待、メンバー管理、権限制御）
 - **ニックネーム機能**：ユーザーの表示名をカスタマイズ
-- **AIカテゴリ推測**：OpenAI APIによる自動カテゴリ分類
+- **AIカテゴリ推測**：Firebase Cloud Functions経由で安全に実装（レート制限付き）
 - **褒め言葉システム**：完了時にパーソナライズされた応援メッセージ
 - **おすすめTODO機能**：時間帯・曜日・周期を分析した自動提案（ワンタップで追加）
 - **ダークモード**：システム設定の自動検出と手動切り替えに対応、全画面・モーダルで統一されたテーマ
@@ -33,8 +33,9 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
 
 - **Firebase Authentication**: ユーザー認証（Email/Password）
 - **Cloud Firestore**: NoSQLデータベース
+- **Firebase Cloud Functions**: サーバーレス関数（AI推測、レート制限）
+- **OpenAI API**: AI カテゴリ推測（GPT-3.5-turbo、Cloud Functions経由）
 - **Expo Notifications**: プッシュ通知
-- **OpenAI API**: AI カテゴリ推測（GPT-3.5-turbo）
 
 ### バリデーション・状態管理
 
@@ -66,7 +67,9 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
 - **完了切り替え**: チェックボックスで即座に反映
 - **共有切り替え**: 作成者がMy List⇄Shared間を移動可能
 - **カテゴリ設定**: 仕事、買い物、家事、勉強、健康、趣味、その他から選択
-- **AIカテゴリ推測**: タイトル・内容からOpenAI APIで自動分類
+- **AIカテゴリ推測**: タイトル・内容からFirebase Cloud Functions + OpenAI APIで自動分類
+  - セキュリティ: APIキーはサーバーサイドで安全に管理
+  - レート制限: 1ユーザー1日10回まで
 
 ### 3. グループ機能
 
@@ -514,7 +517,7 @@ react-native-todo-app/
    ```
 
 2. **環境変数の設定**
-   `.env`ファイルを作成し、Firebase設定とOpenAI APIキーを追加：
+   `.env`ファイルを作成し、Firebase設定を追加：
 
    ```
    EXPO_PUBLIC_FIREBASE_API_KEY=your-api-key
@@ -524,7 +527,7 @@ react-native-todo-app/
    EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
    EXPO_PUBLIC_FIREBASE_APP_ID=your-app-id
    EXPO_PUBLIC_EAS_PROJECT_ID=your-eas-project-id
-   EXPO_PUBLIC_OPENAI_API_KEY=your-openai-api-key  # AIカテゴリ推測用
+   # 注: OpenAI APIキーは不要です（Cloud Functionsで管理）
    ```
 
 3. **Firebaseの設定**
@@ -610,33 +613,87 @@ FirebaseError: Missing or insufficient permissions.
 
 ### 現在の状態
 
-**開発環境：テスト・検証フェーズ**
+**開発環境：テスト・検証フェーズ（本番移行準備中）**
 
 - ✅ 基本機能実装完了
-- ✅ iOS環境で動作確認済み
-- ⚠️ テスト用Firebase環境で運用中
+- ✅ iOS環境で動作確認済み（iOS 18.6.2）
+- ✅ ダークモード実装完了（全画面・全モーダル対応）
+- ✅ Firebase Cloud Functions デプロイ済み（AI機能）
+- ✅ レート制限実装済み（1ユーザー100回/日、開発用）
+- ✅ セキュリティ強化完了（OpenAI APIキーはサーバーサイドで管理）
+- ✅ CI/CD環境構築済み（EAS Workflows）
+- ✅ テスト環境整備済み（Jest + React Native Testing Library）
+- ⚠️ Firebase環境で運用中（`react-native-todo-app-prod`プロジェクト）
 - ⚠️ Expo Go による開発環境のみ
-- ❌ 本番環境未構築
+- ❌ スタンドアロンビルド未作成
 - ❌ Android未検証
+- ❌ ストア公開未実施
 
-### 本番運用への課題
+### 完了した項目
 
-1. **インフラ**
-   - 本番用Firebaseプロジェクトの作成
-   - セキュリティルールの本番環境最適化
-   - バックアップ・リカバリ戦略の策定
+1. **セキュリティ対策** ✅
+   - ✅ OpenAI APIキーをCloud Functionsで安全に管理（クライアント側に露出なし）
+   - ✅ Firebase Cloud Functions経由でAI機能を実装
+   - ✅ レート制限の実装（Firestoreベース、1ユーザー100回/日）
+   - ✅ Firebase Authentication による認証必須化
+   - ✅ Firestore Security Rules 設定済み
 
-2. **アプリ配信**
-   - スタンドアロンビルドの作成
-   - App Store / Google Play への公開準備
-   - TestFlightでのβテスト実施
+2. **CI/CD** ✅
+   - ✅ EAS Workflows 設定済み
+   - ✅ 自動OTA更新（main → production、develop → preview）
+   - ✅ 自動ビルド（タグ作成時）
+   - ✅ GitHub連携済み
 
-3. **監視・運用**
-   - Firebase Analytics の導入
-   - エラートラッキング（Sentry等）
-   - パフォーマンス監視
+3. **テスト環境** ✅
+   - ✅ Jest + React Native Testing Library 導入
+   - ✅ テストスクリプト設定（test、test:watch、test:coverage）
+   - ✅ サンプルテスト作成済み
 
-4. **セキュリティ**
-   - API キーの環境分離（開発/本番）
-   - HTTPS通信の強制
-   - レート制限の実装
+4. **UI/UX改善** ✅
+   - ✅ ダークモード実装（システム設定自動検出、手動切り替え対応）
+   - ✅ AsyncStorage でテーマ設定永続化
+   - ✅ ThemeContext による全画面・全モーダル対応
+
+### 本番運用への残課題
+
+1. **アプリ配信** ⚠️
+   - ❌ スタンドアロンビルドの作成（`eas build --platform ios/android`）
+   - ❌ App Store / Google Play への公開準備
+   - ❌ TestFlightでのβテスト実施
+   - 💡 **現状**: Expo Go経由でのアクセスのみ（QRコード公開済み）
+
+2. **プラットフォーム対応** ⚠️
+   - ❌ Android環境での動作検証
+   - ❌ Android固有のUI/UX調整
+   - ❌ Android通知設定の最適化
+
+3. **監視・運用** ⚠️
+   - ❌ Firebase Analytics の導入（ユーザー行動分析）
+   - ❌ エラートラッキング（Sentry等の導入）
+   - ❌ パフォーマンス監視（Firebase Performance Monitoring）
+   - ❌ コスト監視（Firebase、OpenAI使用量アラート）
+
+4. **本番環境最適化** ⚠️
+   - 💡 OpenAI レート制限の値調整を検討（現在100回/日、本番環境では10回/日推奨）
+     - ⚠️ 実装済みだが、現在は開発テスト用に緩和された設定
+     - 💰 コスト抑制のため、本番公開時には10回/日への変更を推奨
+   - ❌ バックアップ・リカバリ戦略の策定
+   - ❌ 環境変数の分離（開発/本番環境）
+   - ❌ 本番用Firebaseプロジェクトの分離（オプション）
+
+### 今後の推奨アクション
+
+1. **短期（1-2週間）**
+   - 💡 OpenAI レート制限の値を本番用に調整（100回 → 10回/日、オプション）
+   - スタンドアロンビルドの作成とTestFlight配信
+   - Android環境での動作検証
+
+2. **中期（1-2ヶ月）**
+   - Firebase Analytics 導入
+   - Sentry等のエラートラッキング導入
+   - App Store / Google Play 公開準備
+
+3. **長期（3ヶ月以降）**
+   - 本番/開発環境の完全分離
+   - バックアップ・リカバリ戦略の実装
+   - パフォーマンス最適化とスケーラビリティ向上

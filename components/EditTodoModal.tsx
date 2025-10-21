@@ -1,5 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
-import { predictCategory } from "@/services/aiCategoryService";
+import { AICategoryError, predictCategory } from "@/services/aiCategoryService";
 import { notifyTodoUpdated } from "@/services/notificationService";
 import { updateTodo } from "@/services/todoService";
 import type { TodoCategory } from "@/types/Category";
@@ -90,11 +90,22 @@ export default function EditTodoModal({
 			// });
 		} catch (error) {
 			console.error("カテゴリ推測エラー:", error);
-			Toast.show({
-				type: "error",
-				text1: "AI推測失敗",
-				text2: "カテゴリの推測に失敗しました",
-			});
+
+			// カスタムエラーの場合、ユーザーフレンドリーなメッセージを表示
+			if (error instanceof AICategoryError) {
+				Toast.show({
+					type: "error",
+					text1: error.message,
+					text2: error.userMessage,
+					visibilityTime: 5000, // レート制限メッセージは長めに表示
+				});
+			} else {
+				Toast.show({
+					type: "error",
+					text1: "AI推測失敗",
+					text2: "カテゴリの推測に失敗しました。手動で選択してください。",
+				});
+			}
 		} finally {
 			setIsPredicting(false);
 		}

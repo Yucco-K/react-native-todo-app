@@ -7,6 +7,7 @@ import {
 	initializeAuth,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
 // Firebaseの設定
 // Firebase Console (https://console.firebase.google.com/) で取得した設定を入力してください
@@ -39,3 +40,6 @@ export { auth };
 
 // Firestoreのインスタンスを取得
 export const db = getFirestore(app);
+
+// Cloud Functionsのインスタンスを取得（東京リージョン）
+export const functions = getFunctions(app, "asia-northeast1");

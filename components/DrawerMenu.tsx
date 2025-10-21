@@ -73,19 +73,7 @@ export function DrawerMenu({
 				>
 					<View className="flex-1">
 						{/* ヘッダー */}
-						<View
-							className="p-6 pt-16"
-							style={{
-								backgroundColor: isDark
-									? "rgba(55, 65, 81, 0.9)"
-									: "rgba(255, 255, 255, 0.85)",
-								shadowColor: "#000",
-								shadowOffset: { width: 0, height: 2 },
-								shadowOpacity: 0.1,
-								shadowRadius: 4,
-								elevation: 3,
-							}}
-						>
+						<View className="p-6 pt-16">
 							<Text
 								className="text-2xl font-noto-bold"
 								style={{ color: isDark ? "#60a5fa" : "#2563eb" }}
@@ -220,9 +208,9 @@ export function DrawerMenu({
 							</View>
 
 							{/* アクションボタン */}
-							<View className="mt-6 space-y-2">
+							<View className="mt-6">
 								<TouchableOpacity
-									className="flex-row items-center p-4 rounded-lg border"
+									className="flex-row items-center p-4 rounded-lg border mb-4"
 									style={{
 										backgroundColor: isDark
 											? "rgba(34, 197, 94, 0.2)"
@@ -248,7 +236,7 @@ export function DrawerMenu({
 								</TouchableOpacity>
 
 								<TouchableOpacity
-									className="flex-row items-center p-4 rounded-lg border"
+									className="flex-row items-center p-4 rounded-lg border mb-4"
 									style={{
 										backgroundColor: isDark
 											? "rgba(59, 130, 246, 0.2)"

@@ -1,18 +1,31 @@
 import type { TodoCategory } from "@/types/Category";
-import OpenAI from "openai";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "../config/firebase";
 
-const getOpenAIClient = () => {
-	const apiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+/**
+ * ✅ セキュリティ対応完了：Firebase Cloud Functions経由でAI機能を使用
+ *
+ * セキュリティ改善：
+ * - OpenAI APIキーはサーバーサイド（Cloud Functions）で安全に管理
+ * - クライアントからAPIキーが漏洩するリスクを完全に排除
+ * - レート制限: 1ユーザーあたり1日10回まで
+ *
+ * 詳細は SECURITY_GUIDE.md を参照してください
+ */
 
-	if (!apiKey || apiKey === "your_openai_api_key_here") {
-		throw new Error("OpenAI APIキーが設定されていません");
+/**
+ * AIカテゴリ推測エラーのカスタムエラークラス
+ */
+export class AICategoryError extends Error {
+	constructor(
+		message: string,
+		public readonly userMessage: string,
+		public readonly code?: string
+	) {
+		super(message);
+		this.name = "AICategoryError";
 	}
-
-	return new OpenAI({
-		apiKey,
-		dangerouslyAllowBrowser: true,
-	});
-};
+}
 
 export async function predictCategory(
 	title: string,
@@ -23,75 +36,53 @@ export async function predictCategory(
 			return "other";
 		}
 
-		const client = getOpenAIClient();
+		// Firebase Cloud Functionを呼び出し
+		const predictCategoryFn = httpsCallable<
+			{ title: string; content: string },
+			{ category: TodoCategory }
+		>(functions, "predictCategory");
 
-		const categoryDescriptions = `
-- work: 仕事関連のタスク（会議、資料作成、プロジェクト管理など）
-- shopping: 買い物関連のタスク（購入、注文、買い出しなど）
-- personal: プライベート関連のタスク（趣味、運動、旅行、映画など）
-- study: 勉強・学習関連のタスク（読書、資格勉強、学習、復習など）
-- school: 学校関連のタスク（授業、宿題、テスト、提出物など）
-- housework: 家事関連のタスク（掃除、洗濯、料理、片付けなど）
-- other: その他のタスク
-		`.trim();
+		console.log(`🤖 AIカテゴリ推測を開始: "${title}"`);
 
-		const prompt = `
-あなたはタスク管理アプリのアシスタントです。
-以下のタスクを最も適切なカテゴリに分類してください。
+		const result = await predictCategoryFn({ title, content });
 
-タスクのタイトル: ${title}
-タスクの内容: ${content || "（内容なし）"}
+		const category = result.data.category;
+		console.log(`✅ AIカテゴリ推測成功: "${title}" → ${category}`);
 
-利用可能なカテゴリ:
-${categoryDescriptions}
+		return category;
+	} catch (error: unknown) {
+		// エラーハンドリング
+		const errorCode = (error as { code?: string; message?: string }).code;
+		const errorMessage = (error as { message?: string }).message;
 
-カテゴリ名（work, shopping, personal, study, school, housework, other）のみを返してください。
-他の説明は不要です。
-		`.trim();
-
-		const response = await client.chat.completions.create({
-			model: "gpt-3.5-turbo",
-			messages: [
-				{
-					role: "system",
-					content:
-						"あなたはタスクを分類する専門家です。カテゴリ名のみを返してください。",
-				},
-				{
-					role: "user",
-					content: prompt,
-				},
-			],
-			temperature: 0.3,
-			max_tokens: 10,
-		});
-
-		const predictedCategory = response.choices[0]?.message?.content
-			?.trim()
-			.toLowerCase();
-
-		const validCategories: TodoCategory[] = [
-			"work",
-			"shopping",
-			"personal",
-			"study",
-			"school",
-			"housework",
-			"other",
-		];
-
-		if (
-			predictedCategory &&
-			validCategories.includes(predictedCategory as TodoCategory)
-		) {
-			console.log(`✅ AIカテゴリ推測: "${title}" → ${predictedCategory}`);
-			return predictedCategory as TodoCategory;
+		if (errorCode === "functions/unauthenticated") {
+			console.error("❌ 認証エラー: ログインが必要です");
+			throw new AICategoryError(
+				"認証エラー",
+				"ログインが必要です。再度ログインしてください。",
+				errorCode
+			);
+		} else if (errorCode === "functions/resource-exhausted") {
+			console.warn("⚠️ レート制限: 1日の上限に達しました");
+			throw new AICategoryError(
+				"レート制限",
+				"AI推測の1日の上限（100回）に達しました。明日再度お試しください。",
+				errorCode
+			);
+		} else if (errorCode === "functions/internal") {
+			console.error("❌ サーバーエラー:", errorMessage);
+			throw new AICategoryError(
+				"サーバーエラー",
+				"サーバーで問題が発生しました。しばらくしてから再度お試しください。",
+				errorCode
+			);
+		} else {
+			console.error("❌ AIカテゴリ推測エラー:", error);
+			throw new AICategoryError(
+				"AI推測エラー",
+				"AI推測に失敗しました。手動でカテゴリを選択してください。",
+				"unknown"
+			);
 		}
-
-		console.warn(`⚠️ AIが無効なカテゴリを返しました: ${predictedCategory}`);
-		return "other";
-	} catch (error) {
-		console.error("❌ AIカテゴリ推測エラー:", error);
-		return "other";
 	}
 }
