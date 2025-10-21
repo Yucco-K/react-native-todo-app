@@ -33,12 +33,20 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 - **操作性の向上**
   - チェックボックス・ボタンサイズを1.5倍に拡大（タップしやすい）
   - シンプルなグレーデザインで見やすい
+- **ダークモード**：目に優しい暗いテーマに切り替え可能
+  - **自動テーマ検出**：デバイスのシステム設定を自動認識
+  - **トグルボタン**：My List画面右上でワンタップ切り替え
+  - **設定保存**：一度設定すれば次回起動時も維持
+  - **全画面対応**：すべての画面・モーダル・コンポーネントがダークモードに対応
+  - **視認性最適化**：テキストやUIカラーをダークモードで見やすく調整
 
 ## 技術スタック
 
 - React Native + Expo Router
 - Firebase (Authentication, Firestore)
 - OpenAI API (GPT-3.5-turbo)
+- React Context API (テーマ管理、組織管理、Todo更新管理)
+- AsyncStorage (ユーザー設定の永続化)
 - NativeWind, Zod, expo-notifications
 
 ## デモ動画
@@ -123,8 +131,19 @@ npx expo start
 ```
 app/              # 画面（Expo Router）
 components/       # UIコンポーネント
+  ├─ ui/          # TodoItemなどのUI部品
+  └─ *.tsx        # モーダルコンポーネント（Todo追加/編集、グループ管理など）
 services/         # ビジネスロジック
+  ├─ todoService.ts              # Todo CRUD操作
+  ├─ organizationService.ts      # グループ管理
+  ├─ praiseFeedbackService.ts    # 褒め言葉フィードバック
+  ├─ todoRecommendationService.ts # おすすめTODO生成
+  └─ notificationService.ts      # プッシュ通知
 contexts/         # Context API
+  ├─ AuthContext.tsx             # ユーザー認証
+  ├─ OrganizationContext.tsx     # グループ管理
+  ├─ TodoRefreshContext.tsx      # Todo更新管理
+  └─ ThemeContext.tsx            # ダークモード管理
 config/           # Firebase設定
 types/            # 型定義
 ```
