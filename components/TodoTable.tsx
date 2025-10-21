@@ -220,7 +220,14 @@ export default function TodoTable({
 
 	useEffect(() => {
 		getTodos();
-	}, [refresh, organizationId, getTodos]);
+	}, [getTodos]);
+
+	// refreshプロップが変更されたときに再取得
+	useEffect(() => {
+		if (refresh !== undefined) {
+			getTodos();
+		}
+	}, [refresh, getTodos]);
 
 	return (
 		<View className="flex-1">

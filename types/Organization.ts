@@ -1,4 +1,4 @@
-export type Group = {
+export type Organization = {
 	id: string;
 	name: string;
 	ownerId: string;
@@ -6,4 +6,3 @@ export type Group = {
 	members: string[]; // ユーザーIDの配列
 	createdAt: Date;
 };
-

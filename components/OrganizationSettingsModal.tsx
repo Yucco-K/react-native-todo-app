@@ -53,7 +53,7 @@ export function OrganizationSettingsModal({
 
 	const isOwner = organization?.ownerId === auth.currentUser?.uid;
 
-	const fetchMembers = async () => {
+	const fetchMembers = useCallback(async () => {
 		if (!organization) return;
 
 		setIsLoading(true);
@@ -70,7 +70,7 @@ export function OrganizationSettingsModal({
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [organization]);
 
 	useEffect(() => {
 		if (visible && organization) {
@@ -81,7 +81,7 @@ export function OrganizationSettingsModal({
 			setInviteError(null);
 			setInviteSuccess(null);
 		}
-	}, [visible, organization]);
+	}, [visible, organization, fetchMembers]);
 
 	const handleCopyInviteCode = async () => {
 		if (!organization) return;
@@ -273,7 +273,7 @@ export function OrganizationSettingsModal({
 							className="bg-white rounded-lg p-6 w-11/12"
 							style={{ maxHeight: "80%" }}
 						>
-							<Text className="text-3xl font-noto-bold mb-4">
+							<Text className="text-xl font-noto-bold mb-4">
 								{organization.name}
 							</Text>
 
