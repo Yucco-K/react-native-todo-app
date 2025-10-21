@@ -9,6 +9,7 @@ type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
 	onEdit?: (todo: Todo) => void;
 	onDelete?: (id: string) => void;
+	isDark?: boolean;
 };
 
 export default function TodoItem({
@@ -23,6 +24,7 @@ export default function TodoItem({
 	onToggleComplete,
 	onEdit,
 	onDelete,
+	isDark = false,
 }: TodoItemProps) {
 	const [menuVisible, setMenuVisible] = React.useState(false);
 	const [isExpanded, setIsExpanded] = React.useState(false);
@@ -32,7 +34,10 @@ export default function TodoItem({
 	const isOwner = user?.uid === userId;
 
 	return (
-		<View className="py-2 border-b border-gray-200">
+		<View
+			className="py-2 border-b"
+			style={{ borderColor: isDark ? "#4b5563" : "#e5e7eb" }}
+		>
 			<View className="flex-row items-center justify-between">
 				{/* 左側: チェックボックスとTodo内容 */}
 				<TouchableOpacity
@@ -65,9 +70,17 @@ export default function TodoItem({
 					{/* タイトルと内容 */}
 					<View className="flex-1">
 						<Text
-							className={`font-noto-bold text-xl ${
-								completed ? "line-through text-gray-400" : ""
-							}`}
+							className="font-noto-bold text-xl"
+							style={{
+								color: completed
+									? isDark
+										? "#9ca3af"
+										: "#9ca3af"
+									: isDark
+										? "#e5e7eb"
+										: "#000000",
+								textDecorationLine: completed ? "line-through" : "none",
+							}}
 							numberOfLines={1}
 						>
 							{title}
@@ -88,9 +101,17 @@ export default function TodoItem({
 								)}
 
 								<Text
-									className={`font-noto-regular text-lg text-gray-500 mt-2 ${
-										completed ? "line-through text-gray-400" : ""
-									}`}
+									className="font-noto-regular text-lg mt-2"
+									style={{
+										color: completed
+											? isDark
+												? "#9ca3af"
+												: "#9ca3af"
+											: isDark
+												? "#e5e7eb"
+												: "#6b7280",
+										textDecorationLine: completed ? "line-through" : "none",
+									}}
 								>
 									{content}
 								</Text>
@@ -123,11 +144,18 @@ export default function TodoItem({
 					onPress={() => setMenuVisible(false)}
 				>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">
-						<View className="bg-white rounded-lg shadow-lg overflow-hidden min-w-[180px]">
+						<View
+							className="rounded-lg shadow-lg overflow-hidden min-w-[180px]"
+							style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
+						>
 							{/* 編集ボタン - 作成者のみ */}
 							{isOwner && (
 								<Pressable
-									className="flex-row items-center px-4 py-3 border-b border-gray-200"
+									className="flex-row items-center px-4 py-3"
+									style={{
+										borderBottomWidth: 1,
+										borderBottomColor: isDark ? "#374151" : "#e5e7eb",
+									}}
 									onPress={() => {
 										onEdit?.({
 											id,
@@ -142,8 +170,15 @@ export default function TodoItem({
 										setMenuVisible(false);
 									}}
 								>
-									<Ionicons name="create-outline" size={22} color="#3b82f6" />
-									<Text className="ml-3 font-noto-regular text-gray-700 text-base">
+									<Ionicons
+										name="create-outline"
+										size={22}
+										color={isDark ? "#60a5fa" : "#3b82f6"}
+									/>
+									<Text
+										className="ml-3 font-noto-regular text-base"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
+									>
 										編集
 									</Text>
 								</Pressable>
