@@ -9,6 +9,7 @@ import {
 	query,
 	updateDoc,
 	where,
+	type DocumentData,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { TodoCategory } from "../types/Category";
@@ -29,7 +30,7 @@ export const getTodos = async (
 			throw new Error("ユーザーがログインしていません");
 		}
 
-		let q;
+		let q: ReturnType<typeof query>;
 		if (organizationId) {
 			// 組織のTodoを取得
 			q = query(
@@ -51,7 +52,7 @@ export const getTodos = async (
 
 		const todos: Todo[] = [];
 		querySnapshot.forEach((doc) => {
-			const data = doc.data();
+			const data = doc.data() as DocumentData;
 			todos.push({
 				id: doc.id,
 				userId: data.userId,

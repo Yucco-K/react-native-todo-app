@@ -270,10 +270,10 @@ export function OrganizationSettingsModal({
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback>
 						<View
-							className="bg-white rounded-lg p-6 w-11/12"
+							className="bg-white/95 rounded-lg p-6 w-11/12"
 							style={{ maxHeight: "80%" }}
 						>
-							<Text className="text-xl font-noto-bold mb-4">
+							<Text className="text-xl font-noto-bold mb-4 bg-white/80 text-blue-600 px-4 py-2 rounded-md">
 								{organization.name}
 							</Text>
 

@@ -1,6 +1,7 @@
 import React, {
 	createContext,
 	type ReactNode,
+	useCallback,
 	useContext,
 	useEffect,
 	useState,
@@ -28,7 +29,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 		useState<Organization | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const refreshOrganizations = async () => {
+	const refreshOrganizations = useCallback(async () => {
 		// ログインしていない場合は何もしない
 		if (!user) {
 			return;
@@ -51,7 +52,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [user, selectedOrganization]);
 
 	const selectOrganization = (org: Organization | null) => {
 		console.log("🔄 OrganizationContext: 選択変更", {
@@ -71,7 +72,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 			setOrganizations([]);
 			setSelectedOrganization(null);
 		}
-	}, [user]);
+	}, [user, refreshOrganizations]);
 
 	return (
 		<OrganizationContext.Provider
