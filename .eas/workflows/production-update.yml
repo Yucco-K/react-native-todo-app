@@ -1,0 +1,15 @@
+name: Production OTA Update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update:
+    name: Deploy to Production
+    type: update
+    params:
+      branch: production
+      message: "Auto-deploy: ${{ github.event.head_commit.message }}"
+

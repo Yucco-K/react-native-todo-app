@@ -1,0 +1,16 @@
+name: Preview OTA Update
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/*
+
+jobs:
+  update:
+    name: Deploy to Preview
+    type: update
+    params:
+      branch: preview
+      message: "Preview: ${{ github.event.head_commit.message }}"
+

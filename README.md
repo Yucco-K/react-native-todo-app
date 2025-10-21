@@ -100,6 +100,38 @@ npm install
 npx expo start
 ```
 
+## CI/CD（自動デプロイ）
+
+このプロジェクトはEAS Workflowsを使用した自動デプロイに対応しています。
+
+### 自動OTA更新
+
+- **本番環境**: `main`ブランチにプッシュすると自動で`production`ブランチに配信
+- **プレビュー環境**: `develop`または`feature/*`ブランチにプッシュすると`preview`ブランチに配信
+
+### 自動ビルド
+
+- **プロダクションビルド**: `v1.0.0`のようなタグを作成するとiOS/Androidの本番ビルドを自動作成
+
+### EASプロジェクトへのリンク
+
+1. [EAS Dashboard](https://expo.dev/)でプロジェクトの「GitHub settings」に移動
+2. GitHub Appをインストールしてリポジトリを接続
+3. 以降、GitHubへのプッシュで自動デプロイが実行されます
+
+### 手動実行
+
+```bash
+# 本番環境への更新
+eas workflow:run production-update.yml
+
+# プレビュー環境への更新
+eas workflow:run preview-update.yml
+
+# プロダクションビルド
+eas workflow:run production-build.yml
+```
+
 ## アプリへのアクセス
 
 ### 方法1: ローカル開発環境（WiFi必要）
