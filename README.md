@@ -107,7 +107,9 @@ npx expo start
 
 **Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のQRコードをスキャン：
 
-<img src="./assets/qr-code.png" width="200" />
+<img src="https://qr.expo.dev/eas-update?slug=react-native-todo-app&releaseChannel=production&host=u.expo.dev" width="200" />
+
+> このQRコードは常に最新版に自動更新されます。
 
 > **メリット**: WiFi制限なし、どこからでもアクセス可能、常に最新版を使用
 
