@@ -9,8 +9,8 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { useTheme } from "../contexts/ThemeContext";
 import { useOrganization } from "../contexts/OrganizationContext";
+import { useTheme } from "../contexts/ThemeContext";
 import {
 	acceptInvitation,
 	declineInvitation,
@@ -113,63 +113,70 @@ export function InvitationListModal({
 			animationType="slide"
 			onRequestClose={onClose}
 		>
-		<TouchableWithoutFeedback onPress={onClose}>
-			<View className="flex-1 justify-center items-center bg-black/50">
-				<TouchableWithoutFeedback>
-					<View
-						className="rounded-lg p-6 w-11/12"
-						style={{
-							maxHeight: "80%",
-							backgroundColor: isDark ? "#1f2937" : "#ffffff",
-						}}
-					>
-						<Text
-							className="text-3xl font-noto-bold mb-4"
-							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+			<TouchableWithoutFeedback onPress={onClose}>
+				<View className="flex-1 justify-center items-center bg-black/50">
+					<TouchableWithoutFeedback>
+						<View
+							className="rounded-lg p-6 w-11/12"
+							style={{
+								maxHeight: "80%",
+								backgroundColor: isDark ? "#1f2937" : "#ffffff",
+							}}
 						>
-							招待一覧
-						</Text>
+							<Text
+								className="text-3xl font-noto-bold mb-4"
+								style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+							>
+								招待一覧
+							</Text>
 
-						<ScrollView
-							style={{ maxHeight: 400 }}
-							showsVerticalScrollIndicator={false}
-						>
-							{isLoading ? (
-								<View className="py-8">
-									<ActivityIndicator size="large" color={isDark ? "#60a5fa" : "#3b82f6"} />
-								</View>
-							) : invitations.length === 0 ? (
-								<View className="py-8">
-									<Text
-										className="text-center text-lg font-noto-regular"
-										style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-									>
-										招待はありません
-									</Text>
-								</View>
-							) : (
-								invitations.map((invitation) => (
-									<View
-										key={invitation.id}
-										className="mb-4 p-4 rounded-lg"
-										style={{
-											backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "#eff6ff",
-											borderWidth: 1,
-											borderColor: isDark ? "rgba(59, 130, 246, 0.4)" : "#93c5fd",
-										}}
-									>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
+								{isLoading ? (
+									<View className="py-8">
+										<ActivityIndicator
+											size="large"
+											color={isDark ? "#60a5fa" : "#3b82f6"}
+										/>
+									</View>
+								) : invitations.length === 0 ? (
+									<View className="py-8">
 										<Text
-											className="text-xl font-noto-bold mb-2"
-											style={{ color: isDark ? "#d1d5db" : "#1f2937" }}
+											className="text-center text-lg font-noto-regular"
+											style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
 										>
-											{invitation.organizationName}
+											招待はありません
 										</Text>
-										<Text
-											className="text-sm font-noto-regular mb-4"
-											style={{ color: isDark ? "#9ca3af" : "#4b5563" }}
+									</View>
+								) : (
+									invitations.map((invitation) => (
+										<View
+											key={invitation.id}
+											className="mb-4 p-4 rounded-lg"
+											style={{
+												backgroundColor: isDark
+													? "rgba(59, 130, 246, 0.2)"
+													: "#eff6ff",
+												borderWidth: 1,
+												borderColor: isDark
+													? "rgba(59, 130, 246, 0.4)"
+													: "#93c5fd",
+											}}
 										>
-											グループへの招待が届いています
-										</Text>
+											<Text
+												className="text-xl font-noto-bold mb-2"
+												style={{ color: isDark ? "#d1d5db" : "#1f2937" }}
+											>
+												{invitation.organizationName}
+											</Text>
+											<Text
+												className="text-sm font-noto-regular mb-4"
+												style={{ color: isDark ? "#9ca3af" : "#4b5563" }}
+											>
+												グループへの招待が届いています
+											</Text>
 
 											<View className="flex-row space-x-2">
 												<TouchableHighlight

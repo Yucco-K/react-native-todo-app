@@ -198,25 +198,25 @@ export default function EditTodoModal({
 								Todo編集
 							</Text>
 
-						<View className="mb-4">
-							<TextInput
-								className="border-2 rounded-md text-lg"
-								style={{
-									fontFamily: "System",
-									lineHeight: undefined,
-									paddingVertical: 14,
-									paddingHorizontal: 12,
-									fontSize: 18,
-									borderColor: isDark ? "#4b5563" : "#d1d5db",
-									backgroundColor: isDark ? "#374151" : "#ffffff",
-									color: isDark ? "#f3f4f6" : "#000000",
-								}}
-								placeholder="タイトル"
-								placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-								value={title}
-								onChangeText={setTitle}
-								autoFocus={true}
-							/>
+							<View className="mb-4">
+								<TextInput
+									className="border-2 rounded-md text-lg"
+									style={{
+										fontFamily: "System",
+										lineHeight: undefined,
+										paddingVertical: 14,
+										paddingHorizontal: 12,
+										fontSize: 18,
+										borderColor: isDark ? "#4b5563" : "#d1d5db",
+										backgroundColor: isDark ? "#374151" : "#ffffff",
+										color: isDark ? "#f3f4f6" : "#000000",
+									}}
+									placeholder="タイトル"
+									placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+									value={title}
+									onChangeText={setTitle}
+									autoFocus={true}
+								/>
 								{errors.title && (
 									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 										{errors.title}
@@ -224,28 +224,28 @@ export default function EditTodoModal({
 								)}
 							</View>
 
-						<View className="mb-4">
-							<TextInput
-								className="border-2 rounded-md text-lg"
-								style={{
-									fontFamily: "System",
-									lineHeight: undefined,
-									minHeight: 120,
-									paddingVertical: 14,
-									paddingHorizontal: 12,
-									fontSize: 18,
-									borderColor: isDark ? "#4b5563" : "#d1d5db",
-									backgroundColor: isDark ? "#374151" : "#ffffff",
-									color: isDark ? "#f3f4f6" : "#000000",
-								}}
-								placeholder="内容（任意）"
-								placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-								value={content}
-								onChangeText={setContent}
-								multiline
-								numberOfLines={4}
-								textAlignVertical="top"
-							/>
+							<View className="mb-4">
+								<TextInput
+									className="border-2 rounded-md text-lg"
+									style={{
+										fontFamily: "System",
+										lineHeight: undefined,
+										minHeight: 120,
+										paddingVertical: 14,
+										paddingHorizontal: 12,
+										fontSize: 18,
+										borderColor: isDark ? "#4b5563" : "#d1d5db",
+										backgroundColor: isDark ? "#374151" : "#ffffff",
+										color: isDark ? "#f3f4f6" : "#000000",
+									}}
+									placeholder="内容（任意）"
+									placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+									value={content}
+									onChangeText={setContent}
+									multiline
+									numberOfLines={4}
+									textAlignVertical="top"
+								/>
 								{errors.content && (
 									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 										{errors.content}
@@ -253,14 +253,14 @@ export default function EditTodoModal({
 								)}
 							</View>
 
-						{/* カテゴリ選択 */}
-						<View className="mb-4">
-							<Text
-								className="font-noto-bold text-lg mb-2"
-								style={{ color: isDark ? "#d1d5db" : "#374151" }}
-							>
-								カテゴリ
-							</Text>
+							{/* カテゴリ選択 */}
+							<View className="mb-4">
+								<Text
+									className="font-noto-bold text-lg mb-2"
+									style={{ color: isDark ? "#d1d5db" : "#374151" }}
+								>
+									カテゴリ
+								</Text>
 								<ScrollView
 									horizontal
 									showsHorizontalScrollIndicator={false}

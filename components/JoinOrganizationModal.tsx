@@ -10,8 +10,8 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { useTheme } from "../contexts/ThemeContext";
 import { useOrganization } from "../contexts/OrganizationContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { joinByInviteCode } from "../services/organizationService";
 
 type JoinOrganizationModalProps = {
@@ -78,58 +78,58 @@ export function JoinOrganizationModal({
 			animationType="slide"
 			onRequestClose={handleClose}
 		>
-		<TouchableWithoutFeedback onPress={handleClose}>
-			<View className="flex-1 justify-center items-center bg-black/50">
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-					<View
-						className="rounded-lg p-6 w-11/12"
-						style={{
-							maxHeight: "80%",
-							backgroundColor: isDark ? "#1f2937" : "#ffffff",
-						}}
-					>
-						<Text
-							className="text-3xl font-noto-bold mb-4"
-							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+			<TouchableWithoutFeedback onPress={handleClose}>
+				<View className="flex-1 justify-center items-center bg-black/50">
+					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+						<View
+							className="rounded-lg p-6 w-11/12"
+							style={{
+								maxHeight: "80%",
+								backgroundColor: isDark ? "#1f2937" : "#ffffff",
+							}}
 						>
-							グループに参加
-						</Text>
+							<Text
+								className="text-3xl font-noto-bold mb-4"
+								style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+							>
+								グループに参加
+							</Text>
 
-						<View className="mb-4">
-							<Text
-								className="font-noto-bold text-lg mb-2"
-								style={{ color: isDark ? "#d1d5db" : "#374151" }}
-							>
-								招待コード（8桁）
-							</Text>
-							<TextInput
-								className="border-2 rounded-md text-lg"
-								style={{
-									fontFamily: "System",
-									lineHeight: undefined,
-									paddingVertical: 14,
-									paddingHorizontal: 12,
-									fontSize: 18,
-									borderColor: isDark ? "#4b5563" : "#d1d5db",
-									backgroundColor: isDark ? "#374151" : "#ffffff",
-									color: isDark ? "#f3f4f6" : "#000000",
-								}}
-								placeholder="例：ABC12345"
-								placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-								value={inviteCode}
-								onChangeText={(text) => setInviteCode(text.toUpperCase())}
-								autoCapitalize="characters"
-								autoCorrect={false}
-								maxLength={8}
-								autoFocus
-							/>
-							<Text
-								className="text-sm font-noto-regular mt-2"
-								style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-							>
-								グループの管理者から招待コードを教えてもらってください
-							</Text>
-						</View>
+							<View className="mb-4">
+								<Text
+									className="font-noto-bold text-lg mb-2"
+									style={{ color: isDark ? "#d1d5db" : "#374151" }}
+								>
+									招待コード（8桁）
+								</Text>
+								<TextInput
+									className="border-2 rounded-md text-lg"
+									style={{
+										fontFamily: "System",
+										lineHeight: undefined,
+										paddingVertical: 14,
+										paddingHorizontal: 12,
+										fontSize: 18,
+										borderColor: isDark ? "#4b5563" : "#d1d5db",
+										backgroundColor: isDark ? "#374151" : "#ffffff",
+										color: isDark ? "#f3f4f6" : "#000000",
+									}}
+									placeholder="例：ABC12345"
+									placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+									value={inviteCode}
+									onChangeText={(text) => setInviteCode(text.toUpperCase())}
+									autoCapitalize="characters"
+									autoCorrect={false}
+									maxLength={8}
+									autoFocus
+								/>
+								<Text
+									className="text-sm font-noto-regular mt-2"
+									style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+								>
+									グループの管理者から招待コードを教えてもらってください
+								</Text>
+							</View>
 
 							<View className="flex-row justify-end mt-4 space-x-2">
 								<TouchableHighlight

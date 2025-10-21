@@ -305,21 +305,21 @@ export function OrganizationSettingsModal({
 								style={{ maxHeight: 400 }}
 								showsVerticalScrollIndicator={false}
 							>
-							{/* 招待コード */}
-							<View className="mb-6">
-								<Text
-									className="font-noto-bold text-lg mb-2"
-									style={{ color: isDark ? "#d1d5db" : "#374151" }}
-								>
-									招待コード
-								</Text>
-								<View className="flex-row items-center">
+								{/* 招待コード */}
+								<View className="mb-6">
 									<Text
-										className="flex-1 text-2xl font-mono font-bold"
-										style={{ color: isDark ? "#d1d5db" : "#2563eb" }}
+										className="font-noto-bold text-lg mb-2"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
 									>
-										{organization.inviteCode}
+										招待コード
 									</Text>
+									<View className="flex-row items-center">
+										<Text
+											className="flex-1 text-2xl font-mono font-bold"
+											style={{ color: isDark ? "#d1d5db" : "#2563eb" }}
+										>
+											{organization.inviteCode}
+										</Text>
 										<TouchableOpacity
 											className="p-2 bg-blue-100 rounded-md"
 											onPress={handleCopyInviteCode}
@@ -332,21 +332,21 @@ export function OrganizationSettingsModal({
 									</Text>
 								</View>
 
-							{/* メールで招待 */}
-							{isOwner && (
-								<View className="mb-6">
-									<Text
-										className="font-noto-bold text-lg mb-2"
-										style={{ color: isDark ? "#d1d5db" : "#374151" }}
-									>
-										メンバーを招待
-									</Text>
-									<Text
-										className="font-noto-regular text-sm mb-2"
-										style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
-									>
-										登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
-									</Text>
+								{/* メールで招待 */}
+								{isOwner && (
+									<View className="mb-6">
+										<Text
+											className="font-noto-bold text-lg mb-2"
+											style={{ color: isDark ? "#d1d5db" : "#374151" }}
+										>
+											メンバーを招待
+										</Text>
+										<Text
+											className="font-noto-regular text-sm mb-2"
+											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
+										>
+											登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
+										</Text>
 										<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 											<View>
 												<TextInput
@@ -403,14 +403,14 @@ export function OrganizationSettingsModal({
 									</View>
 								)}
 
-							{/* メンバー一覧 */}
-							<View className="mb-6">
-								<Text
-									className="font-noto-bold text-lg mb-2"
-									style={{ color: isDark ? "#d1d5db" : "#374151" }}
-								>
-									メンバー（{members.length}人）
-								</Text>
+								{/* メンバー一覧 */}
+								<View className="mb-6">
+									<Text
+										className="font-noto-bold text-lg mb-2"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
+									>
+										メンバー（{members.length}人）
+									</Text>
 
 									{isLoading ? (
 										<ActivityIndicator size="small" color="#3b82f6" />
