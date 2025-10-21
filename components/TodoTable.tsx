@@ -31,11 +31,13 @@ import TodoItem from "./ui/TodoItem";
 type TodoTableProps = {
 	refresh?: number;
 	organizationId?: string | null;
+	isDark?: boolean;
 };
 
 export default function TodoTable({
 	refresh,
 	organizationId = null,
+	isDark = false,
 }: TodoTableProps) {
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
@@ -231,15 +233,30 @@ export default function TodoTable({
 
 	return (
 		<View className="flex-1">
-			<View className="flex-row py-3 px-2 border-b-2 border-t-2 border-gray-400 items-center bg-gray-50">
+			<View
+				className="flex-row py-3 px-2 border-b-2 border-t-2 items-center"
+				style={{
+					backgroundColor: isDark ? "#374151" : "#f9fafb",
+					borderColor: isDark ? "#4b5563" : "#9ca3af",
+				}}
+			>
 				<View style={{ width: 32 }} className="mr-2" />
-				<Text className="flex-1 font-noto-bold text-lg">Todo</Text>
+				<Text
+					className="flex-1 font-noto-bold text-lg"
+					style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+				>
+					Todo
+				</Text>
 				{/* 検索アイコンボタン */}
 				<TouchableOpacity
 					onPress={() => setIsSearchModalVisible(true)}
 					className="p-2"
 				>
-					<Ionicons name="search" size={24} color="#3b82f6" />
+					<Ionicons
+						name="search"
+						size={24}
+						color={isDark ? "#60a5fa" : "#3b82f6"}
+					/>
 				</TouchableOpacity>
 			</View>
 			{isLoading ? (
@@ -248,10 +265,16 @@ export default function TodoTable({
 				</View>
 			) : data.length === 0 ? (
 				<View className="py-8 items-center">
-					<Text className="text-gray-400 font-noto-regular text-xl">
+					<Text
+						className="font-noto-regular text-xl"
+						style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+					>
 						Todoはまだありません
 					</Text>
-					<Text className="text-gray-400 font-noto-regular text-lg mt-2">
+					<Text
+						className="font-noto-regular text-lg mt-2"
+						style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+					>
 						右下のボタンから新しいTodoを作成できます
 					</Text>
 				</View>
@@ -264,6 +287,7 @@ export default function TodoTable({
 							onToggleComplete={toggleComplete}
 							onEdit={handleEdit}
 							onDelete={deleteTodo}
+							isDark={isDark}
 						/>
 					)}
 					keyExtractor={(item) => item.id.toString()}
@@ -284,6 +308,7 @@ export default function TodoTable({
 				onToggleComplete={toggleComplete}
 				onEdit={handleEdit}
 				onDelete={deleteTodo}
+				isDark={isDark}
 			/>
 		</View>
 	);

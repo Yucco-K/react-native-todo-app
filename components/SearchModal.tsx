@@ -23,6 +23,7 @@ type SearchModalProps = {
 	onToggleComplete: (id: string) => void;
 	onEdit: (todo: Todo) => void;
 	onDelete: (id: string) => void;
+	isDark?: boolean;
 };
 
 export default function SearchModal({
@@ -32,6 +33,7 @@ export default function SearchModal({
 	onToggleComplete,
 	onEdit,
 	onDelete,
+	isDark = false,
 }: SearchModalProps) {
 	const [searchText, setSearchText] = useState("");
 	const [filterType, setFilterType] = useState<FilterType>("all");
@@ -239,6 +241,7 @@ export default function SearchModal({
 											onToggleComplete={onToggleComplete}
 											onEdit={onEdit}
 											onDelete={onDelete}
+											isDark={isDark}
 										/>
 									</View>
 								)}
