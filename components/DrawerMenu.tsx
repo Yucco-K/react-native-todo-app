@@ -144,7 +144,7 @@ export function DrawerMenu({
 							<View className="mt-4">
 								<Text
 									className="text-sm font-noto-bold mb-2 px-2"
-									style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+									style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
 								>
 									所属グループ
 								</Text>
@@ -152,7 +152,7 @@ export function DrawerMenu({
 								{organizations.length === 0 ? (
 									<Text
 										className="text-sm font-noto-regular px-2 py-4"
-										style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+										style={{ color: isDark ? "#d1d5db" : "#9ca3af" }}
 									>
 										所属しているグループがありません
 									</Text>
@@ -201,18 +201,18 @@ export function DrawerMenu({
 												>
 													{org.name}
 												</Text>
-												<TouchableOpacity
-													onPress={() => {
-														onManageOrganization(org);
-														onClose();
-													}}
-												>
-													<Ionicons
-														name="settings-outline"
-														size={20}
-														color={isDark ? "#9ca3af" : "#6b7280"}
-													/>
-												</TouchableOpacity>
+											<TouchableOpacity
+												onPress={() => {
+													onManageOrganization(org);
+													onClose();
+												}}
+											>
+												<Ionicons
+													name="settings-outline"
+													size={20}
+													color={isDark ? "#d1d5db" : "#6b7280"}
+												/>
+											</TouchableOpacity>
 											</TouchableOpacity>
 										</View>
 									))
@@ -279,7 +279,9 @@ export function DrawerMenu({
 										backgroundColor: isDark
 											? "rgba(107, 114, 128, 0.3)"
 											: "#f9fafb",
-										borderColor: isDark ? "rgba(156, 163, 175, 0.4)" : "#d1d5db",
+										borderColor: isDark
+											? "rgba(156, 163, 175, 0.4)"
+											: "#d1d5db",
 									}}
 									onPress={() => {
 										onViewInvitations();
@@ -289,7 +291,7 @@ export function DrawerMenu({
 									<Ionicons
 										name="mail"
 										size={24}
-										color={isDark ? "#9ca3af" : "#6b7280"}
+										color={isDark ? "#d1d5db" : "#6b7280"}
 									/>
 									<Text
 										className="ml-3 text-lg font-noto-bold"

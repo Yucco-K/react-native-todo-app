@@ -267,13 +267,13 @@ export default function TodoTable({
 				<View className="py-8 items-center">
 					<Text
 						className="font-noto-regular text-xl"
-						style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+						style={{ color: isDark ? "#d1d5db" : "#9ca3af" }}
 					>
 						Todoはまだありません
 					</Text>
 					<Text
 						className="font-noto-regular text-lg mt-2"
-						style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+						style={{ color: isDark ? "#d1d5db" : "#9ca3af" }}
 					>
 						右下のボタンから新しいTodoを作成できます
 					</Text>

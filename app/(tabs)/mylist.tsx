@@ -93,21 +93,21 @@ export default function MyListScreen() {
 									>
 										<Text
 											className="text-base font-noto-regular"
-											style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
 										>
 											ニックネームを設定
 										</Text>
 										<Ionicons
 											name="add-circle-outline"
 											size={16}
-											color={isDark ? "#9ca3af" : "#6b7280"}
+											color={isDark ? "#d1d5db" : "#6b7280"}
 											className="ml-1"
 										/>
 									</TouchableOpacity>
 									{user?.email && (
 										<Text
 											className="text-sm font-noto-regular mt-1"
-											style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
 										>
 											{user.email}
 										</Text>
