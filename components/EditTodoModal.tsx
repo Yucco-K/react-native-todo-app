@@ -101,6 +101,12 @@ export default function EditTodoModal({
 	const handleSave = async () => {
 		if (!todo) return;
 
+		console.log("💾 Todo編集を保存:", {
+			title: todo.title,
+			organizationId: todo.organizationId,
+			shared: todo.shared,
+		});
+
 		// バリデーション
 		const result = todoSchema.safeParse({ title, content });
 		if (!result.success) {
