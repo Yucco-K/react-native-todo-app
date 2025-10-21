@@ -84,30 +84,60 @@ export default function SearchModal({
 			transparent={false}
 			onRequestClose={handleClose}
 		>
-			<View className="flex-1 bg-white">
+			<View
+				className="flex-1"
+				style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
+			>
 				{/* ヘッダー */}
-				<View className="bg-white border-b border-gray-200 pt-12 pb-3 px-4">
+				<View
+					className="border-b pt-12 pb-3 px-4"
+					style={{
+						backgroundColor: isDark ? "#1f2937" : "#ffffff",
+						borderColor: isDark ? "#4b5563" : "#e5e7eb",
+					}}
+				>
 					<View className="flex-row items-center justify-between mb-3">
-						<Text className="text-3xl font-noto-bold">検索</Text>
+						<Text
+							className="text-3xl font-noto-bold"
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+						>
+							検索
+						</Text>
 						<TouchableOpacity onPress={handleClose} className="p-2">
-							<Ionicons name="close" size={28} color="#374151" />
+							<Ionicons
+								name="close"
+								size={28}
+								color={isDark ? "#d1d5db" : "#374151"}
+							/>
 						</TouchableOpacity>
 					</View>
 
 					{/* 検索バー */}
-					<View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-3">
-						<Ionicons name="search" size={22} color="#6b7280" />
+					<View
+						className="flex-row items-center rounded-lg px-3 py-3"
+						style={{ backgroundColor: isDark ? "#374151" : "#f3f4f6" }}
+					>
+						<Ionicons
+							name="search"
+							size={22}
+							color={isDark ? "#9ca3af" : "#6b7280"}
+						/>
 						<TextInput
 							className="flex-1 ml-2 text-lg font-noto-regular"
 							placeholder="タイトルや内容で検索..."
-							placeholderTextColor="#9ca3af"
+							placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
 							value={searchText}
 							onChangeText={setSearchText}
 							autoFocus
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
 						/>
 						{searchText.length > 0 && (
 							<TouchableOpacity onPress={() => setSearchText("")}>
-								<Ionicons name="close-circle" size={22} color="#6b7280" />
+								<Ionicons
+									name="close-circle"
+									size={22}
+									color={isDark ? "#9ca3af" : "#6b7280"}
+								/>
 							</TouchableOpacity>
 						)}
 					</View>

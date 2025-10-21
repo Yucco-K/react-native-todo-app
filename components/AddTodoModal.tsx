@@ -1,4 +1,5 @@
 import { predictCategory } from "@/services/aiCategoryService";
+import { useTheme } from "@/contexts/ThemeContext";
 import { notifyTodoAdded } from "@/services/notificationService";
 import { generateTodoRecommendations } from "@/services/todoRecommendationService";
 import { createTodo } from "@/services/todoService";
@@ -47,6 +48,7 @@ export default function AddTodoModal({
 	onSave,
 	organizationId = null,
 }: AddTodoModalProps) {
+	const { isDark } = useTheme();
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [category, setCategory] = useState<TodoCategory>("other");
@@ -259,13 +261,24 @@ export default function AddTodoModal({
 			onRequestClose={handleClose}
 		>
 			<TouchableWithoutFeedback onPress={handleClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
+				<View
+					className="flex-1 justify-center items-center"
+					style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+				>
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View
-							className="bg-white rounded-lg p-6 w-11/12"
-							style={{ maxHeight: "80%" }}
+							className="rounded-lg p-6 w-11/12"
+							style={{
+								maxHeight: "80%",
+								backgroundColor: isDark ? "#1f2937" : "#ffffff",
+							}}
 						>
-							<Text className="text-3xl font-noto-bold mb-4">Todo追加</Text>
+							<Text
+								className="text-3xl font-noto-bold mb-4"
+								style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+							>
+								Todo追加
+							</Text>
 
 							<ScrollView
 								style={{ maxHeight: 400 }}
