@@ -134,8 +134,13 @@ export default function EditTodoModal({
 
 			// 組織のTodoの場合は通知を送信
 			if (todo.organizationId) {
+				console.log("📢 グループTodo編集通知を送信:", {
+					title,
+					organizationId: todo.organizationId,
+				});
 				try {
 					await notifyTodoUpdated(title);
+					console.log("✅ 編集通知の送信完了");
 				} catch (error) {
 					console.error("通知送信エラー:", error);
 				}
