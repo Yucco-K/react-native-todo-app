@@ -108,6 +108,8 @@ async function getAllPushTokens(
 		const querySnapshot = await getDocs(q);
 
 		const tokens: string[] = [];
+		const tokenSet = new Set<string>(); // 重複を防ぐ
+		
 		querySnapshot.forEach((doc) => {
 			const data = doc.data();
 			if (data.pushToken) {
@@ -115,11 +117,18 @@ async function getAllPushTokens(
 				if (excludeCurrentUser && doc.id === currentUserId) {
 					return;
 				}
-				tokens.push(data.pushToken);
+				tokenSet.add(data.pushToken);
 			}
 		});
 
-		return tokens;
+		const uniqueTokens = Array.from(tokenSet);
+		console.log("📱 プッシュトークン取得:", {
+			総トークン数: querySnapshot.size,
+			重複除外後: uniqueTokens.length,
+			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
+		});
+
+		return uniqueTokens;
 	} catch (error) {
 		console.error("Error getting push tokens:", error);
 		return [];
