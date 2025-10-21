@@ -12,7 +12,14 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
+import { LogBox } from "react-native";
 import Toast from "react-native-toast-message";
+
+// 開発中に表示される予期されたエラーメッセージを非表示にする
+LogBox.ignoreLogs([
+	"指定されたメールアドレスのユーザーが見つかりません",
+	"Error inviting by email",
+]);
 
 SplashScreen.preventAutoHideAsync();
 

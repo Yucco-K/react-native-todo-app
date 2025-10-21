@@ -190,6 +190,16 @@ export async function inviteByEmail(
 		throw new Error("招待する権限がありません");
 	}
 
+	// デバッグ: users コレクション全体を確認
+	const allUsersSnapshot = await getDocs(collection(db, "users"));
+	console.log("👥 全ユーザー一覧:", {
+		件数: allUsersSnapshot.size,
+		ユーザー: allUsersSnapshot.docs.map((doc) => ({
+			id: doc.id,
+			email: doc.data().email,
+		})),
+	});
+
 	// 招待されるユーザーを検索
 	console.log("🔍 ユーザーを検索中:", { email });
 	const usersQuery = query(

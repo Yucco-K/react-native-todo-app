@@ -111,12 +111,11 @@ export function OrganizationSettingsModal({
 			setInviteSuccess(`${inviteEmail} に招待を送信しました`);
 			setInviteEmail("");
 		} catch (error: any) {
-			console.error("Error inviting by email:", error);
-			
 			// エラーメッセージを分かりやすく表示
 			let errorMessage = "招待の送信に失敗しました";
 			if (error.message.includes("見つかりません")) {
-				errorMessage = "このメールアドレスはまだ登録されていません。招待コードを共有して、先にアプリに登録してもらってください。";
+				errorMessage =
+					"このメールアドレスはまだ登録されていません。招待コードを共有して、先にアプリに登録してもらってください。";
 			} else if (error.message.includes("既にメンバー")) {
 				errorMessage = "このユーザーは既にグループのメンバーです";
 			} else if (error.message.includes("既に招待")) {
@@ -126,7 +125,7 @@ export function OrganizationSettingsModal({
 			} else if (error.message) {
 				errorMessage = error.message;
 			}
-			
+
 			setInviteError(errorMessage);
 		} finally {
 			setIsInviting(false);
@@ -330,7 +329,7 @@ export function OrganizationSettingsModal({
 											/>
 										</View>
 									</TouchableWithoutFeedback>
-									
+
 									{/* エラーメッセージ */}
 									{inviteError && (
 										<View className="mb-3 p-3 bg-red-50 rounded-md border border-red-200">
@@ -339,7 +338,7 @@ export function OrganizationSettingsModal({
 											</Text>
 										</View>
 									)}
-									
+
 									{/* 成功メッセージ */}
 									{inviteSuccess && (
 										<View className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
@@ -348,7 +347,7 @@ export function OrganizationSettingsModal({
 											</Text>
 										</View>
 									)}
-									
+
 									<TouchableOpacity
 										className={`px-4 py-3 rounded-md ${
 											isInviting ? "bg-blue-300" : "bg-blue-600"
