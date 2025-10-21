@@ -276,162 +276,162 @@ export function OrganizationSettingsModal({
 								style={{ maxHeight: 400 }}
 								showsVerticalScrollIndicator={false}
 							>
-							{/* 招待コード */}
-							<View className="mb-6">
-								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-									招待コード
-								</Text>
-								<View className="flex-row items-center">
-									<Text className="flex-1 text-2xl font-mono font-bold text-blue-600">
-										{organization.inviteCode}
-									</Text>
-									<TouchableOpacity
-										className="p-2 bg-blue-100 rounded-md"
-										onPress={handleCopyInviteCode}
-									>
-										<Ionicons name="copy-outline" size={24} color="#2563eb" />
-									</TouchableOpacity>
-								</View>
-								<Text className="text-gray-500 text-sm font-noto-regular mt-2">
-									このコードを共有して招待できます
-								</Text>
-							</View>
-
-							{/* メールで招待 */}
-							{isOwner && (
+								{/* 招待コード */}
 								<View className="mb-6">
 									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-										メンバーを招待
+										招待コード
 									</Text>
-									<Text className="text-gray-600 font-noto-regular text-sm mb-2">
-										登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
-									</Text>
-									<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-										<View>
-											<TextInput
-												className="border-2 border-gray-300 rounded-md text-lg mb-2"
-												style={{
-													fontFamily: "System",
-													lineHeight: undefined,
-													paddingVertical: 12,
-													paddingHorizontal: 12,
-													fontSize: 16,
-												}}
-												placeholder="メールアドレス"
-												value={inviteEmail}
-												onChangeText={(text) => {
-													setInviteEmail(text);
-													setInviteError(null);
-													setInviteSuccess(null);
-												}}
-												keyboardType="email-address"
-												autoCapitalize="none"
-											/>
-										</View>
-									</TouchableWithoutFeedback>
-
-									{/* エラーメッセージ */}
-									{inviteError && (
-										<View className="mb-3 p-3 bg-red-50 rounded-md border border-red-200">
-											<Text className="text-red-700 font-noto-regular text-sm">
-												{inviteError}
-											</Text>
-										</View>
-									)}
-
-									{/* 成功メッセージ */}
-									{inviteSuccess && (
-										<View className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
-											<Text className="text-green-700 font-noto-regular text-sm">
-												{inviteSuccess}
-											</Text>
-										</View>
-									)}
-
-									<TouchableOpacity
-										className={`px-4 py-3 rounded-md ${
-											isInviting ? "bg-blue-300" : "bg-blue-600"
-										}`}
-										onPress={handleInviteByEmail}
-										disabled={isInviting}
-									>
-										<Text className="text-white text-center text-lg font-noto-bold">
-											{isInviting ? "送信中..." : "招待を送信"}
+									<View className="flex-row items-center">
+										<Text className="flex-1 text-2xl font-mono font-bold text-blue-600">
+											{organization.inviteCode}
 										</Text>
-									</TouchableOpacity>
-								</View>
-							)}
-
-							{/* メンバー一覧 */}
-							<View className="mb-6">
-								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-									メンバー（{members.length}人）
-								</Text>
-
-								{isLoading ? (
-									<ActivityIndicator size="small" color="#3b82f6" />
-								) : (
-									members.map((member) => (
-										<View
-											key={member.userId}
-											className="flex-row items-center justify-between p-3 bg-gray-50 rounded-md mb-2"
+										<TouchableOpacity
+											className="p-2 bg-blue-100 rounded-md"
+											onPress={handleCopyInviteCode}
 										>
-											<View className="flex-1">
-												<Text className="text-lg font-noto-bold text-gray-800">
-													{member.nickname || member.email}
+											<Ionicons name="copy-outline" size={24} color="#2563eb" />
+										</TouchableOpacity>
+									</View>
+									<Text className="text-gray-500 text-sm font-noto-regular mt-2">
+										このコードを共有して招待できます
+									</Text>
+								</View>
+
+								{/* メールで招待 */}
+								{isOwner && (
+									<View className="mb-6">
+										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+											メンバーを招待
+										</Text>
+										<Text className="text-gray-600 font-noto-regular text-sm mb-2">
+											登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
+										</Text>
+										<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+											<View>
+												<TextInput
+													className="border-2 border-gray-300 rounded-md text-lg mb-2"
+													style={{
+														fontFamily: "System",
+														lineHeight: undefined,
+														paddingVertical: 12,
+														paddingHorizontal: 12,
+														fontSize: 16,
+													}}
+													placeholder="メールアドレス"
+													value={inviteEmail}
+													onChangeText={(text) => {
+														setInviteEmail(text);
+														setInviteError(null);
+														setInviteSuccess(null);
+													}}
+													keyboardType="email-address"
+													autoCapitalize="none"
+												/>
+											</View>
+										</TouchableWithoutFeedback>
+
+										{/* エラーメッセージ */}
+										{inviteError && (
+											<View className="mb-3 p-3 bg-red-50 rounded-md border border-red-200">
+												<Text className="text-red-700 font-noto-regular text-sm">
+													{inviteError}
 												</Text>
-												{member.nickname && (
-													<Text className="text-sm text-gray-500 font-noto-regular">
-														{member.email}
+											</View>
+										)}
+
+										{/* 成功メッセージ */}
+										{inviteSuccess && (
+											<View className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
+												<Text className="text-green-700 font-noto-regular text-sm">
+													{inviteSuccess}
+												</Text>
+											</View>
+										)}
+
+										<TouchableOpacity
+											className={`px-4 py-3 rounded-md ${
+												isInviting ? "bg-blue-300" : "bg-blue-600"
+											}`}
+											onPress={handleInviteByEmail}
+											disabled={isInviting}
+										>
+											<Text className="text-white text-center text-lg font-noto-bold">
+												{isInviting ? "送信中..." : "招待を送信"}
+											</Text>
+										</TouchableOpacity>
+									</View>
+								)}
+
+								{/* メンバー一覧 */}
+								<View className="mb-6">
+									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+										メンバー（{members.length}人）
+									</Text>
+
+									{isLoading ? (
+										<ActivityIndicator size="small" color="#3b82f6" />
+									) : (
+										members.map((member) => (
+											<View
+												key={member.userId}
+												className="flex-row items-center justify-between p-3 bg-gray-50 rounded-md mb-2"
+											>
+												<View className="flex-1">
+													<Text className="text-lg font-noto-bold text-gray-800">
+														{member.nickname || member.email}
 													</Text>
-												)}
-												{member.userId === organization.ownerId && (
-													<Text className="text-xs text-blue-600 font-noto-bold mt-1">
-														オーナー
-													</Text>
+													{member.nickname && (
+														<Text className="text-sm text-gray-500 font-noto-regular">
+															{member.email}
+														</Text>
+													)}
+													{member.userId === organization.ownerId && (
+														<Text className="text-xs text-blue-600 font-noto-bold mt-1">
+															オーナー
+														</Text>
+													)}
+												</View>
+
+												{isOwner && member.userId !== organization.ownerId && (
+													<TouchableOpacity
+														onPress={() => handleRemoveMember(member)}
+													>
+														<Ionicons
+															name="remove-circle-outline"
+															size={24}
+															color="#ef4444"
+														/>
+													</TouchableOpacity>
 												)}
 											</View>
+										))
+									)}
+								</View>
 
-											{isOwner && member.userId !== organization.ownerId && (
-												<TouchableOpacity
-													onPress={() => handleRemoveMember(member)}
-												>
-													<Ionicons
-														name="remove-circle-outline"
-														size={24}
-														color="#ef4444"
-													/>
-												</TouchableOpacity>
-											)}
-										</View>
-									))
-								)}
-							</View>
+								{/* アクション */}
+								<View className="space-y-2">
+									{!isOwner && (
+										<TouchableOpacity
+											className="px-4 py-3 bg-orange-600 rounded-md"
+											onPress={handleLeaveOrganization}
+										>
+											<Text className="text-white text-center text-lg font-noto-bold">
+												グループから退出
+											</Text>
+										</TouchableOpacity>
+									)}
 
-							{/* アクション */}
-							<View className="space-y-2">
-								{!isOwner && (
-									<TouchableOpacity
-										className="px-4 py-3 bg-orange-600 rounded-md"
-										onPress={handleLeaveOrganization}
-									>
-										<Text className="text-white text-center text-lg font-noto-bold">
-											グループから退出
-										</Text>
-									</TouchableOpacity>
-								)}
-
-								{isOwner && (
-									<TouchableOpacity
-										className="px-4 py-3 bg-red-600 rounded-md"
-										onPress={handleDeleteOrganization}
-									>
-										<Text className="text-white text-center text-lg font-noto-bold">
-											グループを削除
-										</Text>
-									</TouchableOpacity>
-								)}
-							</View>
+									{isOwner && (
+										<TouchableOpacity
+											className="px-4 py-3 bg-red-600 rounded-md"
+											onPress={handleDeleteOrganization}
+										>
+											<Text className="text-white text-center text-lg font-noto-bold">
+												グループを削除
+											</Text>
+										</TouchableOpacity>
+									)}
+								</View>
 							</ScrollView>
 
 							<View className="mt-4">

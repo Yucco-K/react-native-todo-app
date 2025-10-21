@@ -83,7 +83,9 @@ export function JoinOrganizationModal({
 							className="bg-white rounded-lg p-6 w-11/12"
 							style={{ maxHeight: "80%" }}
 						>
-							<Text className="text-3xl font-noto-bold mb-4">グループに参加</Text>
+							<Text className="text-3xl font-noto-bold mb-4">
+								グループに参加
+							</Text>
 
 							<View className="mb-4">
 								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
