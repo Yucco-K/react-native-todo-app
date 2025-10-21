@@ -278,7 +278,7 @@ export function OrganizationSettingsModal({
 							className="rounded-lg p-6 w-11/12"
 							style={{
 								maxHeight: "80%",
-								backgroundColor: "#ffffff",
+								backgroundColor: isDark ? "#1f2937" : "#ffffff",
 								shadowColor: "#000",
 								shadowOffset: { width: 0, height: 4 },
 								shadowOpacity: 0.25,
@@ -289,8 +289,8 @@ export function OrganizationSettingsModal({
 							<Text
 								className="text-xl font-noto-bold mb-4 px-4 py-2 rounded-md"
 								style={{
-									backgroundColor: "#ffffff",
-									color: "#2563eb",
+									backgroundColor: isDark ? "rgba(55, 65, 81, 0.8)" : "#ffffff",
+									color: isDark ? "#60a5fa" : "#2563eb",
 									shadowColor: "#000",
 									shadowOffset: { width: 0, height: 2 },
 									shadowOpacity: 0.1,
@@ -305,15 +305,21 @@ export function OrganizationSettingsModal({
 								style={{ maxHeight: 400 }}
 								showsVerticalScrollIndicator={false}
 							>
-								{/* 招待コード */}
-								<View className="mb-6">
-									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-										招待コード
+							{/* 招待コード */}
+							<View className="mb-6">
+								<Text
+									className="font-noto-bold text-lg mb-2"
+									style={{ color: isDark ? "#d1d5db" : "#374151" }}
+								>
+									招待コード
+								</Text>
+								<View className="flex-row items-center">
+									<Text
+										className="flex-1 text-2xl font-mono font-bold"
+										style={{ color: isDark ? "#d1d5db" : "#2563eb" }}
+									>
+										{organization.inviteCode}
 									</Text>
-									<View className="flex-row items-center">
-										<Text className="flex-1 text-2xl font-mono font-bold text-blue-600">
-											{organization.inviteCode}
-										</Text>
 										<TouchableOpacity
 											className="p-2 bg-blue-100 rounded-md"
 											onPress={handleCopyInviteCode}
@@ -326,15 +332,21 @@ export function OrganizationSettingsModal({
 									</Text>
 								</View>
 
-								{/* メールで招待 */}
-								{isOwner && (
-									<View className="mb-6">
-										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-											メンバーを招待
-										</Text>
-										<Text className="text-gray-600 font-noto-regular text-sm mb-2">
-											登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
-										</Text>
+							{/* メールで招待 */}
+							{isOwner && (
+								<View className="mb-6">
+									<Text
+										className="font-noto-bold text-lg mb-2"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
+									>
+										メンバーを招待
+									</Text>
+									<Text
+										className="font-noto-regular text-sm mb-2"
+										style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
+									>
+										登録済みユーザーのメールアドレスを入力してください。プッシュ通知で招待が届きます。
+									</Text>
 										<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 											<View>
 												<TextInput
@@ -391,11 +403,14 @@ export function OrganizationSettingsModal({
 									</View>
 								)}
 
-								{/* メンバー一覧 */}
-								<View className="mb-6">
-									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-										メンバー（{members.length}人）
-									</Text>
+							{/* メンバー一覧 */}
+							<View className="mb-6">
+								<Text
+									className="font-noto-bold text-lg mb-2"
+									style={{ color: isDark ? "#d1d5db" : "#374151" }}
+								>
+									メンバー（{members.length}人）
+								</Text>
 
 									{isLoading ? (
 										<ActivityIndicator size="small" color="#3b82f6" />

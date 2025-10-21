@@ -201,18 +201,18 @@ export function DrawerMenu({
 												>
 													{org.name}
 												</Text>
-											<TouchableOpacity
-												onPress={() => {
-													onManageOrganization(org);
-													onClose();
-												}}
-											>
-												<Ionicons
-													name="settings-outline"
-													size={20}
-													color={isDark ? "#d1d5db" : "#6b7280"}
-												/>
-											</TouchableOpacity>
+												<TouchableOpacity
+													onPress={() => {
+														onManageOrganization(org);
+														onClose();
+													}}
+												>
+													<Ionicons
+														name="settings-outline"
+														size={20}
+														color={isDark ? "#d1d5db" : "#6b7280"}
+													/>
+												</TouchableOpacity>
 											</TouchableOpacity>
 										</View>
 									))

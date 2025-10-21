@@ -1,5 +1,5 @@
-import { predictCategory } from "@/services/aiCategoryService";
 import { useTheme } from "@/contexts/ThemeContext";
+import { predictCategory } from "@/services/aiCategoryService";
 import { notifyTodoAdded } from "@/services/notificationService";
 import { generateTodoRecommendations } from "@/services/todoRecommendationService";
 import { createTodo } from "@/services/todoService";
@@ -294,7 +294,10 @@ export default function AddTodoModal({
 									</View>
 								) : recommendations.length > 0 ? (
 									<View className="mb-4">
-										<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+										<Text
+											className="font-noto-bold text-lg mb-2"
+											style={{ color: isDark ? "#d1d5db" : "#374151" }}
+										>
 											💡 おすすめTODO（タップで追加）
 										</Text>
 										{recommendations.map((rec) => (
@@ -336,15 +339,19 @@ export default function AddTodoModal({
 								{/* タイトル入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md text-lg"
+										className="border-2 rounded-md text-lg"
 										style={{
 											fontFamily: "System",
 											lineHeight: undefined,
 											paddingVertical: 14,
 											paddingHorizontal: 12,
 											fontSize: 18,
+											borderColor: isDark ? "#4b5563" : "#d1d5db",
+											backgroundColor: isDark ? "#374151" : "#ffffff",
+											color: isDark ? "#f3f4f6" : "#000000",
 										}}
 										placeholder="タイトル"
+										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
 										value={title}
 										onChangeText={setTitle}
 										autoFocus={true}
@@ -359,7 +366,7 @@ export default function AddTodoModal({
 								{/* 内容入力 */}
 								<View className="mb-3">
 									<TextInput
-										className="border-2 border-gray-300 rounded-md text-lg"
+										className="border-2 rounded-md text-lg"
 										style={{
 											fontFamily: "System",
 											lineHeight: undefined,
@@ -367,8 +374,12 @@ export default function AddTodoModal({
 											paddingVertical: 14,
 											paddingHorizontal: 12,
 											fontSize: 18,
+											borderColor: isDark ? "#4b5563" : "#d1d5db",
+											backgroundColor: isDark ? "#374151" : "#ffffff",
+											color: isDark ? "#f3f4f6" : "#000000",
 										}}
 										placeholder="内容（任意）"
+										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
 										value={content}
 										onChangeText={setContent}
 										multiline
@@ -384,7 +395,10 @@ export default function AddTodoModal({
 
 								{/* カテゴリ選択 */}
 								<View className="mb-3">
-									<Text className="text-gray-700 font-noto-bold text-lg mb-2">
+									<Text
+										className="font-noto-bold text-lg mb-2"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
+									>
 										カテゴリ
 									</Text>
 									<ScrollView

@@ -10,6 +10,7 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { useTheme } from "../contexts/ThemeContext";
 
 type NicknameModalProps = {
 	visible: boolean;
@@ -24,6 +25,7 @@ export default function NicknameModal({
 	onClose,
 	onSave,
 }: NicknameModalProps) {
+	const { isDark } = useTheme();
 	const [nickname, setNickname] = useState(currentNickname);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -76,35 +78,52 @@ export default function NicknameModal({
 			animationType="slide"
 			onRequestClose={onClose}
 		>
-			<TouchableWithoutFeedback onPress={onClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
-					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View
-							className="bg-white rounded-lg p-6 w-11/12"
-							style={{ maxHeight: "80%" }}
+		<TouchableWithoutFeedback onPress={onClose}>
+			<View className="flex-1 justify-center items-center bg-black/50">
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View
+						className="rounded-lg p-6 w-11/12"
+						style={{
+							maxHeight: "80%",
+							backgroundColor: isDark ? "#1f2937" : "#ffffff",
+						}}
+					>
+						<Text
+							className="text-3xl font-noto-bold mb-4"
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
 						>
-							<Text className="text-3xl font-noto-bold mb-4">
-								ニックネーム設定
-							</Text>
+							ニックネーム設定
+						</Text>
 
-							<Text className="text-base text-gray-600 font-noto-regular mb-3">
-								共有リストで表示される名前です
-							</Text>
+						<Text
+							className="text-base font-noto-regular mb-3"
+							style={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+						>
+							共有リストで表示される名前です
+						</Text>
 
-							<View className="mb-4">
-								<TextInput
-									className="border-2 border-gray-300 rounded-md p-3 text-lg font-noto-regular"
-									placeholder="ニックネームを入力"
-									placeholderTextColor="#9ca3af"
-									value={nickname}
-									onChangeText={setNickname}
-									maxLength={20}
-									autoFocus
-								/>
-								<Text className="text-sm text-gray-500 font-noto-regular mt-1">
-									{nickname.length}/20文字
-								</Text>
-							</View>
+						<View className="mb-4">
+							<TextInput
+								className="border-2 rounded-md p-3 text-lg font-noto-regular"
+								style={{
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+									color: isDark ? "#f3f4f6" : "#000000",
+								}}
+								placeholder="ニックネームを入力"
+								placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+								value={nickname}
+								onChangeText={setNickname}
+								maxLength={20}
+								autoFocus
+							/>
+							<Text
+								className="text-sm font-noto-regular mt-1"
+								style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+							>
+								{nickname.length}/20文字
+							</Text>
+						</View>
 
 							<View className="flex-row justify-end mt-4 space-x-2">
 								<TouchableHighlight

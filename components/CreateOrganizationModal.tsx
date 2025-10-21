@@ -10,6 +10,7 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { useTheme } from "../contexts/ThemeContext";
 import { useOrganization } from "../contexts/OrganizationContext";
 import { createOrganization } from "../services/organizationService";
 
@@ -22,6 +23,7 @@ export function CreateOrganizationModal({
 	visible,
 	onClose,
 }: CreateOrganizationModalProps) {
+	const { isDark } = useTheme();
 	const [name, setName] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const { refreshOrganizations } = useOrganization();
@@ -73,36 +75,49 @@ export function CreateOrganizationModal({
 			animationType="slide"
 			onRequestClose={handleClose}
 		>
-			<TouchableWithoutFeedback onPress={handleClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
-					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View
-							className="bg-white rounded-lg p-6 w-11/12"
-							style={{ maxHeight: "80%" }}
+		<TouchableWithoutFeedback onPress={handleClose}>
+			<View className="flex-1 justify-center items-center bg-black/50">
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View
+						className="rounded-lg p-6 w-11/12"
+						style={{
+							maxHeight: "80%",
+							backgroundColor: isDark ? "#1f2937" : "#ffffff",
+						}}
+					>
+						<Text
+							className="text-3xl font-noto-bold mb-4"
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
 						>
-							<Text className="text-3xl font-noto-bold mb-4">
-								グループを作成
-							</Text>
+							グループを作成
+						</Text>
 
-							<View className="mb-4">
-								<Text className="text-gray-700 font-noto-bold text-lg mb-2">
-									グループ名
-								</Text>
-								<TextInput
-									className="border-2 border-gray-300 rounded-md text-lg"
-									style={{
-										fontFamily: "System",
-										lineHeight: undefined,
-										paddingVertical: 14,
-										paddingHorizontal: 12,
-										fontSize: 18,
-									}}
-									placeholder="例：家族、仕事チーム"
-									value={name}
-									onChangeText={setName}
-									autoFocus
-								/>
-							</View>
+						<View className="mb-4">
+							<Text
+								className="font-noto-bold text-lg mb-2"
+								style={{ color: isDark ? "#d1d5db" : "#374151" }}
+							>
+								グループ名
+							</Text>
+							<TextInput
+								className="border-2 rounded-md text-lg"
+								style={{
+									fontFamily: "System",
+									lineHeight: undefined,
+									paddingVertical: 14,
+									paddingHorizontal: 12,
+									fontSize: 18,
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+									color: isDark ? "#f3f4f6" : "#000000",
+								}}
+								placeholder="例：家族、仕事チーム"
+								placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+								value={name}
+								onChangeText={setName}
+								autoFocus
+							/>
+						</View>
 
 							<View className="flex-row justify-end mt-4 space-x-2">
 								<TouchableHighlight

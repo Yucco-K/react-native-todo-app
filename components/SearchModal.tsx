@@ -117,29 +117,29 @@ export default function SearchModal({
 						className="flex-row items-center rounded-lg px-3 py-3"
 						style={{ backgroundColor: isDark ? "#374151" : "#f3f4f6" }}
 					>
-					<Ionicons
-						name="search"
-						size={22}
-						color={isDark ? "#d1d5db" : "#6b7280"}
-					/>
-					<TextInput
-						className="flex-1 ml-2 text-lg font-noto-regular"
-						placeholder="タイトルや内容で検索..."
-						placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-						value={searchText}
-						onChangeText={setSearchText}
-						autoFocus
-						style={{ color: isDark ? "#f3f4f6" : "#000000" }}
-					/>
-					{searchText.length > 0 && (
-						<TouchableOpacity onPress={() => setSearchText("")}>
-							<Ionicons
-								name="close-circle"
-								size={22}
-								color={isDark ? "#d1d5db" : "#6b7280"}
-							/>
-						</TouchableOpacity>
-					)}
+						<Ionicons
+							name="search"
+							size={22}
+							color={isDark ? "#d1d5db" : "#6b7280"}
+						/>
+						<TextInput
+							className="flex-1 ml-2 text-lg font-noto-regular"
+							placeholder="タイトルや内容で検索..."
+							placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+							value={searchText}
+							onChangeText={setSearchText}
+							autoFocus
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+						/>
+						{searchText.length > 0 && (
+							<TouchableOpacity onPress={() => setSearchText("")}>
+								<Ionicons
+									name="close-circle"
+									size={22}
+									color={isDark ? "#d1d5db" : "#6b7280"}
+								/>
+							</TouchableOpacity>
+						)}
 					</View>
 
 					{/* 完了状態フィルターボタン */}
