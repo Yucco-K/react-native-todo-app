@@ -103,11 +103,9 @@ npx expo start
 
 ### 方法2: 公開版（どこからでもアクセス可能）
 
-**Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のURLにアクセス：
+**Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のQRコードをスキャン：
 
-```
-exp://u.expo.dev/update/1397f6de-317f-43d0-961d-a35b7eb48442
-```
+![QR Code](https://qr.expo.dev/eas-update?updateId=1397f6de-317f-43d0-961d-a35b7eb48442&appScheme=exp&host=u.expo.dev)
 
 > **メリット**: WiFi制限なし、どこからでもアクセス可能、常に最新版を使用
 
