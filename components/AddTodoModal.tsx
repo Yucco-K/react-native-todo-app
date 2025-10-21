@@ -5,7 +5,7 @@ import { createTodo } from "@/services/todoService";
 import type { TodoCategory } from "@/types/Category";
 import { CATEGORY_OPTIONS } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -60,31 +60,37 @@ export default function AddTodoModal({
 	>([]);
 	const [isLoadingRecommendations, setIsLoadingRecommendations] =
 		useState(false);
-	const [shownRecommendations, setShownRecommendations] = useState<string[]>(
-		[]
-	);
+	const shownRecommendationsRef = useRef<string[]>([]);
 
 	// おすすめTODOを取得
 	const fetchRecommendations = useCallback(async () => {
 		setIsLoadingRecommendations(true);
 		try {
-			const newRecs = await generateTodoRecommendations(shownRecommendations);
+			// refから最新の表示済みリストを取得
+			const newRecs = await generateTodoRecommendations(
+				shownRecommendationsRef.current
+			);
 			setRecommendations(newRecs);
 			// 表示済みリストに追加
 			const newTitles = newRecs.map((r) => r.title.toLowerCase().trim());
-			setShownRecommendations((prev) => [...prev, ...newTitles]);
+			shownRecommendationsRef.current = [
+				...shownRecommendationsRef.current,
+				...newTitles,
+			];
 		} catch (error) {
 			console.error("おすすめTODO取得エラー:", error);
 			setRecommendations([]);
 		} finally {
 			setIsLoadingRecommendations(false);
 		}
-	}, [shownRecommendations]);
+	}, []);
 
 	// モーダルが開いたら初回のおすすめを取得
 	useEffect(() => {
 		if (visible) {
-			setShownRecommendations([]); // リセット
+			// リセット
+			shownRecommendationsRef.current = [];
+			// 新しいおすすめを取得
 			fetchRecommendations();
 		}
 	}, [visible, fetchRecommendations]);
