@@ -267,13 +267,19 @@ export function OrganizationSettingsModal({
 			onRequestClose={onClose}
 		>
 			<TouchableWithoutFeedback onPress={onClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
+				<View 
+					className="flex-1 justify-center items-center"
+					style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+				>
 					<TouchableWithoutFeedback>
 						<View
-							className="bg-white/95 rounded-lg p-6 w-11/12"
-							style={{ maxHeight: "80%" }}
+							className="rounded-lg p-6 w-11/12"
+							style={{ maxHeight: "80%", backgroundColor: "rgba(255, 255, 255, 0.95)" }}
 						>
-							<Text className="text-xl font-noto-bold mb-4 bg-white/80 text-blue-600 px-4 py-2 rounded-md">
+							<Text 
+								className="text-xl font-noto-bold mb-4 px-4 py-2 rounded-md"
+								style={{ backgroundColor: "rgba(255, 255, 255, 0.8)", color: "#2563eb" }}
+							>
 								{organization.name}
 							</Text>
 
