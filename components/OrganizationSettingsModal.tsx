@@ -72,6 +72,11 @@ export function OrganizationSettingsModal({
 	useEffect(() => {
 		if (visible && organization) {
 			fetchMembers();
+		} else if (!visible) {
+			// モーダルが閉じたときに入力とメッセージをリセット
+			setInviteEmail("");
+			setInviteError(null);
+			setInviteSuccess(null);
 		}
 	}, [visible, organization]);
 
