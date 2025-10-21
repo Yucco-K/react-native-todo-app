@@ -109,9 +109,6 @@ npx expo start
 exp://u.expo.dev/update/1397f6de-317f-43d0-961d-a35b7eb48442
 ```
 
-または、EASダッシュボードから最新版にアクセス：
-https://expo.dev/accounts/yucco-k/projects/react-native-todo-app/updates
-
 > **メリット**: WiFi制限なし、どこからでもアクセス可能、常に最新版を使用
 
 ## プロジェクト構造
