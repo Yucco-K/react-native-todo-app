@@ -105,7 +105,7 @@ npx expo start
 
 **Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のQRコードをスキャン：
 
-<img src="https://qr.expo.dev/eas-update?updateId=2b545eeb-b192-4375-8c28-41ceeaa85eb0&appScheme=exp&host=u.expo.dev" width="200" />
+<img src="./assets/qr-code.png" width="200" />
 
 > **メリット**: WiFi制限なし、どこからでもアクセス可能、常に最新版を使用
 
