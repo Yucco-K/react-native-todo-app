@@ -17,6 +17,7 @@ import {
 import Toast from "react-native-toast-message";
 import { auth } from "../config/firebase";
 import { useOrganization } from "../contexts/OrganizationContext";
+import { useTheme } from "../contexts/ThemeContext";
 import {
 	getCurrentUserDisplayName,
 	notifyInvitation,
@@ -50,6 +51,7 @@ export function OrganizationSettingsModal({
 	const [inviteError, setInviteError] = useState<string | null>(null);
 	const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 	const { refreshOrganizations, selectOrganization } = useOrganization();
+	const { isDark } = useTheme();
 
 	const isOwner = organization?.ownerId === auth.currentUser?.uid;
 

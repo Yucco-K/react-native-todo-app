@@ -9,6 +9,7 @@ import {
 	View,
 } from "react-native";
 import { useOrganization } from "../contexts/OrganizationContext";
+import { useTheme } from "../contexts/ThemeContext";
 import type { Organization } from "../types/Organization";
 
 type DrawerMenuProps = {
@@ -30,6 +31,7 @@ export function DrawerMenu({
 }: DrawerMenuProps) {
 	const { organizations, selectedOrganization, selectOrganization } =
 		useOrganization();
+	const { isDark } = useTheme();
 
 	const handleSelectMyList = () => {
 		console.log("📝 My Listを選択 → organizationId: null");
@@ -58,7 +60,9 @@ export function DrawerMenu({
 				<Pressable
 					className="w-4/5 h-full"
 					style={{
-						backgroundColor: "rgba(255, 255, 255, 0.95)",
+						backgroundColor: isDark
+							? "rgba(31, 41, 55, 0.98)"
+							: "rgba(255, 255, 255, 0.95)",
 						shadowColor: "#000",
 						shadowOffset: { width: 2, height: 0 },
 						shadowOpacity: 0.3,
@@ -72,7 +76,9 @@ export function DrawerMenu({
 						<View
 							className="p-6 pt-16"
 							style={{
-								backgroundColor: "rgba(255, 255, 255, 0.85)",
+								backgroundColor: isDark
+									? "rgba(55, 65, 81, 0.9)"
+									: "rgba(255, 255, 255, 0.85)",
 								shadowColor: "#000",
 								shadowOffset: { width: 0, height: 2 },
 								shadowOpacity: 0.1,
@@ -82,7 +88,7 @@ export function DrawerMenu({
 						>
 							<Text
 								className="text-2xl font-noto-bold"
-								style={{ color: "#2563eb" }}
+								style={{ color: isDark ? "#60a5fa" : "#2563eb" }}
 							>
 								グループ設定
 							</Text>
@@ -91,22 +97,44 @@ export function DrawerMenu({
 						<ScrollView className="flex-1 p-4">
 							{/* MyList */}
 							<TouchableOpacity
-								className={`flex-row items-center p-4 rounded-lg mb-2 ${
-									selectedOrganization === null ? "bg-blue-100" : "bg-gray-50"
-								}`}
+								className="flex-row items-center p-4 rounded-lg mb-2"
+								style={{
+									backgroundColor:
+										selectedOrganization === null
+											? isDark
+												? "rgba(59, 130, 246, 0.3)"
+												: "#dbeafe"
+											: isDark
+												? "rgba(75, 85, 99, 0.5)"
+												: "#f9fafb",
+								}}
 								onPress={handleSelectMyList}
 							>
 								<Ionicons
 									name="person"
 									size={24}
-									color={selectedOrganization === null ? "#2563eb" : "#6b7280"}
+									color={
+										selectedOrganization === null
+											? isDark
+												? "#60a5fa"
+												: "#2563eb"
+											: isDark
+												? "#9ca3af"
+												: "#6b7280"
+									}
 								/>
 								<Text
-									className={`ml-3 text-lg font-noto-regular ${
-										selectedOrganization === null
-											? "text-blue-600"
-											: "text-gray-700"
-									}`}
+									className="ml-3 text-lg font-noto-regular"
+									style={{
+										color:
+											selectedOrganization === null
+												? isDark
+													? "#60a5fa"
+													: "#2563eb"
+												: isDark
+													? "#d1d5db"
+													: "#374151",
+									}}
 								>
 									My List
 								</Text>
@@ -114,23 +142,35 @@ export function DrawerMenu({
 
 							{/* グループ一覧 */}
 							<View className="mt-4">
-								<Text className="text-gray-500 text-sm font-noto-bold mb-2 px-2">
+								<Text
+									className="text-sm font-noto-bold mb-2 px-2"
+									style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+								>
 									所属グループ
 								</Text>
 
 								{organizations.length === 0 ? (
-									<Text className="text-gray-400 text-sm font-noto-regular px-2 py-4">
+									<Text
+										className="text-sm font-noto-regular px-2 py-4"
+										style={{ color: isDark ? "#6b7280" : "#9ca3af" }}
+									>
 										所属しているグループがありません
 									</Text>
 								) : (
 									organizations.map((org) => (
 										<View key={org.id} className="mb-2">
 											<TouchableOpacity
-												className={`flex-row items-center p-4 rounded-lg ${
-													selectedOrganization?.id === org.id
-														? "bg-blue-100"
-														: "bg-gray-50"
-												}`}
+												className="flex-row items-center p-4 rounded-lg"
+												style={{
+													backgroundColor:
+														selectedOrganization?.id === org.id
+															? isDark
+																? "rgba(59, 130, 246, 0.3)"
+																: "#dbeafe"
+															: isDark
+																? "rgba(75, 85, 99, 0.5)"
+																: "#f9fafb",
+												}}
 												onPress={() => handleSelectOrganization(org)}
 											>
 												<Ionicons
@@ -138,16 +178,26 @@ export function DrawerMenu({
 													size={24}
 													color={
 														selectedOrganization?.id === org.id
-															? "#2563eb"
-															: "#6b7280"
+															? isDark
+																? "#60a5fa"
+																: "#2563eb"
+															: isDark
+																? "#9ca3af"
+																: "#6b7280"
 													}
 												/>
 												<Text
-													className={`ml-3 text-lg font-noto-regular flex-1 ${
-														selectedOrganization?.id === org.id
-															? "text-blue-600"
-															: "text-gray-700"
-													}`}
+													className="ml-3 text-lg font-noto-regular flex-1"
+													style={{
+														color:
+															selectedOrganization?.id === org.id
+																? isDark
+																	? "#60a5fa"
+																	: "#2563eb"
+																: isDark
+																	? "#d1d5db"
+																	: "#374151",
+													}}
 												>
 													{org.name}
 												</Text>
@@ -160,7 +210,7 @@ export function DrawerMenu({
 													<Ionicons
 														name="settings-outline"
 														size={20}
-														color="#6b7280"
+														color={isDark ? "#9ca3af" : "#6b7280"}
 													/>
 												</TouchableOpacity>
 											</TouchableOpacity>
@@ -172,40 +222,79 @@ export function DrawerMenu({
 							{/* アクションボタン */}
 							<View className="mt-6 space-y-2">
 								<TouchableOpacity
-									className="flex-row items-center p-4 bg-green-50 rounded-lg border border-green-300"
+									className="flex-row items-center p-4 rounded-lg border"
+									style={{
+										backgroundColor: isDark
+											? "rgba(34, 197, 94, 0.2)"
+											: "#f0fdf4",
+										borderColor: isDark ? "rgba(34, 197, 94, 0.4)" : "#86efac",
+									}}
 									onPress={() => {
 										onCreateOrganization();
 										onClose();
 									}}
 								>
-									<Ionicons name="add-circle" size={24} color="#22c55e" />
-									<Text className="ml-3 text-green-700 text-lg font-noto-bold">
+									<Ionicons
+										name="add-circle"
+										size={24}
+										color={isDark ? "#4ade80" : "#22c55e"}
+									/>
+									<Text
+										className="ml-3 text-lg font-noto-bold"
+										style={{ color: isDark ? "#4ade80" : "#15803d" }}
+									>
 										グループを作成
 									</Text>
 								</TouchableOpacity>
 
 								<TouchableOpacity
-									className="flex-row items-center p-4 bg-blue-50 rounded-lg border border-blue-300"
+									className="flex-row items-center p-4 rounded-lg border"
+									style={{
+										backgroundColor: isDark
+											? "rgba(59, 130, 246, 0.2)"
+											: "#eff6ff",
+										borderColor: isDark ? "rgba(59, 130, 246, 0.4)" : "#93c5fd",
+									}}
 									onPress={() => {
 										onJoinOrganization();
 										onClose();
 									}}
 								>
-									<Ionicons name="enter" size={24} color="#3b82f6" />
-									<Text className="ml-3 text-blue-700 text-lg font-noto-bold">
+									<Ionicons
+										name="enter"
+										size={24}
+										color={isDark ? "#60a5fa" : "#3b82f6"}
+									/>
+									<Text
+										className="ml-3 text-lg font-noto-bold"
+										style={{ color: isDark ? "#60a5fa" : "#1d4ed8" }}
+									>
 										グループに参加
 									</Text>
 								</TouchableOpacity>
 
 								<TouchableOpacity
-									className="flex-row items-center p-4 bg-gray-50 rounded-lg border border-gray-300"
+									className="flex-row items-center p-4 rounded-lg border"
+									style={{
+										backgroundColor: isDark
+											? "rgba(107, 114, 128, 0.3)"
+											: "#f9fafb",
+										borderColor: isDark ? "rgba(156, 163, 175, 0.4)" : "#d1d5db",
+									}}
 									onPress={() => {
 										onViewInvitations();
 										onClose();
 									}}
 								>
-									<Ionicons name="mail" size={24} color="#6b7280" />
-									<Text className="ml-3 text-gray-700 text-lg font-noto-bold">
+									<Ionicons
+										name="mail"
+										size={24}
+										color={isDark ? "#9ca3af" : "#6b7280"}
+									/>
+									<Text
+										className="ml-3 text-lg font-noto-bold"
+										style={{ color: isDark ? "#d1d5db" : "#374151" }}
+									>
 										招待一覧
 									</Text>
 								</TouchableOpacity>
