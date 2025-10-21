@@ -230,21 +230,24 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 
 			// 完了日時が48時間以上前の場合、削除対象
 			if (completedAt && completedAt < fortyEightHoursAgo) {
-			// AI統計用に完了履歴を保存
-			const historyPromise: Promise<void> = addDoc(collection(db, "completedTodoHistory"), {
-				userId: data.userId,
-				title: data.title,
-				category: data.category || "other",
-				completedAt: data.completedAt,
-				completedBy: data.completedBy,
-				createdAt: data.createdAt,
-				deletedAt: new Date(), // 削除日時を記録
-			}).then(() => {});
+				// AI統計用に完了履歴を保存
+				const historyPromise: Promise<void> = addDoc(
+					collection(db, "completedTodoHistory"),
+					{
+						userId: data.userId,
+						title: data.title,
+						category: data.category || "other",
+						completedAt: data.completedAt,
+						completedBy: data.completedBy,
+						createdAt: data.createdAt,
+						deletedAt: new Date(), // 削除日時を記録
+					}
+				).then(() => {});
 
-			// Todo本体を削除
-			const deletePromise = deleteDoc(doc(db, COLLECTION_NAME, document.id));
+				// Todo本体を削除
+				const deletePromise = deleteDoc(doc(db, COLLECTION_NAME, document.id));
 
-			operations.push(historyPromise, deletePromise);
+				operations.push(historyPromise, deletePromise);
 				deletedCount++;
 				console.log(
 					`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`
