@@ -50,15 +50,40 @@ export function DrawerMenu({
 			animationType="fade"
 			onRequestClose={onClose}
 		>
-			<Pressable className="flex-1 bg-black/50" onPress={onClose}>
+			<Pressable
+				className="flex-1"
+				style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+				onPress={onClose}
+			>
 				<Pressable
-					className="w-4/5 h-full bg-white"
+					className="w-4/5 h-full"
+					style={{
+						backgroundColor: "rgba(255, 255, 255, 0.95)",
+						shadowColor: "#000",
+						shadowOffset: { width: 2, height: 0 },
+						shadowOpacity: 0.3,
+						shadowRadius: 10,
+						elevation: 10,
+					}}
 					onPress={(e) => e.stopPropagation()}
 				>
 					<View className="flex-1">
 						{/* ヘッダー */}
-						<View className="bg-blue-600 p-6 pt-16">
-							<Text className="text-white text-2xl font-noto-bold">
+						<View
+							className="p-6 pt-16"
+							style={{
+								backgroundColor: "rgba(255, 255, 255, 0.85)",
+								shadowColor: "#000",
+								shadowOffset: { width: 0, height: 2 },
+								shadowOpacity: 0.1,
+								shadowRadius: 4,
+								elevation: 3,
+							}}
+						>
+							<Text
+								className="text-2xl font-noto-bold"
+								style={{ color: "#2563eb" }}
+							>
 								グループ設定
 							</Text>
 						</View>
