@@ -17,7 +17,10 @@ import {
 import Toast from "react-native-toast-message";
 import { auth } from "../config/firebase";
 import { useOrganization } from "../contexts/OrganizationContext";
-import { getCurrentUserDisplayName } from "../services/notificationService";
+import {
+	getCurrentUserDisplayName,
+	notifyInvitation,
+} from "../services/notificationService";
 import {
 	deleteOrganization,
 	getOrganizationMembers,
@@ -105,13 +108,15 @@ export function OrganizationSettingsModal({
 
 		setIsInviting(true);
 		try {
-			await inviteByEmail(organization.id, inviteEmail.trim());
+			// 招待を送信（招待されたユーザーIDを取得）
+			const invitedUserId = await inviteByEmail(
+				organization.id,
+				inviteEmail.trim()
+			);
 
 			// 招待通知を送信
 			const inviterName = await getCurrentUserDisplayName();
-			// 招待されたユーザーのIDを取得する必要があるが、
-			// inviteByEmail内で既に検索しているので、ここでは簡略化
-			// 実際は inviteByEmail が招待されたユーザーIDを返すように修正すべき
+			await notifyInvitation(invitedUserId, organization.name, inviterName);
 
 			setInviteSuccess(`${inviteEmail} に招待を送信しました`);
 			setInviteEmail("");

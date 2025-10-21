@@ -171,7 +171,7 @@ export async function joinByInviteCode(code: string): Promise<Organization> {
 export async function inviteByEmail(
 	orgId: string,
 	email: string
-): Promise<void> {
+): Promise<string> {
 	const userId = auth.currentUser?.uid;
 	if (!userId) {
 		throw new Error("ユーザーがログインしていません");
@@ -250,6 +250,9 @@ export async function inviteByEmail(
 		status: "pending",
 		createdAt: new Date(),
 	});
+
+	// 招待されたユーザーIDを返す
+	return invitedUserId;
 }
 
 /**
