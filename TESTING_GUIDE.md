@@ -5,11 +5,13 @@
 ## 📋 テストツール
 
 ### 1. **Jest**（ユニットテスト）
+
 - JavaScriptテストフレームワーク
 - React Nativeアプリの標準的なテストツール
 - 高速で並列実行可能
 
 ### 2. **React Native Testing Library**
+
 - React Nativeコンポーネントのテスト用ライブラリ
 - ユーザーの視点でテストを記述
 - DOM Testing Libraryのベストプラクティスに準拠
@@ -85,7 +87,7 @@ describe('TodoItem', () => {
         testID="checkbox"
       />
     );
-    
+
     fireEvent.press(getByTestId('checkbox'));
     expect(mockToggle).toHaveBeenCalledWith('1');
   });
@@ -95,26 +97,26 @@ describe('TodoItem', () => {
 ### サービス関数のテスト例
 
 ```typescript
-import { validateTodo } from '../../services/todoService';
+import { validateTodo } from "../../services/todoService";
 
-describe('todoService', () => {
-  describe('validateTodo', () => {
-    it('有効なTODOデータはエラーなし', () => {
-      const validTodo = {
-        title: 'テストTODO',
-        content: 'これは有効なTODOです',
-      };
-      expect(() => validateTodo(validTodo)).not.toThrow();
-    });
+describe("todoService", () => {
+	describe("validateTodo", () => {
+		it("有効なTODOデータはエラーなし", () => {
+			const validTodo = {
+				title: "テストTODO",
+				content: "これは有効なTODOです",
+			};
+			expect(() => validateTodo(validTodo)).not.toThrow();
+		});
 
-    it('タイトルが空の場合はエラー', () => {
-      const invalidTodo = {
-        title: '',
-        content: 'タイトルが空です',
-      };
-      expect(() => validateTodo(invalidTodo)).toThrow();
-    });
-  });
+		it("タイトルが空の場合はエラー", () => {
+			const invalidTodo = {
+				title: "",
+				content: "タイトルが空です",
+			};
+			expect(() => validateTodo(invalidTodo)).toThrow();
+		});
+	});
 });
 ```
 
@@ -142,21 +144,25 @@ describe('todoService', () => {
 ### テストすべき内容
 
 ✅ **基本機能**
+
 - データの追加・編集・削除
 - 状態の切り替え
 - バリデーション
 
 ✅ **エッジケース**
+
 - 空の入力
 - 最大文字数
 - nullやundefined
 
 ✅ **ユーザーインタラクション**
+
 - ボタンのタップ
 - フォームの入力
 - モーダルの開閉
 
 ❌ **テスト不要**
+
 - Firebaseの内部実装
 - React Nativeの内部実装
 - サードパーティライブラリ
@@ -197,7 +203,7 @@ jobs:
   update:
     name: Deploy to Production
     type: update
-    needs: test  # テストが成功した場合のみ実行
+    needs: test # テストが成功した場合のみ実行
 ```
 
 ---
@@ -230,11 +236,13 @@ open coverage/lcov-report/index.html
 ### テストが失敗する
 
 1. **依存関係のインストール**
+
    ```bash
    npm install
    ```
 
 2. **キャッシュのクリア**
+
    ```bash
    npm test -- --clearCache
    ```
@@ -251,9 +259,9 @@ open coverage/lcov-report/index.html
 
 ```javascript
 // jest.setup.js
-jest.mock('./config/firebase', () => ({
-  auth: {},
-  db: {},
+jest.mock("./config/firebase", () => ({
+	auth: {},
+	db: {},
 }));
 ```
 
@@ -316,10 +324,10 @@ it('チェックボックスをタップすると完了状態が切り替わる'
   // Arrange: テストの準備
   const mockToggle = jest.fn();
   const { getByTestId } = render(<TodoItem {...props} onToggle={mockToggle} />);
-  
+
   // Act: アクションを実行
   fireEvent.press(getByTestId('checkbox'));
-  
+
   // Assert: 期待する結果を検証
   expect(mockToggle).toHaveBeenCalled();
 });
@@ -353,4 +361,3 @@ it('カウンターが0と表示される', () => {
 4. **失敗するテストの修正**
 
 テストを書くことで、コードの品質が向上し、リファクタリングやバグ修正が安全に行えるようになります！
-
