@@ -276,19 +276,24 @@ export function OrganizationSettingsModal({
 							className="rounded-lg p-6 w-11/12"
 							style={{
 								maxHeight: "80%",
-								backgroundColor: "rgba(255, 255, 255, 0.98)",
+								backgroundColor: "#ffffff",
 								shadowColor: "#000",
 								shadowOffset: { width: 0, height: 4 },
-								shadowOpacity: 0.3,
-								shadowRadius: 8,
-								elevation: 10,
+								shadowOpacity: 0.25,
+								shadowRadius: 12,
+								elevation: 8,
 							}}
 						>
 							<Text
 								className="text-xl font-noto-bold mb-4 px-4 py-2 rounded-md"
 								style={{
-									backgroundColor: "rgba(37, 99, 235, 0.15)",
+									backgroundColor: "#ffffff",
 									color: "#2563eb",
+									shadowColor: "#000",
+									shadowOffset: { width: 0, height: 2 },
+									shadowOpacity: 0.1,
+									shadowRadius: 4,
+									elevation: 3,
 								}}
 							>
 								{organization.name}
