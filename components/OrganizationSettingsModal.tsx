@@ -44,6 +44,8 @@ export function OrganizationSettingsModal({
 	const [isLoading, setIsLoading] = useState(false);
 	const [inviteEmail, setInviteEmail] = useState("");
 	const [isInviting, setIsInviting] = useState(false);
+	const [inviteError, setInviteError] = useState<string | null>(null);
+	const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 	const { refreshOrganizations, selectOrganization } = useOrganization();
 
 	const isOwner = organization?.ownerId === auth.currentUser?.uid;
@@ -87,12 +89,12 @@ export function OrganizationSettingsModal({
 	const handleInviteByEmail = async () => {
 		if (!organization) return;
 
+		// エラー・成功メッセージをリセット
+		setInviteError(null);
+		setInviteSuccess(null);
+
 		if (!inviteEmail.trim()) {
-			Toast.show({
-				type: "error",
-				text1: "入力エラー",
-				text2: "メールアドレスを入力してください",
-			});
+			setInviteError("メールアドレスを入力してください");
 			return;
 		}
 
@@ -106,20 +108,26 @@ export function OrganizationSettingsModal({
 			// inviteByEmail内で既に検索しているので、ここでは簡略化
 			// 実際は inviteByEmail が招待されたユーザーIDを返すように修正すべき
 
-			Toast.show({
-				type: "success",
-				text1: "招待完了",
-				text2: `${inviteEmail} に招待を送信しました`,
-			});
-
+			setInviteSuccess(`${inviteEmail} に招待を送信しました`);
 			setInviteEmail("");
 		} catch (error: any) {
 			console.error("Error inviting by email:", error);
-			Toast.show({
-				type: "error",
-				text1: "招待失敗",
-				text2: error.message || "招待の送信に失敗しました",
-			});
+			
+			// エラーメッセージを分かりやすく表示
+			let errorMessage = "招待の送信に失敗しました";
+			if (error.message.includes("見つかりません")) {
+				errorMessage = "このメールアドレスはまだ登録されていません。招待コードを共有して、先にアプリに登録してもらってください。";
+			} else if (error.message.includes("既にメンバー")) {
+				errorMessage = "このユーザーは既にグループのメンバーです";
+			} else if (error.message.includes("既に招待")) {
+				errorMessage = "このユーザーには既に招待を送信しています";
+			} else if (error.message.includes("権限がありません")) {
+				errorMessage = "招待する権限がありません";
+			} else if (error.message) {
+				errorMessage = error.message;
+			}
+			
+			setInviteError(errorMessage);
 		} finally {
 			setIsInviting(false);
 		}
@@ -167,35 +175,39 @@ export function OrganizationSettingsModal({
 	const handleLeaveOrganization = () => {
 		if (!organization) return;
 
-		Alert.alert("グループから退出", `「${organization.name}」から退出しますか？`, [
-			{ text: "キャンセル", style: "cancel" },
-			{
-				text: "退出",
-				style: "destructive",
-				onPress: async () => {
-					try {
-						await leaveOrganization(organization.id);
-						await refreshOrganizations();
-						selectOrganization(null);
+		Alert.alert(
+			"グループから退出",
+			`「${organization.name}」から退出しますか？`,
+			[
+				{ text: "キャンセル", style: "cancel" },
+				{
+					text: "退出",
+					style: "destructive",
+					onPress: async () => {
+						try {
+							await leaveOrganization(organization.id);
+							await refreshOrganizations();
+							selectOrganization(null);
 
-						Toast.show({
-							type: "success",
-							text1: "退出完了",
-							text2: "グループから退出しました",
-						});
+							Toast.show({
+								type: "success",
+								text1: "退出完了",
+								text2: "グループから退出しました",
+							});
 
-						onClose();
-					} catch (error: any) {
-						console.error("Error leaving organization:", error);
-						Toast.show({
-							type: "error",
-							text1: "退出失敗",
-							text2: error.message || "グループからの退出に失敗しました",
-						});
-					}
+							onClose();
+						} catch (error: any) {
+							console.error("Error leaving organization:", error);
+							Toast.show({
+								type: "error",
+								text1: "退出失敗",
+								text2: error.message || "グループからの退出に失敗しました",
+							});
+						}
+					},
 				},
-			},
-		]);
+			]
+		);
 	};
 
 	const handleDeleteOrganization = () => {
@@ -308,12 +320,35 @@ export function OrganizationSettingsModal({
 												}}
 												placeholder="メールアドレス"
 												value={inviteEmail}
-												onChangeText={setInviteEmail}
+												onChangeText={(text) => {
+													setInviteEmail(text);
+													setInviteError(null);
+													setInviteSuccess(null);
+												}}
 												keyboardType="email-address"
 												autoCapitalize="none"
 											/>
 										</View>
 									</TouchableWithoutFeedback>
+									
+									{/* エラーメッセージ */}
+									{inviteError && (
+										<View className="mb-3 p-3 bg-red-50 rounded-md border border-red-200">
+											<Text className="text-red-700 font-noto-regular text-sm">
+												{inviteError}
+											</Text>
+										</View>
+									)}
+									
+									{/* 成功メッセージ */}
+									{inviteSuccess && (
+										<View className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
+											<Text className="text-green-700 font-noto-regular text-sm">
+												{inviteSuccess}
+											</Text>
+										</View>
+									)}
+									
 									<TouchableOpacity
 										className={`px-4 py-3 rounded-md ${
 											isInviting ? "bg-blue-300" : "bg-blue-600"
