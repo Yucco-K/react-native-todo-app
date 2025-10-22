@@ -623,10 +623,14 @@ FirebaseError: Missing or insufficient permissions.
 - ✅ セキュリティ強化完了（OpenAI APIキーはサーバーサイドで管理）
 - ✅ CI/CD環境構築済み（EAS Workflows）
 - ✅ テスト環境整備済み（Jest + React Native Testing Library）
-- ⚠️ Firebase環境で運用中（`react-native-todo-app-prod`プロジェクト）
-- ⚠️ Expo Go による開発環境のみ
-- ❌ スタンドアロンビルド未作成
-- ❌ Android未検証
+- ✅ コスト監視設定済み（OpenAI、Firebase）
+- ✅ 環境変数の分離設定済み（開発/本番環境）
+- ✅ 本番用Firebase環境構築済み（`react-native-todo-app-prod`プロジェクト）
+- ✅ Firebase Analytics 導入済み（ユーザー行動分析）
+- ✅ スタンドアロンビルド設定完了（Bundle Identifier、EASプロファイル）
+- ⚠️ Expo Go による開発環境（スタンドアロンビルドも可能）
+- ❌ TestFlightβテスト未実施
+- ❌ Android環境での動作検証未実施
 - ❌ ストア公開未実施
 
 ### 完了した項目
@@ -654,13 +658,39 @@ FirebaseError: Missing or insufficient permissions.
    - ✅ AsyncStorage でテーマ設定永続化
    - ✅ ThemeContext による全画面・全モーダル対応
 
+5. **コスト監視** ✅
+   - ✅ OpenAI 使用量アラート設定済み
+     - 月次予算: $10
+     - 80%使用アラート、100%使用アラート
+   - ✅ Firebase コスト監視設定済み
+   - ✅ ユーザーフレンドリーなエラーメッセージ実装
+     - レート制限到達時にトースト通知でユーザーに通知
+
+6. **環境設定** ✅
+   - ✅ 環境変数の分離（開発/本番環境）
+   - ✅ 本番用Firebaseプロジェクト設定（`react-native-todo-app-prod`）
+   - ✅ Cloud Functions環境変数管理（OpenAI APIキー）
+
+7. **分析・監視** ✅
+   - ✅ Firebase Analytics 導入済み（ユーザー行動分析）
+   - ✅ コスト監視（OpenAI、Firebase）
+
+8. **ビルド・配信準備** ✅
+   - ✅ スタンドアロンビルド設定完了
+     - Bundle Identifier: `com.yuccok.reactnativetodoapp`
+     - Android Package: `com.yuccok.reactnativetodoapp`
+   - ✅ EAS Build プロファイル設定（preview、production）
+   - ✅ BUILD_GUIDE.md 作成済み
+
 ### 本番運用への残課題
 
 1. **アプリ配信** ⚠️
-   - ❌ スタンドアロンビルドの作成（`eas build --platform ios/android`）
-   - ❌ App Store / Google Play への公開準備
-   - ❌ TestFlightでのβテスト実施
-   - 💡 **現状**: Expo Go経由でのアクセスのみ（QRコード公開済み）
+   - ✅ スタンドアロンビルド設定完了（Bundle Identifier、EASプロファイル）
+   - ❌ スタンドアロンビルドの実行（`eas build`コマンド実行のみ）
+   - ❌ TestFlightでのβテスト実施（Apple Developer Program: $99/年必要）
+   - ❌ App Store / Google Play への本番公開
+   - 💡 **現状**: Expo Go経由でのアクセス可能（QRコード公開済み）
+   - 💡 **次のステップ**: `eas build --platform ios --profile preview` でビルド実行
 
 2. **プラットフォーム対応** ⚠️
    - ❌ Android環境での動作検証
@@ -668,32 +698,36 @@ FirebaseError: Missing or insufficient permissions.
    - ❌ Android通知設定の最適化
 
 3. **監視・運用** ⚠️
-   - ❌ Firebase Analytics の導入（ユーザー行動分析）
+   - ✅ Firebase Analytics 導入済み（ユーザー行動分析）
    - ❌ エラートラッキング（Sentry等の導入）
    - ❌ パフォーマンス監視（Firebase Performance Monitoring）
-   - ❌ コスト監視（Firebase、OpenAI使用量アラート）
+   - ✅ コスト監視設定済み
+     - OpenAI: 月次予算$10、80%/100%使用アラート
+     - Firebase: コスト監視設定済み
 
 4. **本番環境最適化** ⚠️
    - 💡 OpenAI レート制限の値調整を検討（現在100回/日、本番環境では10回/日推奨）
      - ⚠️ 実装済みだが、現在は開発テスト用に緩和された設定
      - 💰 コスト抑制のため、本番公開時には10回/日への変更を推奨
    - ❌ バックアップ・リカバリ戦略の策定
-   - ❌ 環境変数の分離（開発/本番環境）
-   - ❌ 本番用Firebaseプロジェクトの分離（オプション）
+   - ✅ 環境変数の分離（開発/本番環境）設定済み
+   - ✅ 本番用Firebaseプロジェクト設定済み（`react-native-todo-app-prod`）
 
 ### 今後の推奨アクション
 
 1. **短期（1-2週間）**
    - 💡 OpenAI レート制限の値を本番用に調整（100回 → 10回/日、オプション）
-   - スタンドアロンビルドの作成とTestFlight配信
-   - Android環境での動作検証
+   - ✅ スタンドアロンビルド設定完了
+   - プレビュービルドの実行（`eas build --platform ios/android --profile preview`）
+   - TestFlight配信（iOS、Apple Developer Program: $99/年必要）
+   - Android環境での動作検証（APKビルド）
 
 2. **中期（1-2ヶ月）**
-   - Firebase Analytics 導入
    - Sentry等のエラートラッキング導入
+   - Firebase Performance Monitoring 導入
    - App Store / Google Play 公開準備
 
 3. **長期（3ヶ月以降）**
-   - 本番/開発環境の完全分離
    - バックアップ・リカバリ戦略の実装
    - パフォーマンス最適化とスケーラビリティ向上
+   - ユーザーフィードバックに基づく機能拡張

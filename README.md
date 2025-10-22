@@ -177,6 +177,32 @@ eas workflow:run production-build.yml
 - **メールアドレス**: `test@example.com`
 - **パスワード**: `password123`
 
+## スタンドアロンビルド
+
+Expo Goを使わずにネイティブアプリとしてビルド・配信できます。
+
+### ビルドコマンド
+
+```bash
+# iOS（TestFlight用）
+eas build --platform ios --profile preview
+
+# Android（APK）
+eas build --platform android --profile preview
+
+# 本番ビルド（ストア公開用）
+eas build --platform ios --profile production
+eas build --platform android --profile production
+```
+
+### 必要な環境
+
+- **EAS Build**: 月30ビルドまで無料
+- **iOS配信**: Apple Developer Program（$99/年）
+- **Android配信**: Google Play Console登録（$25、一回のみ）
+
+詳細は [BUILD_GUIDE.md](./BUILD_GUIDE.md) を参照してください。
+
 ## プロジェクト構造
 
 ```
