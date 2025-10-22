@@ -1,8 +1,12 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import { defineSecret } from "firebase-functions/params";
 import OpenAI from "openai";
 
 admin.initializeApp();
+
+// Secret Manager から API キーを取得
+const openaiApiKey = defineSecret("OPENAI_API_KEY");
 
 /**
  * AIカテゴリ推測 Cloud Function
@@ -14,6 +18,9 @@ admin.initializeApp();
  */
 export const predictCategory = functions
 	.region("asia-northeast1") // 東京リージョン（低レイテンシ）
+	.runWith({
+		secrets: ["OPENAI_API_KEY"], // Secret Manager のシークレットを指定
+	})
 	.https.onCall(async (data, context) => {
 		// 認証チェック
 		if (!context.auth) {
@@ -60,11 +67,8 @@ export const predictCategory = functions
 				);
 			}
 
-			// OpenAI API呼び出し（APIキーは環境変数から安全に取得）
-			// 本番環境: Google Cloud Consoleで OPENAI_API_KEY を設定してください
-			// 開発環境: functions/.env.local に OPENAI_API_KEY=your-key を設定
-			const apiKey =
-				process.env.OPENAI_API_KEY || functions.config().openai?.key;
+			// OpenAI API呼び出し（Secret Manager から安全に取得）
+			const apiKey = openaiApiKey.value();
 			if (!apiKey) {
 				console.error("OpenAI APIキーが設定されていません");
 				throw new functions.https.HttpsError(
