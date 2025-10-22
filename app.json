@@ -8,7 +8,6 @@
 		"icon": "./assets/images/icon.png",
 		"scheme": "reactnativetodoapp",
 		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
 		"splash": {
 			"image": "./assets/images/splash-icon.png",
 			"resizeMode": "contain",
@@ -23,8 +22,6 @@
 				"foregroundImage": "./assets/images/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"edgeToEdgeEnabled": true,
-			"predictiveBackGestureEnabled": false,
 			"package": "com.yuccok.reactnativetodoapp"
 		},
 		"web": {
