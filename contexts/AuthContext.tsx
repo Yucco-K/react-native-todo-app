@@ -8,10 +8,7 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../config/firebase";
-import {
-	registerForPushNotificationsAsync,
-	savePushToken,
-} from "../services/notificationService";
+import { registerForPushNotificationsAsync, savePushToken } from "../services/notificationService";
 import { getUserNickname, saveUserNickname } from "../services/userService";
 
 type AuthContextType = {
@@ -70,11 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const signUp = async (email: string, password: string) => {
-		const userCredential = await createUserWithEmailAndPassword(
-			auth,
-			email,
-			password
-		);
+		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 		const userId = userCredential.user.uid;
 
 		// Firestoreのusersコレクションにユーザー情報を保存
@@ -87,11 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const signIn = async (email: string, password: string) => {
-		const userCredential = await signInWithEmailAndPassword(
-			auth,
-			email,
-			password
-		);
+		const userCredential = await signInWithEmailAndPassword(auth, email, password);
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
 
@@ -118,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						{
 							email: userEmail,
 						},
-						{ merge: true }
+						{ merge: true },
 					);
 					console.log("✅ ユーザー情報を更新（email追加）:", {
 						userId,

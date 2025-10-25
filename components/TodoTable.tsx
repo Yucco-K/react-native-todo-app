@@ -1,7 +1,8 @@
-import {
-	notifyTodoCompleted,
-	notifyTodoDeleted,
-} from "@/services/notificationService";
+import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { notifyTodoCompleted, notifyTodoDeleted } from "@/services/notificationService";
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteExpiredCompletedTodos,
@@ -9,21 +10,8 @@ import {
 	getTodos as getTodosService,
 	toggleTodoComplete,
 } from "@/services/todoService";
-import {
-	getUserStats,
-	incrementCompletedTaskCount,
-} from "@/services/userStatsService";
+import { getUserStats, incrementCompletedTaskCount } from "@/services/userStatsService";
 import type { Todo } from "@/types/Todo";
-import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
 import SearchModal from "./SearchModal";
 import TodoItem from "./ui/TodoItem";
@@ -75,8 +63,7 @@ export default function TodoTable({
 								"インデックスが必要です。Firestore Consoleでインデックスを作成してください。";
 							break;
 						case "unavailable":
-							errorMessage =
-								"Firestoreに接続できません。インターネット接続を確認してください。";
+							errorMessage = "Firestoreに接続できません。インターネット接続を確認してください。";
 							break;
 						default:
 							errorMessage = `読み込みエラー: ${error.code}`;
@@ -136,12 +123,7 @@ export default function TodoTable({
 				// ランダムなテーマインデックスを生成（0-24の25種類）
 				const randomThemeIndex = Math.floor(Math.random() * 25);
 
-				console.log(
-					"🎨 新しいテーマ:",
-					randomThemeIndex,
-					"褒め言葉:",
-					praiseMessage
-				);
+				console.log("🎨 新しいテーマ:", randomThemeIndex, "褒め言葉:", praiseMessage);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
 				Toast.hide();
@@ -248,15 +230,8 @@ export default function TodoTable({
 					Todo
 				</Text>
 				{/* 検索アイコンボタン */}
-				<TouchableOpacity
-					onPress={() => setIsSearchModalVisible(true)}
-					className="p-2"
-				>
-					<Ionicons
-						name="search"
-						size={24}
-						color={isDark ? "#60a5fa" : "#3b82f6"}
-					/>
+				<TouchableOpacity onPress={() => setIsSearchModalVisible(true)} className="p-2">
+					<Ionicons name="search" size={24} color={isDark ? "#60a5fa" : "#3b82f6"} />
 				</TouchableOpacity>
 			</View>
 			{isLoading ? (

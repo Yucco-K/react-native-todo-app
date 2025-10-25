@@ -5,15 +5,9 @@ type TodoRefreshContextType = {
 	triggerRefresh: () => void;
 };
 
-const TodoRefreshContext = createContext<TodoRefreshContextType | undefined>(
-	undefined
-);
+const TodoRefreshContext = createContext<TodoRefreshContextType | undefined>(undefined);
 
-export function TodoRefreshProvider({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export function TodoRefreshProvider({ children }: { children: React.ReactNode }) {
 	const [refreshTrigger, setRefreshTrigger] = useState(0);
 
 	const triggerRefresh = () => {
@@ -34,4 +28,3 @@ export function useTodoRefresh() {
 	}
 	return context;
 }
-

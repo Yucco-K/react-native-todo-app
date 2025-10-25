@@ -1,11 +1,4 @@
-import {
-	collection,
-	getDocs,
-	limit,
-	orderBy,
-	query,
-	where,
-} from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { TodoCategory } from "../types/Category";
 
@@ -62,10 +55,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 		};
 	}
 
-	const frequentCategories: Record<TodoCategory, number> = {} as Record<
-		TodoCategory,
-		number
-	>;
+	const frequentCategories: Record<TodoCategory, number> = {} as Record<TodoCategory, number>;
 	const frequentTitles: Record<string, number> = {};
 	const recentTodos: Array<{
 		title: string;
@@ -84,7 +74,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 		collection(db, TODOS_COLLECTION),
 		where("userId", "==", userId),
 		orderBy("createdAt", "desc"),
-		limit(50)
+		limit(50),
 	);
 
 	const currentSnapshot = await getDocs(currentTodosQuery);
@@ -99,8 +89,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 
 		// タイトルの頻度をカウント（正規化）
 		const normalizedTitle = title.toLowerCase().trim();
-		frequentTitles[normalizedTitle] =
-			(frequentTitles[normalizedTitle] || 0) + 1;
+		frequentTitles[normalizedTitle] = (frequentTitles[normalizedTitle] || 0) + 1;
 
 		// 最近のTODOを記録
 		if (recentTodos.length < 20) {
@@ -116,7 +105,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 		const historyQuery = query(
 			collection(db, HISTORY_COLLECTION),
 			where("userId", "==", userId),
-			limit(50)
+			limit(50),
 		);
 
 		const historySnapshot = await getDocs(historyQuery);
@@ -129,8 +118,7 @@ async function analyzeUserTodoPatterns(): Promise<{
 			frequentCategories[category] = (frequentCategories[category] || 0) + 1;
 
 			const normalizedTitle = title.toLowerCase().trim();
-			frequentTitles[normalizedTitle] =
-				(frequentTitles[normalizedTitle] || 0) + 1;
+			frequentTitles[normalizedTitle] = (frequentTitles[normalizedTitle] || 0) + 1;
 
 			// すべてのTODOを記録（パターン分析用）
 			allTodos.push({ title, category, createdAt });
@@ -170,12 +158,10 @@ async function analyzeUserTodoPatterns(): Promise<{
 				// 平均間隔を計算（時間単位）
 				const intervals: number[] = [];
 				for (let i = 1; i < sortedDates.length; i++) {
-					const interval =
-						(sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60);
+					const interval = (sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60);
 					intervals.push(interval);
 				}
-				const averageInterval =
-					intervals.reduce((sum, val) => sum + val, 0) / intervals.length;
+				const averageInterval = intervals.reduce((sum, val) => sum + val, 0) / intervals.length;
 				pattern.averageInterval = averageInterval;
 			}
 		}
@@ -196,13 +182,7 @@ async function analyzeUserTodoPatterns(): Promise<{
  * カテゴリごとのおすすめTODOテンプレート
  */
 const CATEGORY_TEMPLATES: Record<TodoCategory, string[]> = {
-	work: [
-		"会議の準備",
-		"メール返信",
-		"資料作成",
-		"週次レポート",
-		"タスクの整理",
-	],
+	work: ["会議の準備", "メール返信", "資料作成", "週次レポート", "タスクの整理"],
 	shopping: ["食材の買い出し", "日用品の補充", "お米の購入", "飲み物の補充"],
 	housework: ["掃除", "洗濯", "料理の下ごしらえ", "ゴミ出し", "片付け"],
 	study: ["英語の勉強", "資格試験の勉強", "読書", "オンライン講座"],
@@ -240,7 +220,7 @@ function generateFriendlyMessage(
 		interval?: number;
 		matchesTimePattern?: boolean;
 		matchesDayOfWeek?: boolean;
-	}
+	},
 ): string {
 	const messages: Record<TodoCategory, string[]> = {
 		work: [
@@ -288,8 +268,7 @@ function generateFriendlyMessage(
 			`前回から${intervalStr}経ちました。{title}の時間ですね⏰`,
 			`${intervalStr}ごとの{title}、忘れていませんか？`,
 		];
-		const template =
-			periodicMessages[Math.floor(Math.random() * periodicMessages.length)];
+		const template = periodicMessages[Math.floor(Math.random() * periodicMessages.length)];
 		return template.replace("{title}", title);
 	}
 
@@ -300,15 +279,13 @@ function generateFriendlyMessage(
 			`いつもこの時間に{title}をされてますね💡`,
 			`タイミングぴったり！{title}はいかがですか？`,
 		];
-		const template =
-			timingMessages[Math.floor(Math.random() * timingMessages.length)];
+		const template = timingMessages[Math.floor(Math.random() * timingMessages.length)];
 		return template.replace("{title}", title);
 	}
 
 	// 通常のメッセージ
 	const categoryMessages = messages[category] || messages.other;
-	const template =
-		categoryMessages[Math.floor(Math.random() * categoryMessages.length)];
+	const template = categoryMessages[Math.floor(Math.random() * categoryMessages.length)];
 	return template.replace("{title}", title);
 }
 
@@ -317,7 +294,7 @@ function generateFriendlyMessage(
  * @param excludeTitles - 除外するタイトルのリスト（小文字・トリム済み）
  */
 export async function generateTodoRecommendations(
-	excludeTitles: string[] = []
+	excludeTitles: string[] = [],
 ): Promise<TodoRecommendation[]> {
 	try {
 		const {
@@ -335,11 +312,7 @@ export async function generateTodoRecommendations(
 
 		// データが少ない場合（初回ユーザー）は、人気カテゴリからランダムに提案
 		if (Object.keys(frequentCategories).length === 0) {
-			const popularCategories: TodoCategory[] = [
-				"work",
-				"shopping",
-				"housework",
-			];
+			const popularCategories: TodoCategory[] = ["work", "shopping", "housework"];
 			const result: TodoRecommendation[] = [];
 
 			for (const cat of popularCategories) {
@@ -375,13 +348,10 @@ export async function generateTodoRecommendations(
 			// 周期が判明しているタスク
 			if (pattern.averageInterval) {
 				// 最後に追加された時刻を取得
-				const lastAdded = recentTodos.find(
-					(t) => t.title.toLowerCase().trim() === normalizedTitle
-				);
+				const lastAdded = recentTodos.find((t) => t.title.toLowerCase().trim() === normalizedTitle);
 
 				if (lastAdded) {
-					const hoursSinceLastAdded =
-						(now - lastAdded.createdAt.getTime()) / (1000 * 60 * 60);
+					const hoursSinceLastAdded = (now - lastAdded.createdAt.getTime()) / (1000 * 60 * 60);
 
 					// 周期の80%以上経過していれば提案
 					if (hoursSinceLastAdded >= pattern.averageInterval * 0.8) {
@@ -389,13 +359,13 @@ export async function generateTodoRecommendations(
 
 						// 時間帯が一致する場合、スコアを上げる
 						const matchesHour = pattern.timePatterns.some(
-							(tp) => Math.abs(tp.hour - currentHour) <= 2
+							(tp) => Math.abs(tp.hour - currentHour) <= 2,
 						);
 						if (matchesHour) score += 50;
 
 						// 曜日が一致する場合、スコアを上げる
 						const matchesDayOfWeek = pattern.timePatterns.some(
-							(tp) => tp.dayOfWeek === currentDayOfWeek
+							(tp) => tp.dayOfWeek === currentDayOfWeek,
 						);
 						if (matchesDayOfWeek) score += 30;
 
@@ -414,11 +384,9 @@ export async function generateTodoRecommendations(
 				}
 			} else if (pattern.timePatterns.length >= 2) {
 				// 周期は不明だが、時間帯や曜日のパターンがあるタスク
-				const matchesHour = pattern.timePatterns.some(
-					(tp) => Math.abs(tp.hour - currentHour) <= 2
-				);
+				const matchesHour = pattern.timePatterns.some((tp) => Math.abs(tp.hour - currentHour) <= 2);
 				const matchesDayOfWeek = pattern.timePatterns.some(
-					(tp) => tp.dayOfWeek === currentDayOfWeek
+					(tp) => tp.dayOfWeek === currentDayOfWeek,
 				);
 
 				if (matchesHour || matchesDayOfWeek) {
@@ -426,7 +394,7 @@ export async function generateTodoRecommendations(
 					const recentlyAdded = recentTodos.some(
 						(todo) =>
 							todo.createdAt.getTime() > now - 7 * 24 * 60 * 60 * 1000 &&
-							todo.title.toLowerCase().trim() === normalizedTitle
+							todo.title.toLowerCase().trim() === normalizedTitle,
 					);
 
 					if (!recentlyAdded) {
@@ -459,11 +427,7 @@ export async function generateTodoRecommendations(
 				recommendations.push({
 					title: task.title,
 					category: task.category,
-					message: generateFriendlyMessage(
-						task.category,
-						task.title,
-						task.options
-					),
+					message: generateFriendlyMessage(task.category, task.title, task.options),
 				});
 			}
 		}
@@ -476,9 +440,7 @@ export async function generateTodoRecommendations(
 
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
 		if (recommendations.length < 3) {
-			const sortedCategories = Object.entries(frequentCategories).sort(
-				([, a], [, b]) => b - a
-			);
+			const sortedCategories = Object.entries(frequentCategories).sort(([, a], [, b]) => b - a);
 
 			// 全カテゴリを試して3件埋める
 			for (const [category, _count] of sortedCategories) {
@@ -488,9 +450,7 @@ export async function generateTodoRecommendations(
 				const templates = CATEGORY_TEMPLATES[cat] || [];
 
 				// そのカテゴリから複数提案可能にする
-				const shuffledTemplates = [...templates].sort(
-					() => Math.random() - 0.5
-				);
+				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
 
 				for (const title of shuffledTemplates) {
 					if (recommendations.length >= 3) break;
@@ -502,7 +462,7 @@ export async function generateTodoRecommendations(
 					const recentlyAdded = recentTodos.some(
 						(todo) =>
 							todo.title.toLowerCase().includes(title.toLowerCase()) ||
-							title.toLowerCase().includes(todo.title.toLowerCase())
+							title.toLowerCase().includes(todo.title.toLowerCase()),
 					);
 
 					if (!recentlyAdded) {
@@ -520,17 +480,13 @@ export async function generateTodoRecommendations(
 		// 2. それでも3件に満たない場合、全カテゴリから選択（最近追加チェックなし）
 		if (recommendations.length < 3) {
 			const allCategories = Object.keys(CATEGORY_TEMPLATES) as TodoCategory[];
-			const shuffledCategories = [...allCategories].sort(
-				() => Math.random() - 0.5
-			);
+			const shuffledCategories = [...allCategories].sort(() => Math.random() - 0.5);
 
 			for (const cat of shuffledCategories) {
 				if (recommendations.length >= 3) break;
 
 				const templates = CATEGORY_TEMPLATES[cat] || [];
-				const shuffledTemplates = [...templates].sort(
-					() => Math.random() - 0.5
-				);
+				const shuffledTemplates = [...templates].sort(() => Math.random() - 0.5);
 
 				for (const title of shuffledTemplates) {
 					if (recommendations.length >= 3) break;
@@ -549,14 +505,12 @@ export async function generateTodoRecommendations(
 		}
 
 		console.log(
-			`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`
+			`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`,
 		);
 
 		// 常に3件を保証（万が一に備えて）
 		if (recommendations.length < 3) {
-			console.warn(
-				`⚠️ おすすめが${recommendations.length}件しか生成できませんでした`
-			);
+			console.warn(`⚠️ おすすめが${recommendations.length}件しか生成できませんでした`);
 		}
 
 		return recommendations.slice(0, 3);

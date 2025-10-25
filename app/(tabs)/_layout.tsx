@@ -1,3 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Text, TouchableOpacity, View } from "react-native";
 import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import { InvitationListModal } from "@/components/InvitationListModal";
@@ -5,10 +9,6 @@ import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { getMyInvitations } from "@/services/organizationService";
 import type { Organization } from "@/types/Organization";
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Text, TouchableOpacity, View } from "react-native";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -42,7 +42,7 @@ export default function TabLayout() {
 				console.log(
 					"📬 未読招待があります:",
 					invitations.length,
-					"件 - モーダルを自動的に開きます"
+					"件 - モーダルを自動的に開きます",
 				);
 				setInvitationsVisible(true);
 			}
@@ -63,13 +63,8 @@ export default function TabLayout() {
 	// アプリがバックグラウンドからフォアグラウンドに戻った時に未読招待をチェック
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
-			if (
-				appState.current.match(/inactive|background/) &&
-				nextAppState === "active"
-			) {
-				console.log(
-					"🔄 アプリがフォアグラウンドに戻りました: 未読招待をチェック中..."
-				);
+			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待をチェック中...");
 				checkForPendingInvitations();
 			}
 			appState.current = nextAppState;
@@ -94,10 +89,7 @@ export default function TabLayout() {
 						fontSize: 20,
 					},
 					headerLeft: () => (
-						<TouchableOpacity
-							onPress={() => setDrawerVisible(true)}
-							style={{ marginLeft: 15 }}
-						>
+						<TouchableOpacity onPress={() => setDrawerVisible(true)} style={{ marginLeft: 15 }}>
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
@@ -111,10 +103,7 @@ export default function TabLayout() {
 				}}
 			>
 				<Stack.Screen name="mylist" />
-				<Stack.Screen
-					name="organization-settings"
-					options={{ headerShown: false }}
-				/>
+				<Stack.Screen name="organization-settings" options={{ headerShown: false }} />
 			</Stack>
 
 			{/* ドロワーメニュー */}
@@ -134,10 +123,7 @@ export default function TabLayout() {
 			/>
 
 			{/* 組織参加モーダル */}
-			<JoinOrganizationModal
-				visible={joinOrgVisible}
-				onClose={() => setJoinOrgVisible(false)}
-			/>
+			<JoinOrganizationModal visible={joinOrgVisible} onClose={() => setJoinOrgVisible(false)} />
 
 			{/* 招待一覧モーダル */}
 			<InvitationListModal

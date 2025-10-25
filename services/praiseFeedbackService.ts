@@ -12,7 +12,7 @@ export type FeedbackType = "like" | "dislike";
 export const savePraiseFeedback = async (
 	message: string,
 	category: TodoCategory,
-	feedbackType: FeedbackType
+	feedbackType: FeedbackType,
 ): Promise<void> => {
 	try {
 		const userId = auth.currentUser?.uid;
@@ -28,9 +28,7 @@ export const savePraiseFeedback = async (
 			createdAt: new Date(),
 		});
 
-		console.log(
-			`👍 フィードバック保存: ${feedbackType} (カテゴリ: ${category})`
-		);
+		console.log(`👍 フィードバック保存: ${feedbackType} (カテゴリ: ${category})`);
 	} catch (error) {
 		console.error("Error saving praise feedback:", error);
 		throw error;
@@ -48,10 +46,7 @@ export const getMessageScores = async (): Promise<Record<string, number>> => {
 			return {};
 		}
 
-		const q = query(
-			collection(db, COLLECTION_NAME),
-			where("userId", "==", userId)
-		);
+		const q = query(collection(db, COLLECTION_NAME), where("userId", "==", userId));
 		const querySnapshot = await getDocs(q);
 
 		const messageScores: Record<string, number> = {};
@@ -69,9 +64,7 @@ export const getMessageScores = async (): Promise<Record<string, number>> => {
 			messageScores[message] += feedbackType === "like" ? 1 : -1;
 		});
 
-		console.log(
-			`📊 メッセージスコア: ${Object.keys(messageScores).length}件のメッセージ`
-		);
+		console.log(`📊 メッセージスコア: ${Object.keys(messageScores).length}件のメッセージ`);
 
 		return messageScores;
 	} catch (error) {
@@ -104,22 +97,13 @@ export const getUserPraiseStats = async (): Promise<{
 			};
 		}
 
-		const q = query(
-			collection(db, COLLECTION_NAME),
-			where("userId", "==", userId)
-		);
+		const q = query(collection(db, COLLECTION_NAME), where("userId", "==", userId));
 		const querySnapshot = await getDocs(q);
 
 		let totalLikes = 0;
 		let totalDislikes = 0;
-		const likedCategories: Record<TodoCategory, number> = {} as Record<
-			TodoCategory,
-			number
-		>;
-		const dislikedCategories: Record<TodoCategory, number> = {} as Record<
-			TodoCategory,
-			number
-		>;
+		const likedCategories: Record<TodoCategory, number> = {} as Record<TodoCategory, number>;
+		const dislikedCategories: Record<TodoCategory, number> = {} as Record<TodoCategory, number>;
 		const likedMessages: string[] = [];
 		const dislikedMessages: string[] = [];
 
@@ -144,9 +128,7 @@ export const getUserPraiseStats = async (): Promise<{
 			}
 		});
 
-		console.log(
-			`📊 フィードバック統計: Like ${totalLikes}件, Dislike ${totalDislikes}件`
-		);
+		console.log(`📊 フィードバック統計: Like ${totalLikes}件, Dislike ${totalDislikes}件`);
 
 		return {
 			totalLikes,

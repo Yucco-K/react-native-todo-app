@@ -24,36 +24,24 @@ export const predictCategory = functions
 	.https.onCall(async (data, context) => {
 		// 認証チェック
 		if (!context.auth) {
-			throw new functions.https.HttpsError(
-				"unauthenticated",
-				"ユーザー認証が必要です"
-			);
+			throw new functions.https.HttpsError("unauthenticated", "ユーザー認証が必要です");
 		}
 
 		const { title, content } = data;
 
 		// バリデーション
 		if (!title || typeof title !== "string") {
-			throw new functions.https.HttpsError(
-				"invalid-argument",
-				"タイトルが必要です"
-			);
+			throw new functions.https.HttpsError("invalid-argument", "タイトルが必要です");
 		}
 
 		if (title.length > 100) {
-			throw new functions.https.HttpsError(
-				"invalid-argument",
-				"タイトルが長すぎます"
-			);
+			throw new functions.https.HttpsError("invalid-argument", "タイトルが長すぎます");
 		}
 
 		// レート制限チェック（Firestoreで実装）
 		const userId = context.auth.uid;
 		const today = new Date().toISOString().split("T")[0];
-		const rateLimitDoc = admin
-			.firestore()
-			.collection("rateLimits")
-			.doc(`${userId}_${today}`);
+		const rateLimitDoc = admin.firestore().collection("rateLimits").doc(`${userId}_${today}`);
 
 		try {
 			const rateLimitData = await rateLimitDoc.get();
@@ -63,7 +51,7 @@ export const predictCategory = functions
 			if (requestCount >= 100) {
 				throw new functions.https.HttpsError(
 					"resource-exhausted",
-					"1日の上限（100回）に達しました。明日再度お試しください。"
+					"1日の上限（100回）に達しました。明日再度お試しください。",
 				);
 			}
 
@@ -73,7 +61,7 @@ export const predictCategory = functions
 				console.error("OpenAI APIキーが設定されていません");
 				throw new functions.https.HttpsError(
 					"internal",
-					"サーバー設定エラー: OpenAI APIキーが設定されていません"
+					"サーバー設定エラー: OpenAI APIキーが設定されていません",
 				);
 			}
 
@@ -110,8 +98,7 @@ ${categoryDescriptions}
 				messages: [
 					{
 						role: "system",
-						content:
-							"あなたはタスクを分類する専門家です。カテゴリ名のみを返してください。",
+						content: "あなたはタスクを分類する専門家です。カテゴリ名のみを返してください。",
 					},
 					{
 						role: "user",
@@ -122,9 +109,7 @@ ${categoryDescriptions}
 				max_tokens: 10,
 			});
 
-			const predictedCategory = response.choices[0]?.message?.content
-				?.trim()
-				.toLowerCase();
+			const predictedCategory = response.choices[0]?.message?.content?.trim().toLowerCase();
 
 			const validCategories = [
 				"work",
@@ -150,7 +135,7 @@ ${categoryDescriptions}
 					count: requestCount + 1,
 					updatedAt: admin.firestore.FieldValue.serverTimestamp(),
 				},
-				{ merge: true }
+				{ merge: true },
 			);
 
 			return { category: finalCategory };

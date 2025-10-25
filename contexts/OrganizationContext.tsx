@@ -18,15 +18,12 @@ type OrganizationContextType = {
 	isLoading: boolean;
 };
 
-const OrganizationContext = createContext<OrganizationContextType | undefined>(
-	undefined
-);
+const OrganizationContext = createContext<OrganizationContextType | undefined>(undefined);
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
 	const { user } = useAuth();
 	const [organizations, setOrganizations] = useState<Organization[]>([]);
-	const [selectedOrganization, setSelectedOrganization] =
-		useState<Organization | null>(null);
+	const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const refreshOrganizations = useCallback(async () => {
@@ -41,10 +38,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 			setOrganizations(orgs);
 
 			// 選択中の組織が削除されていたらnullにする
-			if (
-				selectedOrganization &&
-				!orgs.find((o) => o.id === selectedOrganization.id)
-			) {
+			if (selectedOrganization && !orgs.find((o) => o.id === selectedOrganization.id)) {
 				setSelectedOrganization(null);
 			}
 		} catch (error) {
@@ -92,9 +86,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 export function useOrganization() {
 	const context = useContext(OrganizationContext);
 	if (context === undefined) {
-		throw new Error(
-			"useOrganization must be used within an OrganizationProvider"
-		);
+		throw new Error("useOrganization must be used within an OrganizationProvider");
 	}
 	return context;
 }

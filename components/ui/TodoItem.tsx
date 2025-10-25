@@ -1,6 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { TODO_CATEGORIES } from "@/types/Category";
-import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -11,6 +8,9 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
+import { TODO_CATEGORIES } from "@/types/Category";
+import type { Todo } from "@/types/Todo";
 
 type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
@@ -41,10 +41,7 @@ export default function TodoItem({
 	const isOwner = user?.uid === userId;
 
 	return (
-		<View
-			className="py-2 border-b"
-			style={{ borderColor: isDark ? "#4b5563" : "#e5e7eb" }}
-		>
+		<View className="py-2 border-b" style={{ borderColor: isDark ? "#4b5563" : "#e5e7eb" }}>
 			<View className="flex-row items-center justify-between">
 				{/* 左側: チェックボックスとTodo内容 */}
 				<TouchableOpacity
@@ -62,14 +59,10 @@ export default function TodoItem({
 						>
 							<View
 								className={`w-9 h-9 rounded border-2 items-center justify-center ${
-									completed
-										? "bg-green-500 border-green-500"
-										: "border-gray-400"
+									completed ? "bg-green-500 border-green-500" : "border-gray-400"
 								}`}
 							>
-								{completed && (
-									<Text className="text-white font-noto-bold text-2xl">✓</Text>
-								)}
+								{completed && <Text className="text-white font-noto-bold text-2xl">✓</Text>}
 							</View>
 						</TouchableOpacity>
 					</View>
@@ -99,9 +92,7 @@ export default function TodoItem({
 									<View className="mt-2 flex-row">
 										<View className="bg-blue-100 px-3 py-1 rounded-full">
 											<Text className="text-blue-700 font-noto-bold text-base">
-												{TODO_CATEGORIES[
-													category as keyof typeof TODO_CATEGORIES
-												] || "その他"}
+												{TODO_CATEGORIES[category as keyof typeof TODO_CATEGORIES] || "その他"}
 											</Text>
 										</View>
 									</View>
@@ -146,10 +137,7 @@ export default function TodoItem({
 				animationType="fade"
 				onRequestClose={() => setMenuVisible(false)}
 			>
-				<Pressable
-					className="flex-1 bg-black/50"
-					onPress={() => setMenuVisible(false)}
-				>
+				<Pressable className="flex-1 bg-black/50" onPress={() => setMenuVisible(false)}>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">
 						<View
 							className="rounded-lg shadow-lg overflow-hidden min-w-[180px]"
@@ -201,9 +189,7 @@ export default function TodoItem({
 									}}
 								>
 									<Ionicons name="trash-outline" size={22} color="#ef4444" />
-									<Text className="ml-3 font-noto-regular text-red-500 text-base">
-										削除
-									</Text>
+									<Text className="ml-3 font-noto-regular text-red-500 text-base">削除</Text>
 								</Pressable>
 							)}
 

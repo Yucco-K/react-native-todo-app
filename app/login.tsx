@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -13,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { useAuth } from "@/contexts/AuthContext";
 
 // バリデーションスキーマ
 const loginSchema = z.object({
@@ -24,9 +24,7 @@ export default function LoginScreen() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-		{}
-	);
+	const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
 	const { signIn } = useAuth();
 	const router = useRouter();
@@ -88,12 +86,10 @@ export default function LoginScreen() {
 							errorMessage = "このアカウントは無効化されています";
 							break;
 						case "auth/too-many-requests":
-							errorMessage =
-								"ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
+							errorMessage = "ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
 							break;
 						case "auth/network-request-failed":
-							errorMessage =
-								"ネットワークエラー: インターネット接続を確認してください";
+							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `ログインエラー: ${error.code}`;
@@ -124,9 +120,7 @@ export default function LoginScreen() {
 				className="flex-1"
 			>
 				<View className="flex-1 justify-center px-8">
-					<Text className="text-4xl font-noto-bold text-center mb-8">
-						Todo App
-					</Text>
+					<Text className="text-4xl font-noto-bold text-center mb-8">Todo App</Text>
 					<Text className="text-2xl font-noto-bold mb-6">ログイン</Text>
 
 					<View className="mb-4">
@@ -140,9 +134,7 @@ export default function LoginScreen() {
 							autoComplete="email"
 						/>
 						{errors.email && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.email}
-							</Text>
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">{errors.email}</Text>
 						)}
 					</View>
 
@@ -173,16 +165,12 @@ export default function LoginScreen() {
 						{isLoading ? (
 							<ActivityIndicator color="white" />
 						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">
-								ログイン
-							</Text>
+							<Text className="text-white text-center font-noto-bold text-xl">ログイン</Text>
 						)}
 					</TouchableHighlight>
 
 					<View className="flex-row justify-center">
-						<Text className="text-gray-600 font-noto-regular">
-							アカウントをお持ちでない方は{" "}
-						</Text>
+						<Text className="text-gray-600 font-noto-regular">アカウントをお持ちでない方は </Text>
 						<Link href="/signup" asChild>
 							<TouchableHighlight>
 								<Text className="text-blue-500 font-noto-bold">新規登録</Text>

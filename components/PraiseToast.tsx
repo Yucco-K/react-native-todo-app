@@ -1,9 +1,9 @@
-import { savePraiseFeedback } from "@/services/praiseFeedbackService";
-import type { TodoCategory } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import type { ToastConfigParams } from "react-native-toast-message";
+import { savePraiseFeedback } from "@/services/praiseFeedbackService";
+import type { TodoCategory } from "@/types/Category";
 
 const { height } = Dimensions.get("window");
 
@@ -284,9 +284,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 					})}
 				>
 					<Ionicons
-						name={
-							feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"
-						}
+						name={feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"}
 						size={36}
 						color={feedback === "dislike" ? "white" : "#6b7280"}
 					/>

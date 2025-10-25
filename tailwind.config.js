@@ -4,11 +4,7 @@ module.exports = {
 	presets: [require("nativewind/preset")],
 	theme: {
 		fontFamily: {
-			"noto-regurar": [
-				"NotoSansJP_400Regular",
-				"NotoSansJP_700Bold",
-				"sans-serif",
-			],
+			"noto-regurar": ["NotoSansJP_400Regular", "NotoSansJP_700Bold", "sans-serif"],
 			"noto-bold": ["NotoSansJP_700Bold", "sans-serif"],
 		},
 		extend: {},

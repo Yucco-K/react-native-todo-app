@@ -1,17 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { FlatList, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import type { TodoCategory } from "@/types/Category";
 import { CATEGORY_OPTIONS } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
-import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import {
-	FlatList,
-	Modal,
-	ScrollView,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
 import TodoItem from "./ui/TodoItem";
 
 type FilterType = "all" | "active" | "completed";
@@ -37,9 +29,7 @@ export default function SearchModal({
 }: SearchModalProps) {
 	const [searchText, setSearchText] = useState("");
 	const [filterType, setFilterType] = useState<FilterType>("all");
-	const [categoryFilter, setCategoryFilter] = useState<TodoCategory | "all">(
-		"all"
-	);
+	const [categoryFilter, setCategoryFilter] = useState<TodoCategory | "all">("all");
 
 	// フィルタリングと検索を適用したデータ
 	const filteredData = (() => {
@@ -51,7 +41,7 @@ export default function SearchModal({
 			result = result.filter(
 				(todo) =>
 					todo.title.toLowerCase().includes(searchLower) ||
-					todo.content.toLowerCase().includes(searchLower)
+					todo.content.toLowerCase().includes(searchLower),
 			);
 		}
 
@@ -78,16 +68,8 @@ export default function SearchModal({
 	};
 
 	return (
-		<Modal
-			visible={visible}
-			animationType="slide"
-			transparent={false}
-			onRequestClose={handleClose}
-		>
-			<View
-				className="flex-1"
-				style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-			>
+		<Modal visible={visible} animationType="slide" transparent={false} onRequestClose={handleClose}>
+			<View className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 				{/* ヘッダー */}
 				<View
 					className="border-b pt-12 pb-3 px-4"
@@ -104,11 +86,7 @@ export default function SearchModal({
 							検索
 						</Text>
 						<TouchableOpacity onPress={handleClose} className="p-2">
-							<Ionicons
-								name="close"
-								size={28}
-								color={isDark ? "#d1d5db" : "#374151"}
-							/>
+							<Ionicons name="close" size={28} color={isDark ? "#d1d5db" : "#374151"} />
 						</TouchableOpacity>
 					</View>
 
@@ -117,11 +95,7 @@ export default function SearchModal({
 						className="flex-row items-center rounded-lg px-3 py-3"
 						style={{ backgroundColor: isDark ? "#374151" : "#f3f4f6" }}
 					>
-						<Ionicons
-							name="search"
-							size={22}
-							color={isDark ? "#d1d5db" : "#6b7280"}
-						/>
+						<Ionicons name="search" size={22} color={isDark ? "#d1d5db" : "#6b7280"} />
 						<TextInput
 							className="flex-1 ml-2 text-lg font-noto-regular"
 							placeholder="タイトルや内容で検索..."
@@ -133,11 +107,7 @@ export default function SearchModal({
 						/>
 						{searchText.length > 0 && (
 							<TouchableOpacity onPress={() => setSearchText("")}>
-								<Ionicons
-									name="close-circle"
-									size={22}
-									color={isDark ? "#d1d5db" : "#6b7280"}
-								/>
+								<Ionicons name="close-circle" size={22} color={isDark ? "#d1d5db" : "#6b7280"} />
 							</TouchableOpacity>
 						)}
 					</View>
@@ -190,9 +160,7 @@ export default function SearchModal({
 
 					{/* カテゴリフィルター */}
 					<View className="mt-3">
-						<Text className="text-gray-600 font-noto-bold text-sm mb-2">
-							カテゴリ
-						</Text>
+						<Text className="text-gray-600 font-noto-bold text-sm mb-2">カテゴリ</Text>
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 							<TouchableOpacity
 								onPress={() => setCategoryFilter("all")}
@@ -222,9 +190,7 @@ export default function SearchModal({
 								>
 									<Text
 										className={`font-noto-regular text-sm ${
-											categoryFilter === option.value
-												? "text-white"
-												: "text-gray-700"
+											categoryFilter === option.value ? "text-white" : "text-gray-700"
 										}`}
 									>
 										{option.icon} {option.label}
@@ -245,9 +211,7 @@ export default function SearchModal({
 								color="#d1d5db"
 							/>
 							<Text className="text-gray-400 font-noto-regular text-xl mt-4 text-center">
-								{searchText
-									? "該当するTodoが見つかりません"
-									: "キーワードを入力して検索"}
+								{searchText ? "該当するTodoが見つかりません" : "キーワードを入力して検索"}
 							</Text>
 							<Text className="text-gray-400 font-noto-regular text-lg mt-2 text-center">
 								{searchText

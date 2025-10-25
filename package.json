@@ -10,7 +10,11 @@
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage",
-		"lint": "eslint . --ext .ts,.tsx"
+		"lint": "eslint . --ext .ts,.tsx",
+		"biome:check": "biome check .",
+		"biome:check:ci": "biome check . --max-diagnostics=50 || true",
+		"biome:fix": "biome check --fix .",
+		"biome:format": "biome format --write ."
 	},
 	"dependencies": {
 		"@expo-google-fonts/inter": "^0.4.2",
@@ -42,6 +46,7 @@
 		"zod": "^3.25.76"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.3.0",
 		"@testing-library/jest-native": "^5.4.3",
 		"@testing-library/react-native": "^13.3.3",
 		"@types/jest": "^30.0.0",

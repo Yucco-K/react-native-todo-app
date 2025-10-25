@@ -72,12 +72,7 @@ export default function NicknameModal({
 	};
 
 	return (
-		<Modal
-			visible={visible}
-			transparent
-			animationType="slide"
-			onRequestClose={onClose}
-		>
+		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -148,9 +143,7 @@ export default function NicknameModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">
-											保存
-										</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">保存</Text>
 									)}
 								</TouchableHighlight>
 							</View>

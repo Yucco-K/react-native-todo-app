@@ -41,15 +41,7 @@ describe("Todoバリデーション", () => {
 });
 
 describe("カテゴリの検証", () => {
-	const validCategories = [
-		"work",
-		"shopping",
-		"housework",
-		"study",
-		"health",
-		"hobby",
-		"other",
-	];
+	const validCategories = ["work", "shopping", "housework", "study", "health", "hobby", "other"];
 
 	it("有効なカテゴリが正しく定義されている", () => {
 		expect(validCategories).toHaveLength(7);

@@ -1,6 +1,6 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function DebugScreen() {
 	const { user } = useAuth();

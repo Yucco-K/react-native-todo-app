@@ -1,10 +1,3 @@
-import AddTodoModal from "@/components/AddTodoModal";
-import NicknameModal from "@/components/NicknameModal";
-import TodoTable from "@/components/TodoTable";
-import { useAuth } from "@/contexts/AuthContext";
-import { useOrganization } from "@/contexts/OrganizationContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
@@ -17,6 +10,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import AddTodoModal from "@/components/AddTodoModal";
+import NicknameModal from "@/components/NicknameModal";
+import TodoTable from "@/components/TodoTable";
+import { useAuth } from "@/contexts/AuthContext";
+import { useOrganization } from "@/contexts/OrganizationContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 
 export default function MyListScreen() {
 	const { user, nickname, logout, updateNickname } = useAuth();
@@ -59,10 +59,7 @@ export default function MyListScreen() {
 	};
 
 	return (
-		<SafeAreaView
-			className="flex-1"
-			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-		>
+		<SafeAreaView className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View className="flex-1 px-4 pt-4">
 					<View className="flex-row justify-between items-center mb-4">
@@ -121,9 +118,7 @@ export default function MyListScreen() {
 								onPress={toggleTheme}
 								className="rounded-full w-10 h-10 items-center justify-center"
 								style={{
-									backgroundColor: isDark
-										? "rgba(59, 130, 246, 0.2)"
-										: "rgba(156, 163, 175, 0.2)",
+									backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "rgba(156, 163, 175, 0.2)",
 								}}
 								activeOpacity={0.7}
 							>

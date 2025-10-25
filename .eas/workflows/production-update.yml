@@ -7,11 +7,12 @@ on:
 
 jobs:
   test:
-    name: Run Tests, Lint & Type Check
+    name: Run Tests, Lint, Biome & Type Check
     type: generic
     command:
       - npm install
       - npm run lint
+      - npm run biome:check:ci
       - npx tsc --noEmit
       - npm run test -- --ci
 

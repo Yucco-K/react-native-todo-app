@@ -19,10 +19,7 @@ type JoinOrganizationModalProps = {
 	onClose: () => void;
 };
 
-export function JoinOrganizationModal({
-	visible,
-	onClose,
-}: JoinOrganizationModalProps) {
+export function JoinOrganizationModal({ visible, onClose }: JoinOrganizationModalProps) {
 	const { isDark } = useTheme();
 	const [inviteCode, setInviteCode] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -66,12 +63,7 @@ export function JoinOrganizationModal({
 	};
 
 	return (
-		<Modal
-			visible={visible}
-			transparent
-			animationType="slide"
-			onRequestClose={handleClose}
-		>
+		<Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -148,9 +140,7 @@ export function JoinOrganizationModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">
-											参加
-										</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">参加</Text>
 									)}
 								</TouchableHighlight>
 							</View>

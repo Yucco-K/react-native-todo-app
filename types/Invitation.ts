@@ -9,4 +9,3 @@ export type Invitation = {
 	status: InvitationStatus;
 	createdAt: Date;
 };
-
