@@ -64,4 +64,4 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Publish EAS Update
-        run: eas update --auto --non-interactive
+        run: eas update --branch production --platform ios,android --non-interactive
