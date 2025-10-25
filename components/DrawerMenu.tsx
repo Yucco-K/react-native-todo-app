@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
+	type GestureResponderEvent,
 	Modal,
 	Pressable,
 	ScrollView,
@@ -69,7 +70,7 @@ export function DrawerMenu({
 						shadowRadius: 10,
 						elevation: 10,
 					}}
-					onPress={(e) => e.stopPropagation()}
+					onPress={(e: GestureResponderEvent) => e.stopPropagation()}
 				>
 					<View className="flex-1">
 						{/* ヘッダー */}

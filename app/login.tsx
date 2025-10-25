@@ -55,16 +55,16 @@ export default function LoginScreen() {
 		setErrors({});
 		setIsLoading(true);
 
-	try {
-		await signIn(email, password);
-		// Toast.show({
-		// 	type: "success",
-		// 	text1: "ログイン成功",
-		// 	text2: "ようこそ！",
-		// });
-		router.replace("/");
-	} catch (error) {
-			console.error("ログインエラー:", error);
+		try {
+			await signIn(email, password);
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "ログイン成功",
+			// 	text2: "ようこそ！",
+			// });
+			router.replace("/");
+		} catch (error) {
+			console.log("ログインエラー:", error);
 			const errorTitle = "ログイン失敗";
 			let errorMessage = "ログインに失敗しました";
 
@@ -100,13 +100,9 @@ export default function LoginScreen() {
 					}
 				}
 
-				// エラーメッセージがある場合
+				// エラーメッセージがある場合（ターミナルログに出力）
 				if ("message" in error && typeof error.message === "string") {
-					console.error("詳細:", error.message);
-					// 開発用に詳細メッセージも表示
-					if (__DEV__) {
-						errorMessage += `\n\n[開発モード] ${error.message}`;
-					}
+					console.log("詳細:", error.message);
 				}
 			}
 

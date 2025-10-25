@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
@@ -275,9 +275,9 @@ export function OrganizationSettingsModal({
 				>
 					<TouchableWithoutFeedback>
 						<View
-							className="rounded-lg p-6 w-11/12"
+							className="rounded-lg px-6 pt-4 w-11/12"
 							style={{
-								maxHeight: "80%",
+								height: "94%",
 								backgroundColor: isDark ? "#1f2937" : "#ffffff",
 								shadowColor: "#000",
 								shadowOffset: { width: 0, height: 4 },
@@ -287,7 +287,7 @@ export function OrganizationSettingsModal({
 							}}
 						>
 							<Text
-								className="text-xl font-noto-bold mb-4 px-4 py-2 rounded-md"
+								className="text-xl font-noto-bold my-4 px-4 py-2 rounded-md"
 								style={{
 									backgroundColor: isDark ? "rgba(55, 65, 81, 0.8)" : "#ffffff",
 									color: isDark ? "#60a5fa" : "#2563eb",
@@ -302,8 +302,8 @@ export function OrganizationSettingsModal({
 							</Text>
 
 							<ScrollView
-								style={{ maxHeight: 400 }}
-								showsVerticalScrollIndicator={false}
+								style={{ maxHeight: "70%" }}
+								showsVerticalScrollIndicator={true}
 							>
 								{/* 招待コード */}
 								<View className="mb-6">
@@ -360,7 +360,7 @@ export function OrganizationSettingsModal({
 													}}
 													placeholder="メールアドレス"
 													value={inviteEmail}
-													onChangeText={(text) => {
+													onChangeText={(text: string) => {
 														setInviteEmail(text);
 														setInviteError(null);
 														setInviteSuccess(null);
@@ -478,7 +478,7 @@ export function OrganizationSettingsModal({
 								</View>
 							</ScrollView>
 
-							<View className="mt-4">
+							<View className="mt-1">
 								<TouchableHighlight
 									onPress={onClose}
 									activeOpacity={0.7}

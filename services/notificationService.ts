@@ -107,7 +107,6 @@ async function getAllPushTokens(
 		const q = query(usersRef);
 		const querySnapshot = await getDocs(q);
 
-		const tokens: string[] = [];
 		const tokenSet = new Set<string>(); // 重複を防ぐ
 
 		querySnapshot.forEach((doc) => {
@@ -223,6 +222,7 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 		"新しい共有Todo",
 		`${displayName} が「${title}」を追加しました`,
 		{ type: "todo_added" }
+		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
 
@@ -236,6 +236,7 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 		"共有Todoが更新されました",
 		`${displayName} が「${title}」を編集しました`,
 		{ type: "todo_updated" }
+		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
 
@@ -249,6 +250,7 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 		"共有Todoが削除されました",
 		`${displayName} が「${title}」を削除しました`,
 		{ type: "todo_deleted" }
+		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
 
@@ -274,7 +276,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 		"共有TODO完了",
 		`${displayName} が共有TODO「${title}」を完了しました。完了時刻：${completedTime}`,
 		{ type: "todo_completed" }
-		// 本人は除外（本人は画面でトーストを見ている）
+		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
 
@@ -286,6 +288,13 @@ export async function notifyInvitation(
 	orgName: string,
 	inviterName: string
 ): Promise<void> {
+	// 自分自身には通知を送らない
+	const currentUserId = auth.currentUser?.uid;
+	if (currentUserId === invitedUserId) {
+		console.log("招待通知: 自分自身には通知を送りません");
+		return;
+	}
+
 	// 招待されたユーザーのプッシュトークンを取得
 	const userDoc = await getDoc(doc(db, "users", invitedUserId));
 	if (!userDoc.exists()) {

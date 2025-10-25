@@ -3,7 +3,14 @@ import { TODO_CATEGORIES } from "@/types/Category";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+	type GestureResponderEvent,
+	Modal,
+	Pressable,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
@@ -48,7 +55,7 @@ export default function TodoItem({
 					{/* 完了チェックボックス */}
 					<View style={{ width: 48 }} className="items-center mr-2">
 						<TouchableOpacity
-							onPress={(e) => {
+							onPress={(e: GestureResponderEvent) => {
 								e.stopPropagation();
 								onToggleComplete?.(id);
 							}}
@@ -122,7 +129,7 @@ export default function TodoItem({
 
 				{/* 右側: 3点メニューボタン */}
 				<TouchableOpacity
-					onPress={(e) => {
+					onPress={(e: GestureResponderEvent) => {
 						e.stopPropagation();
 						setMenuVisible(true);
 					}}

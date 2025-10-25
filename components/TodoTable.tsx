@@ -281,7 +281,7 @@ export default function TodoTable({
 			) : (
 				<FlatList
 					data={data}
-					renderItem={({ item }) => (
+					renderItem={({ item }: { item: Todo }) => (
 						<TodoItem
 							{...item}
 							onToggleComplete={toggleComplete}
@@ -290,7 +290,7 @@ export default function TodoTable({
 							isDark={isDark}
 						/>
 					)}
-					keyExtractor={(item) => item.id.toString()}
+					keyExtractor={(item: Todo) => item.id.toString()}
 					contentContainerStyle={{ paddingBottom: 20 }}
 					showsVerticalScrollIndicator={true}
 				/>

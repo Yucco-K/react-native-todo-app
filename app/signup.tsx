@@ -77,16 +77,16 @@ export default function SignupScreen() {
 		setErrors({});
 		setIsLoading(true);
 
-	try {
-		await signUp(email, password);
-		// Toast.show({
-		// 	type: "success",
-		// 	text1: "登録成功",
-		// 	text2: "アカウントを作成しました",
-		// });
-		router.replace("/");
-	} catch (error) {
-			console.error("サインアップエラー:", error);
+		try {
+			await signUp(email, password);
+			// Toast.show({
+			// 	type: "success",
+			// 	text1: "登録成功",
+			// 	text2: "アカウントを作成しました",
+			// });
+			router.replace("/");
+		} catch (error) {
+			console.log("サインアップエラー:", error);
 			let errorTitle = "登録失敗";
 			let errorMessage = "登録に失敗しました";
 
@@ -117,13 +117,9 @@ export default function SignupScreen() {
 					}
 				}
 
-				// エラーメッセージがある場合
+				// エラーメッセージがある場合（ターミナルログに出力）
 				if ("message" in error && typeof error.message === "string") {
-					console.error("詳細:", error.message);
-					// 開発用に詳細メッセージも表示
-					if (__DEV__) {
-						errorMessage += `\n\n[開発モード] ${error.message}`;
-					}
+					console.log("詳細:", error.message);
 				}
 			}
 
