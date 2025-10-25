@@ -1,7 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Text, TouchableOpacity, View } from "react-native";
 import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import { InvitationListModal } from "@/components/InvitationListModal";
@@ -10,9 +6,16 @@ import ReminderNotificationModal from "@/components/ReminderNotificationModal";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { notifyReminder } from "@/services/notificationService";
 import { getMyInvitations } from "@/services/organizationService";
-import { getDueReminders, markReminderAsNotified } from "@/services/todoService";
+import {
+	getDueReminders,
+	markReminderAsNotified,
+} from "@/services/todoService";
 import type { Organization } from "@/types/Organization";
 import type { Todo } from "@/types/Todo";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Platform, Text, TouchableOpacity, View } from "react-native";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -23,7 +26,7 @@ export default function TabLayout() {
 	const [remindersVisible, setRemindersVisible] = useState(false);
 	const [dueReminders, setDueReminders] = useState<Todo[]>([]);
 	const { selectedOrganization } = useOrganization();
-	const appState = useRef(AppState.currentState);
+	const appState = useRef(Platform.OS !== "web" ? AppState.currentState : "active");
 	const hasCheckedInitialInvitations = useRef(false);
 	const hasCheckedInitialReminders = useRef(false);
 
@@ -49,7 +52,7 @@ export default function TabLayout() {
 				console.log(
 					"📬 未読招待があります:",
 					invitations.length,
-					"件 - モーダルを自動的に開きます",
+					"件 - モーダルを自動的に開きます"
 				);
 				setInvitationsVisible(true);
 			}
@@ -66,7 +69,7 @@ export default function TabLayout() {
 				console.log(
 					"⏰ リマインドが",
 					reminders.length,
-					"件あります - モーダルを自動的に開きます",
+					"件あります - モーダルを自動的に開きます"
 				);
 				setDueReminders(reminders);
 				setRemindersVisible(true);
@@ -111,9 +114,17 @@ export default function TabLayout() {
 
 	// アプリがバックグラウンドからフォアグラウンドに戻った時に未読招待とリマインドをチェック
 	useEffect(() => {
+		// AppStateはネイティブのみで動作（Web/SSRでは無効化）
+		if (Platform.OS === "web") return;
+
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
-			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中...");
+			if (
+				appState.current.match(/inactive|background/) &&
+				nextAppState === "active"
+			) {
+				console.log(
+					"🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中..."
+				);
 				checkForPendingInvitations();
 				checkForDueReminders();
 			}
@@ -139,7 +150,10 @@ export default function TabLayout() {
 						fontSize: 20,
 					},
 					headerLeft: () => (
-						<TouchableOpacity onPress={() => setDrawerVisible(true)} style={{ marginLeft: 15 }}>
+						<TouchableOpacity
+							onPress={() => setDrawerVisible(true)}
+							style={{ marginLeft: 15 }}
+						>
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
@@ -153,7 +167,10 @@ export default function TabLayout() {
 				}}
 			>
 				<Stack.Screen name="mylist" />
-				<Stack.Screen name="organization-settings" options={{ headerShown: false }} />
+				<Stack.Screen
+					name="organization-settings"
+					options={{ headerShown: false }}
+				/>
 			</Stack>
 
 			{/* ドロワーメニュー */}
@@ -173,7 +190,10 @@ export default function TabLayout() {
 			/>
 
 			{/* 組織参加モーダル */}
-			<JoinOrganizationModal visible={joinOrgVisible} onClose={() => setJoinOrgVisible(false)} />
+			<JoinOrganizationModal
+				visible={joinOrgVisible}
+				onClose={() => setJoinOrgVisible(false)}
+			/>
 
 			{/* 招待一覧モーダル */}
 			<InvitationListModal
