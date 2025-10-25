@@ -7,10 +7,12 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Tests, Lint & Type Check
     type: generic
     command:
       - npm install
+      - npm run lint
+      - npx tsc --noEmit
       - npm run test -- --ci
 
   update:

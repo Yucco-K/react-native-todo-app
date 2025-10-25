@@ -9,7 +9,7 @@ describe("Todo型の検証", () => {
 			content: "テスト内容",
 			completed: false,
 			shared: false,
-			organizationId: null,
+			organizationId: undefined,
 			category: "work",
 		};
 
@@ -28,7 +28,8 @@ describe("Todo型の検証", () => {
 			content: "",
 			completed: false,
 			shared: false,
-			organizationId: null,
+			organizationId: undefined,
+			category: "other",
 		};
 
 		// 必須フィールドが存在することを確認
