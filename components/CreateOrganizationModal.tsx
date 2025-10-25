@@ -43,12 +43,6 @@ export function CreateOrganizationModal({
 			await createOrganization(name.trim());
 			await refreshOrganizations();
 
-			Toast.show({
-				type: "success",
-				text1: "グループ作成完了",
-				text2: `「${name}」を作成しました`,
-			});
-
 			setName("");
 			onClose();
 		} catch (error) {

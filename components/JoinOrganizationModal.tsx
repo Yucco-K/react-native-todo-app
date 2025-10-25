@@ -46,12 +46,6 @@ export function JoinOrganizationModal({
 			// 参加したグループを選択
 			selectOrganization(org);
 
-			Toast.show({
-				type: "success",
-				text1: "参加完了",
-				text2: `「${org.name}」に参加しました`,
-			});
-
 			setInviteCode("");
 			onClose();
 		} catch (error: any) {

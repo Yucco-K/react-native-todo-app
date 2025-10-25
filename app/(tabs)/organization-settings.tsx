@@ -81,11 +81,6 @@ export default function OrganizationSettingsScreen() {
 		if (!organization) return;
 
 		await Clipboard.setStringAsync(organization.inviteCode);
-		Toast.show({
-			type: "success",
-			text1: "コピー完了",
-			text2: "招待コードをコピーしました",
-		});
 	};
 
 	const handleInviteByEmail = async () => {
@@ -158,12 +153,6 @@ export default function OrganizationSettingsScreen() {
 						try {
 							await removeMember(organization.id, member.userId);
 							await fetchMembers();
-
-							Toast.show({
-								type: "success",
-								text1: "削除完了",
-								text2: "メンバーを削除しました",
-							});
 						} catch (error) {
 							console.error("Error removing member:", error);
 							Toast.show({
@@ -194,12 +183,6 @@ export default function OrganizationSettingsScreen() {
 							await leaveOrganization(organization.id);
 							await refreshOrganizations();
 							selectOrganization(null);
-
-							Toast.show({
-								type: "success",
-								text1: "退出完了",
-								text2: "グループから退出しました",
-							});
 
 							router.back();
 						} catch (error) {
@@ -239,12 +222,6 @@ export default function OrganizationSettingsScreen() {
 							await deleteOrganization(organization.id);
 							await refreshOrganizations();
 							selectOrganization(null);
-
-							Toast.show({
-								type: "success",
-								text1: "削除完了",
-								text2: "グループを削除しました",
-							});
 
 							router.back();
 						} catch (error) {

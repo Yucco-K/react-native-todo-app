@@ -62,12 +62,6 @@ export function InvitationListModal({
 			await acceptInvitation(invitationId);
 			await refreshOrganizations();
 
-			Toast.show({
-				type: "success",
-				text1: "参加完了",
-				text2: "グループに参加しました",
-			});
-
 			// 招待一覧を再取得
 			await fetchInvitations();
 		} catch (error) {
@@ -86,11 +80,6 @@ export function InvitationListModal({
 		setProcessingId(invitationId);
 		try {
 			await declineInvitation(invitationId);
-
-			Toast.show({
-				type: "success",
-				text1: "招待を拒否しました",
-			});
 
 			// 招待一覧を再取得
 			await fetchInvitations();
