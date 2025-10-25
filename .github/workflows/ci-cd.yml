@@ -63,5 +63,8 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Publish EAS Update
-        run: eas update --branch production --platform ios,android --non-interactive
+      - name: Publish EAS Update (iOS)
+        run: eas update --branch production --platform ios --non-interactive
+        
+      - name: Publish EAS Update (Android)
+        run: eas update --branch production --platform android --non-interactive
