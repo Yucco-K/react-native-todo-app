@@ -2,21 +2,20 @@ import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import { InvitationListModal } from "@/components/InvitationListModal";
 import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
-import { OrganizationSettingsModal } from "@/components/OrganizationSettingsModal";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { getMyInvitations } from "@/services/organizationService";
 import type { Organization } from "@/types/Organization";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Text, TouchableOpacity, View } from "react-native";
 
 export default function TabLayout() {
+	const router = useRouter();
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [createOrgVisible, setCreateOrgVisible] = useState(false);
 	const [joinOrgVisible, setJoinOrgVisible] = useState(false);
 	const [invitationsVisible, setInvitationsVisible] = useState(false);
-	const [settingsOrg, setSettingsOrg] = useState<Organization | null>(null);
 	const { selectedOrganization } = useOrganization();
 	const appState = useRef(AppState.currentState);
 	const hasCheckedInitialInvitations = useRef(false);
@@ -29,7 +28,12 @@ export default function TabLayout() {
 	};
 
 	const handleManageOrganization = (org: Organization) => {
-		setSettingsOrg(org);
+		console.log("🔧 組織設定を開きます:", org.name, "id:", org.id);
+		router.push({
+			pathname: "/(tabs)/organization-settings",
+			params: { id: org.id },
+		});
+		console.log("✅ 画面遷移を実行しました");
 	};
 
 	// 未読招待をチェックして、あればモーダルを自動的に開く
@@ -109,6 +113,10 @@ export default function TabLayout() {
 				}}
 			>
 				<Stack.Screen name="mylist" />
+				<Stack.Screen
+					name="organization-settings"
+					options={{ headerShown: false }}
+				/>
 			</Stack>
 
 			{/* ドロワーメニュー */}
@@ -137,13 +145,6 @@ export default function TabLayout() {
 			<InvitationListModal
 				visible={invitationsVisible}
 				onClose={() => setInvitationsVisible(false)}
-			/>
-
-			{/* 組織設定モーダル */}
-			<OrganizationSettingsModal
-				visible={settingsOrg !== null}
-				organization={settingsOrg}
-				onClose={() => setSettingsOrg(null)}
 			/>
 		</>
 	);
