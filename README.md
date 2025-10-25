@@ -231,6 +231,14 @@ config/           # Firebase設定
 types/            # 型定義
 ```
 
+## CI/CD
+
+このプロジェクトは**GitHub Actions**で自動的にテスト・デプロイを実行します。
+
+- ✅ ESLint、Biome、型チェック、ユニットテスト
+- ✅ mainブランチへのプッシュで自動デプロイ（EAS Update）
+- 📖 詳細：[GITHUB_ACTIONS_SETUP.md](./GITHUB_ACTIONS_SETUP.md)
+
 ## 変更履歴
 
 最新の更新内容については[CHANGELOG.md](./CHANGELOG.md)をご覧ください。
