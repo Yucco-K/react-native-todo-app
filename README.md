@@ -19,8 +19,17 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
     - Todoの編集・削除は作成者のみ可能
   - **リアルタイム同期**：グループメンバー全員の変更が即座に反映
 - **プッシュ通知**：グループのTodo追加・削除・完了時に全メンバーに通知（通知センター対応）
+- **リマインド機能**：Todoに日時を設定してリマインド通知
+  - **3点メニューから簡単設定**：カレンダーピッカーで日時を選択
+  - **自動プッシュ通知**：設定時刻にプッシュ通知を自動送信
+  - **グループ対応**：グループTodoは全メンバーに、個人Todoは本人のみに通知
+  - **ログイン時の自動チェック**：アプリ起動・フォアグラウンド時に未読リマインドを確認
+  - **通知モーダル表示**：「わかった」をタップするまで表示（タップ後は非表示）
 - 検索・フィルタリング（モーダル、カテゴリ対応）
-- Firebase認証（メール/パスワード）
+- **Firebase認証**（メール/パスワード）
+  - **ログインセキュリティ**：7回の失敗で10分間ログイン一時停止
+  - **段階的な警告**：残り3回以下で警告メッセージを表示
+  - **リアルタイムカウントダウン**：残り時間を秒単位で表示
 - **ニックネーム登録**：ユーザー名を設定可能
 - **カテゴリ管理**：仕事、買い物、家事、学校などのカテゴリ分類
 - **AI カテゴリ推測**：Firebase Cloud Functions + OpenAI APIで安全な自動カテゴリ分類
@@ -50,8 +59,9 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 - Firebase (Authentication, Firestore, Cloud Functions)
 - OpenAI API (GPT-3.5-turbo) - Firebase Cloud Functions経由で安全に実装
 - React Context API (テーマ管理、組織管理、Todo更新管理)
-- AsyncStorage (ユーザー設定の永続化)
+- AsyncStorage (ユーザー設定・ログイン制限の永続化)
 - NativeWind, Zod, expo-notifications
+- @react-native-community/datetimepicker (リマインド日時選択)
 
 ## デモ動画
 
@@ -99,6 +109,7 @@ npm install
 - **Firestore Indexes を作成**（必須）:
   - インデックス1: `organizationId` + `userId` + `createdAt`（グループTodo用）
   - インデックス2: `userId` + `createdAt`（おすすめTODO用）
+  - インデックス3: `userId` + `remindNotified`（リマインド機能用）
   - 作成方法: アプリ起動時のエラーメッセージ内のリンクから自動作成が最も簡単
 - **Firestore Security Rules を設定**（`FIRESTORE_RULES.md`参照）
 
