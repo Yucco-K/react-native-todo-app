@@ -1,7 +1,14 @@
-import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { Todo } from "@/types/Todo";
+import { Ionicons } from "@expo/vector-icons";
+import {
+	Modal,
+	Pressable,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 type ReminderNotificationModalProps = {
 	visible: boolean;
@@ -26,8 +33,16 @@ export default function ReminderNotificationModal({
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-			<Pressable className="flex-1 bg-black/50 justify-center items-center" onPress={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="fade"
+			onRequestClose={onClose}
+		>
+			<Pressable
+				className="flex-1 bg-black/50 justify-center items-center"
+				onPress={onClose}
+			>
 				<Pressable onPress={(e) => e.stopPropagation()}>
 					<View
 						className="mx-4 rounded-2xl p-6 w-[340px] max-h-[500px]"
@@ -49,7 +64,11 @@ export default function ReminderNotificationModal({
 								</Text>
 							</View>
 							<TouchableOpacity onPress={onClose}>
-								<Ionicons name="close" size={24} color={isDark ? "#9ca3af" : "#6b7280"} />
+								<Ionicons
+									name="close"
+									size={24}
+									color={isDark ? "#9ca3af" : "#6b7280"}
+								/>
 							</TouchableOpacity>
 						</View>
 
@@ -117,7 +136,9 @@ export default function ReminderNotificationModal({
 							className="bg-blue-500 rounded-lg p-4 items-center"
 							activeOpacity={0.7}
 						>
-							<Text className="text-white font-noto-bold text-base">わかった</Text>
+							<Text className="text-white font-noto-bold text-base">
+								わかった
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</Pressable>
@@ -125,4 +146,3 @@ export default function ReminderNotificationModal({
 		</Modal>
 	);
 }
-

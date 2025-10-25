@@ -1,17 +1,20 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
-import { NotoSansJP_400Regular, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
-import { useFonts } from "expo-font";
-import { SplashScreen } from "expo-router";
-import { useEffect } from "react";
-import { LogBox } from "react-native";
-import Toast from "react-native-toast-message";
 import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
+import {
+	NotoSansJP_400Regular,
+	NotoSansJP_700Bold,
+} from "@expo-google-fonts/noto-sans-jp";
+import { useFonts } from "expo-font";
+import { SplashScreen } from "expo-router";
+import { useEffect } from "react";
+import { LogBox } from "react-native";
+import Toast from "react-native-toast-message";
 
 // 開発中に表示される予期されたエラーメッセージを非表示にする
 LogBox.ignoreLogs([
@@ -21,6 +24,11 @@ LogBox.ignoreLogs([
 ]);
 
 SplashScreen.preventAutoHideAsync();
+
+// Toast の設定は再レンダーで参照が変わらないようモジュールスコープに定義
+const toastConfig = {
+	praise: PraiseToast,
+};
 
 function RootLayoutNav() {
 	const { user, loading } = useAuth();
@@ -80,10 +88,6 @@ export default function RootLayout() {
 	if (!fontsLoaded || fontError) {
 		return null;
 	}
-
-	const toastConfig = {
-		praise: PraiseToast,
-	};
 
 	return (
 		<ThemeProvider>

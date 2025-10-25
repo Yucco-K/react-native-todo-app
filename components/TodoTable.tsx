@@ -1,21 +1,31 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
-import { notifyTodoCompleted, notifyTodoDeleted } from "@/services/notificationService";
+import {
+	notifyTodoCompleted,
+	notifyTodoDeleted,
+} from "@/services/notificationService";
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteExpiredCompletedTodos,
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
-	removeTodoReminder,
-	setTodoReminder,
 	toggleTodoComplete,
 } from "@/services/todoService";
-import { getUserStats, incrementCompletedTaskCount } from "@/services/userStatsService";
+import {
+	getUserStats,
+	incrementCompletedTaskCount,
+} from "@/services/userStatsService";
 import type { Todo } from "@/types/Todo";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import {
+	ActivityIndicator,
+	FlatList,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
-import ReminderModal from "./ReminderModal";
 import SearchModal from "./SearchModal";
 import TodoItem from "./ui/TodoItem";
 
@@ -30,13 +40,13 @@ export default function TodoTable({
 	organizationId = null,
 	isDark = false,
 }: TodoTableProps) {
+	const router = useRouter();
 	const [isLoading, setLoading] = useState(true);
 	const [data, setData] = useState<Todo[]>([]);
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-	const [reminderTodo, setReminderTodo] = useState<Todo | null>(null);
-	const [isReminderModalVisible, setIsReminderModalVisible] = useState(false);
+	// リマインド設定は画面遷移に移行（モーダル廃止）
 
 	const getTodos = useCallback(async () => {
 		setLoading(true);
@@ -68,7 +78,8 @@ export default function TodoTable({
 								"インデックスが必要です。Firestore Consoleでインデックスを作成してください。";
 							break;
 						case "unavailable":
-							errorMessage = "Firestoreに接続できません。インターネット接続を確認してください。";
+							errorMessage =
+								"Firestoreに接続できません。インターネット接続を確認してください。";
 							break;
 						default:
 							errorMessage = `読み込みエラー: ${error.code}`;
@@ -128,7 +139,12 @@ export default function TodoTable({
 				// ランダムなテーマインデックスを生成（0-24の25種類）
 				const randomThemeIndex = Math.floor(Math.random() * 25);
 
-				console.log("🎨 新しいテーマ:", randomThemeIndex, "褒め言葉:", praiseMessage);
+				console.log(
+					"🎨 新しいテーマ:",
+					randomThemeIndex,
+					"褒め言葉:",
+					praiseMessage
+				);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
 				Toast.hide();
@@ -208,49 +224,17 @@ export default function TodoTable({
 	};
 
 	const handleSetReminder = (todo: Todo) => {
-		setReminderTodo(todo);
-		setIsReminderModalVisible(true);
+		console.log("➡️ リマインド設定へ遷移", {
+			id: todo.id,
+			organizationId: todo.organizationId ?? null,
+		});
+		router.push({
+			pathname: "/(tabs)/reminder-settings",
+			params: { id: todo.id, organizationId: todo.organizationId ?? undefined },
+		});
 	};
 
-	const handleSaveReminder = async (todoId: string, remindAt: Date) => {
-		try {
-			await setTodoReminder(todoId, remindAt);
-			await getTodos();
-			Toast.show({
-				type: "success",
-				text1: "リマインド設定完了",
-				text2: `${remindAt.toLocaleString()}に通知します`,
-			});
-		} catch (error) {
-			console.error(error);
-			Toast.show({
-				type: "error",
-				text1: "リマインド設定失敗",
-				text2: "リマインドの設定に失敗しました",
-			});
-			throw error;
-		}
-	};
-
-	const handleRemoveReminder = async (todoId: string) => {
-		try {
-			await removeTodoReminder(todoId);
-			await getTodos();
-			Toast.show({
-				type: "success",
-				text1: "リマインド削除完了",
-				text2: "リマインドを削除しました",
-			});
-		} catch (error) {
-			console.error(error);
-			Toast.show({
-				type: "error",
-				text1: "リマインド削除失敗",
-				text2: "リマインドの削除に失敗しました",
-			});
-			throw error;
-		}
-	};
+	// 画面遷移版では保存/削除は遷移先で実行するため未使用関数を削除
 
 	useEffect(() => {
 		getTodos();
@@ -262,6 +246,13 @@ export default function TodoTable({
 			getTodos();
 		}
 	}, [refresh, getTodos]);
+
+	// 画面に戻ってきた時に最新を再取得
+	useFocusEffect(
+		useCallback(() => {
+			getTodos();
+		}, [getTodos])
+	);
 
 	return (
 		<View className="flex-1">
@@ -280,8 +271,15 @@ export default function TodoTable({
 					Todo
 				</Text>
 				{/* 検索アイコンボタン */}
-				<TouchableOpacity onPress={() => setIsSearchModalVisible(true)} className="p-2">
-					<Ionicons name="search" size={24} color={isDark ? "#60a5fa" : "#3b82f6"} />
+				<TouchableOpacity
+					onPress={() => setIsSearchModalVisible(true)}
+					className="p-2"
+				>
+					<Ionicons
+						name="search"
+						size={24}
+						color={isDark ? "#60a5fa" : "#3b82f6"}
+					/>
 				</TouchableOpacity>
 			</View>
 			{isLoading ? (
@@ -326,13 +324,6 @@ export default function TodoTable({
 				todo={editingTodo}
 				onClose={handleCloseModal}
 				onSave={handleSaveEdit}
-			/>
-			<ReminderModal
-				visible={isReminderModalVisible}
-				todo={reminderTodo}
-				onClose={() => setIsReminderModalVisible(false)}
-				onSave={handleSaveReminder}
-				onRemove={handleRemoveReminder}
 			/>
 			<SearchModal
 				visible={isSearchModalVisible}
