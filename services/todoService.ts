@@ -63,6 +63,8 @@ export const getTodos = async (organizationId: string | null = null): Promise<To
 				createdAt: data.createdAt?.toDate(),
 				completedAt: data.completedAt?.toDate(),
 				completedBy: data.completedBy,
+				remindAt: data.remindAt?.toDate(),
+				remindNotified: data.remindNotified,
 			});
 		});
 
@@ -252,6 +254,130 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		return deletedCount;
 	} catch (error) {
 		console.error("Error deleting expired todos:", error);
+		throw error;
+	}
+};
+
+/**
+ * Todoのリマインドを設定
+ * @param todoId - TodoのID
+ * @param remindAt - リマインド日時
+ */
+export const setTodoReminder = async (todoId: string, remindAt: Date): Promise<void> => {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		const todoRef = doc(db, COLLECTION_NAME, todoId);
+		await updateDoc(todoRef, {
+			remindAt: remindAt,
+			remindNotified: false, // リマインド設定時は未通知状態に
+		});
+
+		console.log(`⏰ リマインド設定: Todo ID ${todoId} - ${remindAt.toLocaleString()}`);
+	} catch (error) {
+		console.error("Error setting reminder:", error);
+		throw error;
+	}
+};
+
+/**
+ * Todoのリマインドを削除
+ * @param todoId - TodoのID
+ */
+export const removeTodoReminder = async (todoId: string): Promise<void> => {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		const todoRef = doc(db, COLLECTION_NAME, todoId);
+		await updateDoc(todoRef, {
+			remindAt: deleteField(),
+			remindNotified: deleteField(),
+		});
+
+		console.log(`🔕 リマインド削除: Todo ID ${todoId}`);
+	} catch (error) {
+		console.error("Error removing reminder:", error);
+		throw error;
+	}
+};
+
+/**
+ * リマインド時刻が来たTodoを取得
+ * @returns リマインド時刻が来た未通知のTodo一覧
+ */
+export const getDueReminders = async (): Promise<Todo[]> => {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			return [];
+		}
+
+		const now = new Date();
+
+		// 個人用Todoのリマインドを取得
+		const personalQuery = query(
+			collection(db, COLLECTION_NAME),
+			where("userId", "==", userId),
+			where("remindNotified", "==", false),
+		);
+
+		// 組織Todoのリマインドを取得（自分が所属する組織のもの）
+		// TODO: 組織メンバーシップのチェックが必要な場合はここで追加
+
+		const querySnapshot = await getDocs(personalQuery);
+
+		const dueTodos: Todo[] = [];
+		querySnapshot.forEach((doc) => {
+			const data = doc.data() as DocumentData;
+			const remindAt = data.remindAt?.toDate();
+
+			// リマインド時刻が現在時刻以前で、未通知のもの
+			if (remindAt && remindAt <= now) {
+				dueTodos.push({
+					id: doc.id,
+					userId: data.userId,
+					title: data.title,
+					content: data.content,
+					completed: data.completed,
+					shared: data.shared || false,
+					organizationId: data.organizationId,
+					category: data.category || "other",
+					createdAt: data.createdAt?.toDate(),
+					completedAt: data.completedAt?.toDate(),
+					completedBy: data.completedBy,
+					remindAt: remindAt,
+					remindNotified: data.remindNotified || false,
+				});
+			}
+		});
+
+		return dueTodos;
+	} catch (error) {
+		console.error("Error getting due reminders:", error);
+		return [];
+	}
+};
+
+/**
+ * リマインド通知済みフラグを更新
+ * @param todoId - TodoのID
+ */
+export const markReminderAsNotified = async (todoId: string): Promise<void> => {
+	try {
+		const todoRef = doc(db, COLLECTION_NAME, todoId);
+		await updateDoc(todoRef, {
+			remindNotified: true,
+		});
+
+		console.log(`✅ リマインド通知済み: Todo ID ${todoId}`);
+	} catch (error) {
+		console.error("Error marking reminder as notified:", error);
 		throw error;
 	}
 };

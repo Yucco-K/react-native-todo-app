@@ -8,11 +8,14 @@ import {
 	deleteExpiredCompletedTodos,
 	deleteTodo as deleteTodoService,
 	getTodos as getTodosService,
+	removeTodoReminder,
+	setTodoReminder,
 	toggleTodoComplete,
 } from "@/services/todoService";
 import { getUserStats, incrementCompletedTaskCount } from "@/services/userStatsService";
 import type { Todo } from "@/types/Todo";
 import EditTodoModal from "./EditTodoModal";
+import ReminderModal from "./ReminderModal";
 import SearchModal from "./SearchModal";
 import TodoItem from "./ui/TodoItem";
 
@@ -32,6 +35,8 @@ export default function TodoTable({
 	const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
+	const [reminderTodo, setReminderTodo] = useState<Todo | null>(null);
+	const [isReminderModalVisible, setIsReminderModalVisible] = useState(false);
 
 	const getTodos = useCallback(async () => {
 		setLoading(true);
@@ -202,6 +207,51 @@ export default function TodoTable({
 		}
 	};
 
+	const handleSetReminder = (todo: Todo) => {
+		setReminderTodo(todo);
+		setIsReminderModalVisible(true);
+	};
+
+	const handleSaveReminder = async (todoId: string, remindAt: Date) => {
+		try {
+			await setTodoReminder(todoId, remindAt);
+			await getTodos();
+			Toast.show({
+				type: "success",
+				text1: "リマインド設定完了",
+				text2: `${remindAt.toLocaleString()}に通知します`,
+			});
+		} catch (error) {
+			console.error(error);
+			Toast.show({
+				type: "error",
+				text1: "リマインド設定失敗",
+				text2: "リマインドの設定に失敗しました",
+			});
+			throw error;
+		}
+	};
+
+	const handleRemoveReminder = async (todoId: string) => {
+		try {
+			await removeTodoReminder(todoId);
+			await getTodos();
+			Toast.show({
+				type: "success",
+				text1: "リマインド削除完了",
+				text2: "リマインドを削除しました",
+			});
+		} catch (error) {
+			console.error(error);
+			Toast.show({
+				type: "error",
+				text1: "リマインド削除失敗",
+				text2: "リマインドの削除に失敗しました",
+			});
+			throw error;
+		}
+	};
+
 	useEffect(() => {
 		getTodos();
 	}, [getTodos]);
@@ -262,6 +312,7 @@ export default function TodoTable({
 							onToggleComplete={toggleComplete}
 							onEdit={handleEdit}
 							onDelete={deleteTodo}
+							onSetReminder={handleSetReminder}
 							isDark={isDark}
 						/>
 					)}
@@ -276,6 +327,13 @@ export default function TodoTable({
 				onClose={handleCloseModal}
 				onSave={handleSaveEdit}
 			/>
+			<ReminderModal
+				visible={isReminderModalVisible}
+				todo={reminderTodo}
+				onClose={() => setIsReminderModalVisible(false)}
+				onSave={handleSaveReminder}
+				onRemove={handleRemoveReminder}
+			/>
 			<SearchModal
 				visible={isSearchModalVisible}
 				onClose={() => setIsSearchModalVisible(false)}
@@ -283,6 +341,7 @@ export default function TodoTable({
 				onToggleComplete={toggleComplete}
 				onEdit={handleEdit}
 				onDelete={deleteTodo}
+				onSetReminder={handleSetReminder}
 				isDark={isDark}
 			/>
 		</View>

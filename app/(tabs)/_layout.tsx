@@ -6,9 +6,13 @@ import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import { InvitationListModal } from "@/components/InvitationListModal";
 import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
+import ReminderNotificationModal from "@/components/ReminderNotificationModal";
 import { useOrganization } from "@/contexts/OrganizationContext";
+import { notifyReminder } from "@/services/notificationService";
 import { getMyInvitations } from "@/services/organizationService";
+import { getDueReminders, markReminderAsNotified } from "@/services/todoService";
 import type { Organization } from "@/types/Organization";
+import type { Todo } from "@/types/Todo";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -16,9 +20,12 @@ export default function TabLayout() {
 	const [createOrgVisible, setCreateOrgVisible] = useState(false);
 	const [joinOrgVisible, setJoinOrgVisible] = useState(false);
 	const [invitationsVisible, setInvitationsVisible] = useState(false);
+	const [remindersVisible, setRemindersVisible] = useState(false);
+	const [dueReminders, setDueReminders] = useState<Todo[]>([]);
 	const { selectedOrganization } = useOrganization();
 	const appState = useRef(AppState.currentState);
 	const hasCheckedInitialInvitations = useRef(false);
+	const hasCheckedInitialReminders = useRef(false);
 
 	const getHeaderTitle = () => {
 		if (selectedOrganization) {
@@ -51,6 +58,39 @@ export default function TabLayout() {
 		}
 	}, []);
 
+	// リマインド時刻が来たTodoをチェックして、あればモーダルを開く
+	const checkForDueReminders = useCallback(async () => {
+		try {
+			const reminders = await getDueReminders();
+			if (reminders.length > 0) {
+				console.log(
+					"⏰ リマインドが",
+					reminders.length,
+					"件あります - モーダルを自動的に開きます",
+				);
+				setDueReminders(reminders);
+				setRemindersVisible(true);
+
+				// プッシュ通知を送信し、通知済みフラグを更新
+				for (const reminder of reminders) {
+					try {
+						await notifyReminder({
+							id: reminder.id,
+							title: reminder.title,
+							content: reminder.content,
+							organizationId: reminder.organizationId,
+						});
+						await markReminderAsNotified(reminder.id);
+					} catch (error) {
+						console.error("リマインド通知エラー:", error);
+					}
+				}
+			}
+		} catch (error) {
+			console.error("リマインドチェックエラー:", error);
+		}
+	}, []);
+
 	// アプリ起動時に未読招待をチェック（初回のみ）
 	useEffect(() => {
 		if (!hasCheckedInitialInvitations.current) {
@@ -60,12 +100,22 @@ export default function TabLayout() {
 		}
 	}, [checkForPendingInvitations]);
 
-	// アプリがバックグラウンドからフォアグラウンドに戻った時に未読招待をチェック
+	// アプリ起動時にリマインドをチェック（初回のみ）
+	useEffect(() => {
+		if (!hasCheckedInitialReminders.current) {
+			hasCheckedInitialReminders.current = true;
+			console.log("🚀 アプリ起動: リマインドをチェック中...");
+			checkForDueReminders();
+		}
+	}, [checkForDueReminders]);
+
+	// アプリがバックグラウンドからフォアグラウンドに戻った時に未読招待とリマインドをチェック
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
 			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待をチェック中...");
+				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中...");
 				checkForPendingInvitations();
+				checkForDueReminders();
 			}
 			appState.current = nextAppState;
 		});
@@ -73,7 +123,7 @@ export default function TabLayout() {
 		return () => {
 			subscription.remove();
 		};
-	}, [checkForPendingInvitations]);
+	}, [checkForPendingInvitations, checkForDueReminders]);
 
 	return (
 		<>
@@ -129,6 +179,13 @@ export default function TabLayout() {
 			<InvitationListModal
 				visible={invitationsVisible}
 				onClose={() => setInvitationsVisible(false)}
+			/>
+
+			{/* リマインド通知モーダル */}
+			<ReminderNotificationModal
+				visible={remindersVisible}
+				reminders={dueReminders}
+				onClose={() => setRemindersVisible(false)}
 			/>
 		</>
 	);

@@ -16,6 +16,7 @@ type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
 	onEdit?: (todo: Todo) => void;
 	onDelete?: (id: string) => void;
+	onSetReminder?: (todo: Todo) => void;
 	isDark?: boolean;
 };
 
@@ -28,9 +29,12 @@ export default function TodoItem({
 	shared,
 	organizationId,
 	category,
+	remindAt,
+	remindNotified,
 	onToggleComplete,
 	onEdit,
 	onDelete,
+	onSetReminder,
 	isDark = false,
 }: TodoItemProps) {
 	const [menuVisible, setMenuVisible] = React.useState(false);
@@ -161,6 +165,8 @@ export default function TodoItem({
 											shared,
 											organizationId,
 											category,
+											remindAt,
+											remindNotified,
 										});
 										setMenuVisible(false);
 									}}
@@ -175,6 +181,46 @@ export default function TodoItem({
 										style={{ color: isDark ? "#d1d5db" : "#374151" }}
 									>
 										編集
+									</Text>
+								</Pressable>
+							)}
+
+							{/* リマインド設定ボタン - 作成者のみ */}
+							{isOwner && (
+								<Pressable
+									className="flex-row items-center px-4 py-3"
+									style={{
+										borderBottomWidth: 1,
+										borderBottomColor: isDark ? "#374151" : "#e5e7eb",
+									}}
+									onPress={() => {
+										onSetReminder?.({
+											id,
+											userId,
+											title,
+											content,
+											completed,
+											shared,
+											organizationId,
+											category,
+											remindAt,
+											remindNotified,
+										});
+										setMenuVisible(false);
+									}}
+								>
+									<Ionicons
+										name={remindAt ? "notifications" : "notifications-outline"}
+										size={22}
+										color={remindAt ? "#f59e0b" : isDark ? "#60a5fa" : "#3b82f6"}
+									/>
+									<Text
+										className="ml-3 font-noto-regular text-base"
+										style={{
+											color: remindAt ? "#f59e0b" : isDark ? "#d1d5db" : "#374151",
+										}}
+									>
+										{remindAt ? "リマインド変更" : "リマインド設定"}
 									</Text>
 								</Pressable>
 							)}

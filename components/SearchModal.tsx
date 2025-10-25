@@ -15,6 +15,7 @@ type SearchModalProps = {
 	onToggleComplete: (id: string) => void;
 	onEdit: (todo: Todo) => void;
 	onDelete: (id: string) => void;
+	onSetReminder?: (todo: Todo) => void;
 	isDark?: boolean;
 };
 
@@ -25,6 +26,7 @@ export default function SearchModal({
 	onToggleComplete,
 	onEdit,
 	onDelete,
+	onSetReminder,
 	isDark = false,
 }: SearchModalProps) {
 	const [searchText, setSearchText] = useState("");
@@ -235,6 +237,7 @@ export default function SearchModal({
 											onToggleComplete={onToggleComplete}
 											onEdit={onEdit}
 											onDelete={onDelete}
+											onSetReminder={onSetReminder}
 											isDark={isDark}
 										/>
 									</View>

@@ -332,3 +332,80 @@ export async function notifyInvitation(
 		throw error;
 	}
 }
+
+/**
+ * Todoのリマインド通知を送信
+ */
+export async function notifyReminder(
+	todo: { id: string; title: string; content: string; organizationId?: string },
+): Promise<void> {
+	try {
+		const currentUserId = auth.currentUser?.uid;
+		if (!currentUserId) {
+			console.log("リマインド通知: ユーザーが未ログイン");
+			return;
+		}
+
+		// グループTodoの場合は全メンバーに通知、個人Todoの場合は本人のみに通知
+		if (todo.organizationId) {
+			// グループの全メンバーに通知
+			await sendPushNotification(
+				"📌 リマインド",
+				`「${todo.title}」のリマインド時刻になりました`,
+				{
+					type: "reminder",
+					todoId: todo.id,
+					todoTitle: todo.title,
+				},
+				true, // 本人を含む全員に通知
+			);
+		} else {
+			// 個人Todoの場合は本人のみに通知
+			const userDoc = await getDoc(doc(db, "users", currentUserId));
+			if (!userDoc.exists()) {
+				console.log("リマインド通知: ユーザーが見つかりません");
+				return;
+			}
+
+			const userData = userDoc.data();
+			const pushToken = userData.pushToken;
+
+			if (!pushToken) {
+				console.log("リマインド通知: プッシュトークンがありません");
+				return;
+			}
+
+			const message = {
+				to: pushToken,
+				sound: "default",
+				title: "📌 リマインド",
+				body: `「${todo.title}」のリマインド時刻になりました`,
+				data: {
+					type: "reminder",
+					todoId: todo.id,
+					todoTitle: todo.title,
+				},
+			};
+
+			const response = await fetch("https://exp.host/--/api/v2/push/send", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Accept-encoding": "gzip, deflate",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(message),
+			});
+
+			if (!response.ok) {
+				const errorBody = await response.text();
+				throw new Error(`Push notification failed: ${response.status} (body: ${errorBody})`);
+			}
+		}
+
+		console.log(`⏰ リマインド通知送信: ${todo.title}`);
+	} catch (error) {
+		console.error("Error sending reminder notification:", error);
+		throw error;
+	}
+}

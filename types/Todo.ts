@@ -12,6 +12,8 @@ type Todo = {
 	createdAt?: Date; // 作成日時
 	completedAt?: Date; // 完了日時
 	completedBy?: string; // 完了者のuserId
+	remindAt?: Date; // リマインド日時
+	remindNotified?: boolean; // リマインド通知済みフラグ
 };
 
 export type { Todo };
