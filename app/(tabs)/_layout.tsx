@@ -28,12 +28,10 @@ export default function TabLayout() {
 	};
 
 	const handleManageOrganization = (org: Organization) => {
-		console.log("🔧 組織設定を開きます:", org.name, "id:", org.id);
 		router.push({
 			pathname: "/(tabs)/organization-settings",
 			params: { id: org.id },
 		});
-		console.log("✅ 画面遷移を実行しました");
 	};
 
 	// 未読招待をチェックして、あればモーダルを自動的に開く
