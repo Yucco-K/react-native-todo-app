@@ -1,11 +1,3 @@
-import { useTheme } from "@/contexts/ThemeContext";
-import {
-	getTodoById,
-	getTodos,
-	removeTodoReminder,
-	setTodoReminder,
-} from "@/services/todoService";
-import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -18,6 +10,9 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { useTheme } from "@/contexts/ThemeContext";
+import { getTodoById, getTodos, removeTodoReminder, setTodoReminder } from "@/services/todoService";
+import type { Todo } from "@/types/Todo";
 
 export default function ReminderSettingsScreen() {
 	const router = useRouter();
@@ -58,8 +53,7 @@ export default function ReminderSettingsScreen() {
 					const now = new Date();
 					const base = found?.remindAt ? new Date(found.remindAt) : new Date();
 					// 初期値が過去の場合は現在+5分をセット
-					const safeInitial =
-						base <= now ? new Date(now.getTime() + 5 * 60 * 1000) : base;
+					const safeInitial = base <= now ? new Date(now.getTime() + 5 * 60 * 1000) : base;
 					setSelectedDate(safeInitial);
 					setSelectedTime(safeInitial);
 				}
@@ -76,7 +70,7 @@ export default function ReminderSettingsScreen() {
 
 	const headerTitle = useMemo(
 		() => (todo ? `リマインド設定 - ${todo.title}` : "リマインド設定"),
-		[todo]
+		[todo],
 	);
 
 	const handleSave = async () => {
@@ -149,9 +143,7 @@ export default function ReminderSettingsScreen() {
 				<TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
 					<Ionicons name="chevron-back" size={24} color="#fff" />
 				</TouchableOpacity>
-				<Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
-					{headerTitle}
-				</Text>
+				<Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>{headerTitle}</Text>
 				<View style={{ width: 32 }} />
 			</View>
 
@@ -166,9 +158,7 @@ export default function ReminderSettingsScreen() {
 						backgroundColor: isDark ? "#1f2937" : "#f3f4f6",
 					}}
 				>
-					<Text style={{ color: isDark ? "#d1d5db" : "#6b7280", fontSize: 12 }}>
-						TODO
-					</Text>
+					<Text style={{ color: isDark ? "#d1d5db" : "#6b7280", fontSize: 12 }}>TODO</Text>
 					<Text
 						style={{
 							color: isDark ? "#f3f4f6" : "#111827",
@@ -217,16 +207,10 @@ export default function ReminderSettingsScreen() {
 							borderColor: isDark ? "#374151" : "#d1d5db",
 						}}
 					>
-						<Text
-							style={{ color: isDark ? "#f3f4f6" : "#111827", fontSize: 16 }}
-						>
+						<Text style={{ color: isDark ? "#f3f4f6" : "#111827", fontSize: 16 }}>
 							{`${selectedDate.getFullYear()}年${selectedDate.getMonth() + 1}月${selectedDate.getDate()}日`}
 						</Text>
-						<Ionicons
-							name="calendar-outline"
-							size={20}
-							color={isDark ? "#9ca3af" : "#6b7280"}
-						/>
+						<Ionicons name="calendar-outline" size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
 					</TouchableOpacity>
 					{showDatePicker && (
 						<DateTimePicker
@@ -268,16 +252,10 @@ export default function ReminderSettingsScreen() {
 							borderColor: isDark ? "#374151" : "#d1d5db",
 						}}
 					>
-						<Text
-							style={{ color: isDark ? "#f3f4f6" : "#111827", fontSize: 16 }}
-						>
+						<Text style={{ color: isDark ? "#f3f4f6" : "#111827", fontSize: 16 }}>
 							{`${String(selectedTime.getHours()).padStart(2, "0")}:${String(selectedTime.getMinutes()).padStart(2, "0")}`}
 						</Text>
-						<Ionicons
-							name="time-outline"
-							size={20}
-							color={isDark ? "#9ca3af" : "#6b7280"}
-						/>
+						<Ionicons name="time-outline" size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
 					</TouchableOpacity>
 					{showTimePicker && (
 						<DateTimePicker
@@ -309,9 +287,7 @@ export default function ReminderSettingsScreen() {
 						{saving ? (
 							<ActivityIndicator color="#fff" />
 						) : (
-							<Text style={{ color: "#fff", fontWeight: "700" }}>
-								リマインドを設定
-							</Text>
+							<Text style={{ color: "#fff", fontWeight: "700" }}>リマインドを設定</Text>
 						)}
 					</TouchableOpacity>
 
@@ -328,9 +304,7 @@ export default function ReminderSettingsScreen() {
 							}}
 							activeOpacity={0.7}
 						>
-							<Text style={{ color: "#ef4444", fontWeight: "700" }}>
-								リマインドを削除
-							</Text>
+							<Text style={{ color: "#ef4444", fontWeight: "700" }}>リマインドを削除</Text>
 						</TouchableOpacity>
 					)}
 				</View>

@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Keyboard,
+	Switch,
 	Text,
 	TouchableHighlight,
 	TouchableOpacity,
@@ -12,11 +13,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import AddTodoModal from "@/components/AddTodoModal";
 import NicknameModal from "@/components/NicknameModal";
+import ReminderHistoryModal from "@/components/ReminderHistoryModal";
 import TodoTable from "@/components/TodoTable";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
+import { getReminderHistory, removeTodoReminder } from "@/services/todoService";
+import { getNotificationEnabled, setNotificationEnabled } from "@/services/userService";
+import type { Todo } from "@/types/Todo";
 
 export default function MyListScreen() {
 	const { user, nickname, logout, updateNickname } = useAuth();
@@ -25,11 +30,23 @@ export default function MyListScreen() {
 	const { isDark, toggleTheme } = useTheme();
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
 	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+	const [isReminderHistoryVisible, setIsReminderHistoryVisible] = useState(false);
+	const [reminderHistory, setReminderHistory] = useState<Todo[]>([]);
+	const [notificationEnabled, setNotificationEnabledState] = useState(true);
 
 	console.log("📱 MyListScreen: レンダリング", {
 		selectedOrganization: selectedOrganization?.name || "My List",
 		organizationId: selectedOrganization?.id || null,
 	});
+
+	// 通知設定を読み込み
+	useEffect(() => {
+		const loadNotificationSetting = async () => {
+			const enabled = await getNotificationEnabled();
+			setNotificationEnabledState(enabled);
+		};
+		loadNotificationSetting();
+	}, []);
 
 	// ログインしていない場合は何も表示しない
 	if (!user) {
@@ -54,6 +71,54 @@ export default function MyListScreen() {
 				type: "error",
 				text1: "エラー",
 				text2: "ログアウトに失敗しました",
+			});
+		}
+	};
+
+	const handleOpenReminderHistory = async () => {
+		try {
+			const history = await getReminderHistory();
+			setReminderHistory(history);
+			setIsReminderHistoryVisible(true);
+		} catch (error) {
+			console.error("リマインド履歴取得エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "エラー",
+				text2: "リマインド履歴の取得に失敗しました",
+			});
+		}
+	};
+
+	const handleDeleteReminder = async (todoId: string) => {
+		try {
+			await removeTodoReminder(todoId);
+			// 履歴を再取得
+			const history = await getReminderHistory();
+			setReminderHistory(history);
+			triggerRefresh(); // Todoリストも更新
+		} catch (error) {
+			console.error("リマインド削除エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "エラー",
+				text2: "リマインドの削除に失敗しました",
+			});
+		}
+	};
+
+	const handleToggleNotification = async (value: boolean) => {
+		try {
+			setNotificationEnabledState(value);
+			await setNotificationEnabled(value);
+		} catch (error) {
+			console.error("通知設定エラー:", error);
+			// エラー時は元に戻す
+			setNotificationEnabledState(!value);
+			Toast.show({
+				type: "error",
+				text1: "エラー",
+				text2: "通知設定の変更に失敗しました",
 			});
 		}
 	};
@@ -113,6 +178,31 @@ export default function MyListScreen() {
 							)}
 						</View>
 						<View className="flex-row items-center gap-2">
+							{/* 通知ON/OFFトグル */}
+							<View className="flex-row items-center">
+								<Switch
+									value={notificationEnabled}
+									onValueChange={handleToggleNotification}
+									trackColor={{
+										false: isDark ? "#4b5563" : "#d1d5db",
+										true: isDark ? "#3b82f6" : "#60a5fa",
+									}}
+									thumbColor={notificationEnabled ? "#ffffff" : "#f3f4f6"}
+								/>
+							</View>
+
+							{/* リマインド履歴ボタン */}
+							<TouchableOpacity
+								onPress={handleOpenReminderHistory}
+								className="rounded-full w-10 h-10 items-center justify-center"
+								style={{
+									backgroundColor: isDark ? "rgba(245, 158, 11, 0.2)" : "rgba(251, 191, 36, 0.2)",
+								}}
+								activeOpacity={0.7}
+							>
+								<Ionicons name="time" size={20} color={isDark ? "#fbbf24" : "#f59e0b"} />
+							</TouchableOpacity>
+
 							{/* ダークモード切り替えボタン */}
 							<TouchableOpacity
 								onPress={toggleTheme}
@@ -170,6 +260,13 @@ export default function MyListScreen() {
 				currentNickname={nickname || ""}
 				onClose={() => setIsNicknameModalVisible(false)}
 				onSave={updateNickname}
+			/>
+
+			<ReminderHistoryModal
+				visible={isReminderHistoryVisible}
+				reminders={reminderHistory}
+				onClose={() => setIsReminderHistoryVisible(false)}
+				onDelete={handleDeleteReminder}
 			/>
 		</SafeAreaView>
 	);

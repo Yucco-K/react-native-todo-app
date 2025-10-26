@@ -1,20 +1,17 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
-import { PraiseToast } from "@/components/PraiseToast";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { OrganizationProvider } from "@/contexts/OrganizationContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
-import {
-	NotoSansJP_400Regular,
-	NotoSansJP_700Bold,
-} from "@expo-google-fonts/noto-sans-jp";
+import { NotoSansJP_400Regular, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
 import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
 import Toast from "react-native-toast-message";
+import { PraiseToast } from "@/components/PraiseToast";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
 
 // 開発中に表示される予期されたエラーメッセージを非表示にする
 LogBox.ignoreLogs([

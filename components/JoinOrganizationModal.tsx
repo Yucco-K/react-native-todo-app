@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -19,7 +19,10 @@ type JoinOrganizationModalProps = {
 	onClose: () => void;
 };
 
-export function JoinOrganizationModal({ visible, onClose }: JoinOrganizationModalProps) {
+export function JoinOrganizationModal({
+	visible,
+	onClose,
+}: JoinOrganizationModalProps) {
 	const { isDark } = useTheme();
 	const [inviteCode, setInviteCode] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +48,15 @@ export function JoinOrganizationModal({ visible, onClose }: JoinOrganizationModa
 
 			setInviteCode("");
 			onClose();
-		} catch (error: any) {
+		} catch (error) {
 			console.error("Error joining organization:", error);
 			Toast.show({
 				type: "error",
 				text1: "参加失敗",
-				text2: error.message || "グループへの参加に失敗しました",
+				text2:
+					error instanceof Error
+						? error.message
+						: "グループへの参加に失敗しました",
 			});
 		} finally {
 			setIsLoading(false);
@@ -63,7 +69,12 @@ export function JoinOrganizationModal({ visible, onClose }: JoinOrganizationModa
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			onRequestClose={handleClose}
+		>
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -140,7 +151,9 @@ export function JoinOrganizationModal({ visible, onClose }: JoinOrganizationModa
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">参加</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">
+											参加
+										</Text>
 									)}
 								</TouchableHighlight>
 							</View>

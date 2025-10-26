@@ -3,17 +3,19 @@ import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "reac
 import { useTheme } from "@/contexts/ThemeContext";
 import type { Todo } from "@/types/Todo";
 
-type ReminderNotificationModalProps = {
+type ReminderHistoryModalProps = {
 	visible: boolean;
 	reminders: Todo[];
 	onClose: () => void;
+	onDelete: (id: string) => void;
 };
 
-export default function ReminderNotificationModal({
+export default function ReminderHistoryModal({
 	visible,
 	reminders,
 	onClose,
-}: ReminderNotificationModalProps) {
+	onDelete,
+}: ReminderHistoryModalProps) {
 	const { isDark } = useTheme();
 
 	const formatDateTime = (date: Date | undefined) => {
@@ -36,12 +38,12 @@ export default function ReminderNotificationModal({
 						{/* タイトル */}
 						<View className="flex-row items-center justify-between mb-4">
 							<View className="flex-row items-center">
-								<Ionicons name="notifications" size={28} color={isDark ? "#f59e0b" : "#f59e0b"} />
+								<Ionicons name="time" size={28} color={isDark ? "#60a5fa" : "#3b82f6"} />
 								<Text
 									className="ml-2 text-xl font-noto-bold"
 									style={{ color: isDark ? "#f3f4f6" : "#111827" }}
 								>
-									リマインド通知
+									リマインド履歴
 								</Text>
 							</View>
 							<TouchableOpacity onPress={onClose}>
@@ -55,23 +57,39 @@ export default function ReminderNotificationModal({
 								className="font-noto-regular text-base text-center"
 								style={{ color: isDark ? "#d1d5db" : "#374151" }}
 							>
-								{reminders.length}件のリマインドがあります
+								{reminders.length > 0
+									? `${reminders.length}件のリマインド履歴`
+									: "リマインド履歴はありません"}
 							</Text>
 						</View>
 
 						{/* リマインドリスト */}
-						<ScrollView className="mb-4" style={{ maxHeight: 280 }}>
-							{reminders.map((todo) => (
-								<View
-									key={todo.id}
-									className="mb-3 p-4 rounded-lg"
-									style={{
-										backgroundColor: isDark ? "#374151" : "#f3f4f6",
-										borderLeftWidth: 4,
-										borderLeftColor: "#f59e0b",
-									}}
-								>
-									<View className="flex-row items-start">
+						{reminders.length > 0 ? (
+							<ScrollView className="mb-4" style={{ maxHeight: 320 }}>
+								{reminders.map((todo) => (
+									<View
+										key={todo.id}
+										className="mb-3 p-4 rounded-lg flex-row items-start"
+										style={{
+											backgroundColor: isDark ? "#374151" : "#f3f4f6",
+											borderLeftWidth: 4,
+											borderLeftColor: todo.remindNotified
+												? isDark
+													? "#6b7280"
+													: "#9ca3af"
+												: "#f59e0b",
+										}}
+									>
+										{/* 削除ボタン */}
+										<TouchableOpacity onPress={() => onDelete(todo.id)} className="mr-3 mt-1">
+											<Ionicons
+												name="close-circle"
+												size={20}
+												color={isDark ? "#ef4444" : "#dc2626"}
+											/>
+										</TouchableOpacity>
+
+										{/* Todo情報 */}
 										<View className="flex-1">
 											<Text
 												className="font-noto-bold text-base mb-1"
@@ -100,20 +118,45 @@ export default function ReminderNotificationModal({
 												>
 													{formatDateTime(todo.remindAt)}
 												</Text>
+												{typeof todo.remindNotified === "boolean" && (
+													<Text
+														className="ml-2 font-noto-regular text-xs"
+														style={{
+															color: todo.remindNotified
+																? isDark
+																	? "#9ca3af"
+																	: "#6b7280"
+																: "#f59e0b",
+														}}
+													>
+														{todo.remindNotified ? "通知済み" : "未通知"}
+													</Text>
+												)}
 											</View>
 										</View>
 									</View>
-								</View>
-							))}
-						</ScrollView>
+								))}
+							</ScrollView>
+						) : (
+							<View className="py-8">
+								<Text
+									className="text-center font-noto-regular text-base"
+									style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+								>
+									リマインドを設定すると
+									{"\n"}
+									ここに履歴が表示されます
+								</Text>
+							</View>
+						)}
 
-						{/* わかったボタン */}
+						{/* 閉じるボタン */}
 						<TouchableOpacity
 							onPress={onClose}
 							className="bg-blue-500 rounded-lg p-4 items-center"
 							activeOpacity={0.7}
 						>
-							<Text className="text-white font-noto-bold text-base">わかった</Text>
+							<Text className="text-white font-noto-bold text-base">閉じる</Text>
 						</TouchableOpacity>
 					</View>
 				</Pressable>

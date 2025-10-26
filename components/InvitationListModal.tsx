@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Modal,
@@ -23,7 +23,10 @@ type InvitationListModalProps = {
 	onClose: () => void;
 };
 
-export function InvitationListModal({ visible, onClose }: InvitationListModalProps) {
+export function InvitationListModal({
+	visible,
+	onClose,
+}: InvitationListModalProps) {
 	const { isDark } = useTheme();
 	const [invitations, setInvitations] = useState<Invitation[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +96,12 @@ export function InvitationListModal({ visible, onClose }: InvitationListModalPro
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			onRequestClose={onClose}
+		>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/50">
 					<TouchableWithoutFeedback>
@@ -111,10 +119,16 @@ export function InvitationListModal({ visible, onClose }: InvitationListModalPro
 								招待一覧
 							</Text>
 
-							<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
 								{isLoading ? (
 									<View className="py-8">
-										<ActivityIndicator size="large" color={isDark ? "#60a5fa" : "#3b82f6"} />
+										<ActivityIndicator
+											size="large"
+											color={isDark ? "#60a5fa" : "#3b82f6"}
+										/>
 									</View>
 								) : invitations.length === 0 ? (
 									<View className="py-8">
@@ -131,9 +145,13 @@ export function InvitationListModal({ visible, onClose }: InvitationListModalPro
 											key={invitation.id}
 											className="mb-4 p-4 rounded-lg"
 											style={{
-												backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "#eff6ff",
+												backgroundColor: isDark
+													? "rgba(59, 130, 246, 0.2)"
+													: "#eff6ff",
 												borderWidth: 1,
-												borderColor: isDark ? "rgba(59, 130, 246, 0.4)" : "#93c5fd",
+												borderColor: isDark
+													? "rgba(59, 130, 246, 0.4)"
+													: "#93c5fd",
 											}}
 										>
 											<Text
@@ -194,7 +212,9 @@ export function InvitationListModal({ visible, onClose }: InvitationListModalPro
 									className="bg-gray-300 rounded-md py-3"
 									underlayColor="#d1d5db"
 								>
-									<Text className="text-gray-700 font-noto-bold text-lg text-center">閉じる</Text>
+									<Text className="text-gray-700 font-noto-bold text-lg text-center">
+										閉じる
+									</Text>
 								</TouchableHighlight>
 							</View>
 						</View>

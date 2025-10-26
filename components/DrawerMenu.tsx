@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
 import {
 	type GestureResponderEvent,
 	Modal,
@@ -30,7 +29,8 @@ export function DrawerMenu({
 	onManageOrganization,
 	onViewInvitations,
 }: DrawerMenuProps) {
-	const { organizations, selectedOrganization, selectOrganization } = useOrganization();
+	const { organizations, selectedOrganization, selectOrganization } =
+		useOrganization();
 	const { isDark } = useTheme();
 
 	const handleSelectMyList = () => {
@@ -46,7 +46,12 @@ export function DrawerMenu({
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="fade"
+			onRequestClose={onClose}
+		>
 			<Pressable
 				className="flex-1"
 				style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
@@ -55,7 +60,9 @@ export function DrawerMenu({
 				<Pressable
 					className="w-4/5 h-full"
 					style={{
-						backgroundColor: isDark ? "rgba(31, 41, 55, 0.98)" : "rgba(255, 255, 255, 0.95)",
+						backgroundColor: isDark
+							? "rgba(31, 41, 55, 0.98)"
+							: "rgba(255, 255, 255, 0.95)",
 						shadowColor: "#000",
 						shadowOffset: { width: 2, height: 0 },
 						shadowOpacity: 0.3,
@@ -205,7 +212,9 @@ export function DrawerMenu({
 								<TouchableOpacity
 									className="flex-row items-center p-4 rounded-lg border mb-4"
 									style={{
-										backgroundColor: isDark ? "rgba(34, 197, 94, 0.2)" : "#f0fdf4",
+										backgroundColor: isDark
+											? "rgba(34, 197, 94, 0.2)"
+											: "#f0fdf4",
 										borderColor: isDark ? "rgba(34, 197, 94, 0.4)" : "#86efac",
 									}}
 									onPress={() => {
@@ -213,7 +222,11 @@ export function DrawerMenu({
 										onClose();
 									}}
 								>
-									<Ionicons name="add-circle" size={24} color={isDark ? "#4ade80" : "#22c55e"} />
+									<Ionicons
+										name="add-circle"
+										size={24}
+										color={isDark ? "#4ade80" : "#22c55e"}
+									/>
 									<Text
 										className="ml-3 text-lg font-noto-bold"
 										style={{ color: isDark ? "#4ade80" : "#15803d" }}
@@ -225,7 +238,9 @@ export function DrawerMenu({
 								<TouchableOpacity
 									className="flex-row items-center p-4 rounded-lg border mb-4"
 									style={{
-										backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "#eff6ff",
+										backgroundColor: isDark
+											? "rgba(59, 130, 246, 0.2)"
+											: "#eff6ff",
 										borderColor: isDark ? "rgba(59, 130, 246, 0.4)" : "#93c5fd",
 									}}
 									onPress={() => {
@@ -233,7 +248,11 @@ export function DrawerMenu({
 										onClose();
 									}}
 								>
-									<Ionicons name="enter" size={24} color={isDark ? "#60a5fa" : "#3b82f6"} />
+									<Ionicons
+										name="enter"
+										size={24}
+										color={isDark ? "#60a5fa" : "#3b82f6"}
+									/>
 									<Text
 										className="ml-3 text-lg font-noto-bold"
 										style={{ color: isDark ? "#60a5fa" : "#1d4ed8" }}
@@ -245,15 +264,23 @@ export function DrawerMenu({
 								<TouchableOpacity
 									className="flex-row items-center p-4 rounded-lg border"
 									style={{
-										backgroundColor: isDark ? "rgba(107, 114, 128, 0.3)" : "#f9fafb",
-										borderColor: isDark ? "rgba(156, 163, 175, 0.4)" : "#d1d5db",
+										backgroundColor: isDark
+											? "rgba(107, 114, 128, 0.3)"
+											: "#f9fafb",
+										borderColor: isDark
+											? "rgba(156, 163, 175, 0.4)"
+											: "#d1d5db",
 									}}
 									onPress={() => {
 										onViewInvitations();
 										onClose();
 									}}
 								>
-									<Ionicons name="mail" size={24} color={isDark ? "#d1d5db" : "#6b7280"} />
+									<Ionicons
+										name="mail"
+										size={24}
+										color={isDark ? "#d1d5db" : "#6b7280"}
+									/>
 									<Text
 										className="ml-3 text-lg font-noto-bold"
 										style={{ color: isDark ? "#d1d5db" : "#374151" }}

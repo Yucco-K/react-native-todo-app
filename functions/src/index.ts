@@ -24,36 +24,24 @@ export const predictCategory = functions
 	.https.onCall(async (data, context) => {
 		// 認証チェック
 		if (!context.auth) {
-			throw new functions.https.HttpsError(
-				"unauthenticated",
-				"ユーザー認証が必要です"
-			);
+			throw new functions.https.HttpsError("unauthenticated", "ユーザー認証が必要です");
 		}
 
 		const { title, content } = data;
 
 		// バリデーション
 		if (!title || typeof title !== "string") {
-			throw new functions.https.HttpsError(
-				"invalid-argument",
-				"タイトルが必要です"
-			);
+			throw new functions.https.HttpsError("invalid-argument", "タイトルが必要です");
 		}
 
 		if (title.length > 100) {
-			throw new functions.https.HttpsError(
-				"invalid-argument",
-				"タイトルが長すぎます"
-			);
+			throw new functions.https.HttpsError("invalid-argument", "タイトルが長すぎます");
 		}
 
 		// レート制限チェック（Firestoreで実装）
 		const userId = context.auth.uid;
 		const today = new Date().toISOString().split("T")[0];
-		const rateLimitDoc = admin
-			.firestore()
-			.collection("rateLimits")
-			.doc(`${userId}_${today}`);
+		const rateLimitDoc = admin.firestore().collection("rateLimits").doc(`${userId}_${today}`);
 
 		try {
 			const rateLimitData = await rateLimitDoc.get();
@@ -63,7 +51,7 @@ export const predictCategory = functions
 			if (requestCount >= 100) {
 				throw new functions.https.HttpsError(
 					"resource-exhausted",
-					"1日の上限（100回）に達しました。明日再度お試しください。"
+					"1日の上限（100回）に達しました。明日再度お試しください。",
 				);
 			}
 
@@ -73,7 +61,7 @@ export const predictCategory = functions
 				console.error("OpenAI APIキーが設定されていません");
 				throw new functions.https.HttpsError(
 					"internal",
-					"サーバー設定エラー: OpenAI APIキーが設定されていません"
+					"サーバー設定エラー: OpenAI APIキーが設定されていません",
 				);
 			}
 
@@ -110,8 +98,7 @@ ${categoryDescriptions}
 				messages: [
 					{
 						role: "system",
-						content:
-							"あなたはタスクを分類する専門家です。カテゴリ名のみを返してください。",
+						content: "あなたはタスクを分類する専門家です。カテゴリ名のみを返してください。",
 					},
 					{
 						role: "user",
@@ -122,9 +109,7 @@ ${categoryDescriptions}
 				max_tokens: 10,
 			});
 
-			const predictedCategory = response.choices[0]?.message?.content
-				?.trim()
-				.toLowerCase();
+			const predictedCategory = response.choices[0]?.message?.content?.trim().toLowerCase();
 
 			const validCategories = [
 				"work",
@@ -150,7 +135,7 @@ ${categoryDescriptions}
 					count: requestCount + 1,
 					updatedAt: admin.firestore.FieldValue.serverTimestamp(),
 				},
-				{ merge: true }
+				{ merge: true },
 			);
 
 			return { category: finalCategory };
@@ -201,8 +186,7 @@ export const sendDueReminders = functions
 				const todoId = docSnap.id;
 				const title: string = data.title || "";
 				const userId: string | undefined = data.userId;
-				const organizationId: string | null | undefined =
-					data.organizationId ?? null;
+				const organizationId: string | null | undefined = data.organizationId ?? null;
 
 				const tokens: string[] = [];
 
@@ -210,18 +194,12 @@ export const sendDueReminders = functions
 					// 組織の全メンバーに送信
 					const orgRef = db.collection("organizations").doc(organizationId);
 					const orgSnap = await orgRef.get();
-					const members: string[] = orgSnap.exists
-						? orgSnap.data()?.members || []
-						: [];
+					const members: string[] = orgSnap.exists ? orgSnap.data()?.members || [] : [];
 					if (members.length > 0) {
-						const userRefs = members.map((uid) =>
-							db.collection("users").doc(uid)
-						);
+						const userRefs = members.map((uid) => db.collection("users").doc(uid));
 						const users = await db.getAll(...userRefs);
 						for (const u of users) {
-							const pushToken = u.exists
-								? (u.data()?.pushToken as string | undefined)
-								: undefined;
+							const pushToken = u.exists ? (u.data()?.pushToken as string | undefined) : undefined;
 							if (pushToken) tokens.push(pushToken);
 						}
 					}
