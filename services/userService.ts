@@ -115,7 +115,6 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 			},
 			{ merge: true },
 		);
-
 		console.log(`✅ 通知設定を更新しました: ${enabled ? "ON" : "OFF"}`);
 	} catch (error) {
 		console.error("Error setting notification enabled:", error);

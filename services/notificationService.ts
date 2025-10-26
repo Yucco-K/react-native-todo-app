@@ -1,6 +1,13 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import { collection, doc, getDoc, getDocs, query, setDoc } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	setDoc,
+} from "firebase/firestore";
 import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
 
@@ -23,7 +30,9 @@ if (Platform.OS === "ios") {
 /**
  * プッシュ通知のパーミッションを取得してトークンを登録
  */
-export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
+export async function registerForPushNotificationsAsync(): Promise<
+	string | undefined
+> {
 	let token: string | undefined;
 
 	if (Platform.OS === "android") {
@@ -36,7 +45,8 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
 	}
 
 	if (Device.isDevice) {
-		const { status: existingStatus } = await Notifications.getPermissionsAsync();
+		const { status: existingStatus } =
+			await Notifications.getPermissionsAsync();
 		let finalStatus = existingStatus;
 		if (existingStatus !== "granted") {
 			const { status } = await Notifications.requestPermissionsAsync();
@@ -76,7 +86,7 @@ export async function savePushToken(token: string): Promise<void> {
 				pushToken: token,
 				updatedAt: new Date(),
 			},
-			{ merge: true },
+			{ merge: true }
 		);
 		console.log("Push token saved to Firestore");
 	} catch (error) {
@@ -86,9 +96,11 @@ export async function savePushToken(token: string): Promise<void> {
 }
 
 /**
- * 全ユーザーのプッシュトークンを取得（現在のユーザーを除く）
+ * 全ユーザーのプッシュトークンを取得（現在のユーザーを除く、通知OFF のユーザーも除外）
  */
-async function getAllPushTokens(excludeCurrentUser: boolean = true): Promise<string[]> {
+async function getAllPushTokens(
+	excludeCurrentUser: boolean = true
+): Promise<string[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
 		const usersRef = collection(db, "users");
@@ -96,14 +108,24 @@ async function getAllPushTokens(excludeCurrentUser: boolean = true): Promise<str
 		const querySnapshot = await getDocs(q);
 
 		const tokenSet = new Set<string>(); // 重複を防ぐ
+		let excludedByNotificationOff = 0;
 
 		querySnapshot.forEach((doc) => {
 			const data = doc.data();
+
+			// 現在のユーザーを除外する場合
+			if (excludeCurrentUser && doc.id === currentUserId) {
+				return;
+			}
+
+			// 通知設定を確認（デフォルトはtrue）
+			const notificationEnabled = data.notificationEnabled !== false;
+			if (!notificationEnabled) {
+				excludedByNotificationOff++;
+				return;
+			}
+
 			if (data.pushToken) {
-				// 現在のユーザーを除外する場合
-				if (excludeCurrentUser && doc.id === currentUserId) {
-					return;
-				}
 				tokenSet.add(data.pushToken);
 			}
 		});
@@ -112,6 +134,7 @@ async function getAllPushTokens(excludeCurrentUser: boolean = true): Promise<str
 		console.log("📱 プッシュトークン取得:", {
 			総トークン数: querySnapshot.size,
 			重複除外後: uniqueTokens.length,
+			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
 		});
 
@@ -129,7 +152,7 @@ export async function sendPushNotification(
 	title: string,
 	body: string,
 	data?: Record<string, unknown>,
-	includeCurrentUser: boolean = false,
+	includeCurrentUser: boolean = false
 ): Promise<void> {
 	try {
 		const tokens = await getAllPushTokens(!includeCurrentUser);
@@ -209,7 +232,7 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 	await sendPushNotification(
 		"新しい共有Todo",
 		`${displayName} が「${title}」を追加しました`,
-		{ type: "todo_added" },
+		{ type: "todo_added" }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -223,7 +246,7 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有Todoが更新されました",
 		`${displayName} が「${title}」を編集しました`,
-		{ type: "todo_updated" },
+		{ type: "todo_updated" }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -237,7 +260,7 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有Todoが削除されました",
 		`${displayName} が「${title}」を削除しました`,
-		{ type: "todo_deleted" },
+		{ type: "todo_deleted" }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -263,7 +286,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有TODO完了",
 		`${displayName} が共有TODO「${title}」を完了しました。完了時刻：${completedTime}`,
-		{ type: "todo_completed" },
+		{ type: "todo_completed" }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -274,7 +297,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 export async function notifyInvitation(
 	invitedUserId: string,
 	orgName: string,
-	inviterName: string,
+	inviterName: string
 ): Promise<void> {
 	// 自分自身には通知を送らない
 	const currentUserId = auth.currentUser?.uid;
@@ -323,7 +346,9 @@ export async function notifyInvitation(
 
 		if (!response.ok) {
 			const errorBody = await response.text();
-			throw new Error(`Push notification failed: ${response.status} (body: ${errorBody})`);
+			throw new Error(
+				`Push notification failed: ${response.status} (body: ${errorBody})`
+			);
 		}
 
 		console.log("Invitation notification sent");
@@ -360,7 +385,7 @@ export async function notifyReminder(todo: {
 					todoId: todo.id,
 					todoTitle: todo.title,
 				},
-				true, // 本人を含む全員に通知
+				true // 本人を含む全員に通知
 			);
 		} else {
 			// 個人Todoの場合は本人のみに通知
@@ -402,7 +427,9 @@ export async function notifyReminder(todo: {
 
 			if (!response.ok) {
 				const errorBody = await response.text();
-				throw new Error(`Push notification failed: ${response.status} (body: ${errorBody})`);
+				throw new Error(
+					`Push notification failed: ${response.status} (body: ${errorBody})`
+				);
 			}
 		}
 

@@ -199,7 +199,14 @@ export const sendDueReminders = functions
 						const userRefs = members.map((uid) => db.collection("users").doc(uid));
 						const users = await db.getAll(...userRefs);
 						for (const u of users) {
-							const pushToken = u.exists ? (u.data()?.pushToken as string | undefined) : undefined;
+							if (!u.exists) continue;
+							const userData = u.data();
+							const notificationEnabled = userData?.notificationEnabled !== false; // デフォルトtrue
+							if (!notificationEnabled) {
+								console.log(`⚠️ User ${u.id} has notifications disabled, skipping`);
+								continue;
+							}
+							const pushToken = userData?.pushToken as string | undefined;
 							if (pushToken) tokens.push(pushToken);
 						}
 					}
@@ -207,10 +214,16 @@ export const sendDueReminders = functions
 					// 個人: 本人に送信
 					const userRef = db.collection("users").doc(userId);
 					const userSnap = await userRef.get();
-					const pushToken = userSnap.exists
-						? (userSnap.data()?.pushToken as string | undefined)
-						: undefined;
-					if (pushToken) tokens.push(pushToken);
+					if (userSnap.exists) {
+						const userData = userSnap.data();
+						const notificationEnabled = userData?.notificationEnabled !== false; // デフォルトtrue
+						if (notificationEnabled) {
+							const pushToken = userData?.pushToken as string | undefined;
+							if (pushToken) tokens.push(pushToken);
+						} else {
+							console.log(`⚠️ User ${userId} has notifications disabled, skipping`);
+						}
+					}
 				}
 
 				if (tokens.length === 0) {

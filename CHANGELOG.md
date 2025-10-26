@@ -1,5 +1,56 @@
 # 変更履歴
 
+## [2025-10-26] - 通知ON/OFF設定と通知履歴機能の追加
+
+### 新機能
+
+#### 通知ON/OFF設定
+
+- **ヘッダーにトグルボタンを追加**: ユーザーが通知のON/OFFを簡単に切り替え可能
+  - トグルをタップすると「通知をONにしました」/「通知をOFFにしました」のトーストを表示
+  - Firestoreの`users`コレクションに`notificationEnabled`フィールドで保存
+  - デフォルトは`true`（ON）
+- **全通知タイプに対応**: TODO操作、招待、リマインダーのすべてのプッシュ通知に適用
+- **クライアント側とサーバー側の両方でチェック**:
+  - `services/notificationService.ts`: `getAllPushTokens`関数で`notificationEnabled`をチェック
+  - `functions/src/index.ts`: `sendDueReminders` Cloud Functionで`notificationEnabled`をチェック
+  - 通知OFFのユーザーはプッシュ通知の送信対象から除外
+- **通知OFFの場合は履歴にも保存されない**: クライアント側で受信時にチェック
+
+#### 通知履歴機能
+
+- **ヘッダーに通知アイコンを追加**: タップすると受信した通知の履歴を表示
+- **通知履歴モーダル**:
+  - 受信した通知のタイトルと日時を一覧表示
+  - タイトルをタップすると通知の詳細（本文、受信日時）を展開表示
+  - 各通知の右側に×ボタンを配置し、個別削除が可能
+- **Firestoreに保存**: `notificationHistory`コレクションに保存
+  - `userId`, `title`, `body`, `data`, `createdAt`フィールド
+  - 複合インデックス: `userId` (Ascending) + `createdAt` (Descending)
+- **新しいサービス**: `services/notificationHistoryService.ts`を追加
+  - `saveNotificationHistory`: 通知履歴を保存
+  - `getNotificationHistory`: ユーザーの通知履歴を取得
+  - `deleteNotificationHistory`: 通知履歴を削除
+
+### 技術的な改善
+
+- **`services/userService.ts`**: `getNotificationEnabled`と`setNotificationEnabled`関数を追加
+- **`app/(tabs)/_layout.tsx`**: 通知受信時に`notificationEnabled`をチェックし、OFFの場合は履歴に保存しない
+- **`app/(tabs)/mylist.tsx`**: 通知トグルと通知履歴アイコンをヘッダーに統合
+- **`components/NotificationHistoryModal.tsx`**: 新しいモーダルコンポーネントを追加
+
+### テスト環境での注意事項
+
+**同じデバイスで複数のユーザーアカウントをテストする場合**:
+
+- プッシュトークンはデバイス固有のため、同じデバイスを使用する全ユーザーが同じトークンを共有します
+- ユーザーAが通知をOFFにしても、ユーザーBが通知をONにしている場合、同じデバイスに通知が届く可能性があります
+- これは、プッシュトークンがユーザーではなくデバイスに紐づいているためです
+- **本番環境では問題ありません**: 各ユーザーが異なるデバイスを使用するため、通知ON/OFF設定は正しく機能します
+- **推奨**: 複数ユーザーでの通知ON/OFF機能をテストする場合は、異なる物理デバイスを使用してください
+
+---
+
 ## [2025-10-26] - リマインド機能UI/UX改善とサーバー側自動送信
 
 ### UI/UX改善

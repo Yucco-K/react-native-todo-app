@@ -1,17 +1,23 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import "../global.css";
 
-import { NotoSansJP_400Regular, NotoSansJP_700Bold } from "@expo-google-fonts/noto-sans-jp";
-import { useFonts } from "expo-font";
-import { SplashScreen } from "expo-router";
-import { useEffect } from "react";
-import { LogBox } from "react-native";
-import Toast from "react-native-toast-message";
 import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
+import { saveNotificationHistory } from "@/services/notificationHistoryService";
+import { getNotificationEnabled } from "@/services/userService";
+import {
+	NotoSansJP_400Regular,
+	NotoSansJP_700Bold,
+} from "@expo-google-fonts/noto-sans-jp";
+import { useFonts } from "expo-font";
+import * as Notifications from "expo-notifications";
+import { SplashScreen } from "expo-router";
+import { useEffect, useRef } from "react";
+import { LogBox } from "react-native";
+import Toast from "react-native-toast-message";
 
 // 開発中に表示される予期されたエラーメッセージを非表示にする
 LogBox.ignoreLogs([
@@ -31,6 +37,59 @@ function RootLayoutNav() {
 	const { user, loading } = useAuth();
 	const segments = useSegments();
 	const router = useRouter();
+	const notificationListener = useRef<ReturnType<
+		typeof Notifications.addNotificationReceivedListener
+	> | null>(null);
+	const responseListener = useRef<ReturnType<
+		typeof Notifications.addNotificationResponseReceivedListener
+	> | null>(null);
+
+	// 通知リスナーを設定
+	useEffect(() => {
+		// 通知を受信したときの処理
+		notificationListener.current =
+			Notifications.addNotificationReceivedListener(async (notification) => {
+				if (!user) return;
+
+				const { title, body, data } = notification.request.content;
+				console.log("📬 通知を受信しました:", title);
+
+				// 通知設定を確認
+				const isEnabled = await getNotificationEnabled();
+				if (!isEnabled) {
+					console.log("⚠️ 通知がOFFのため、履歴に保存しません");
+					return;
+				}
+
+				// 通知履歴を保存
+				try {
+					await saveNotificationHistory(
+						user.uid,
+						title || "通知",
+						body || "",
+						data as Record<string, unknown>
+					);
+				} catch (error) {
+					console.error("通知履歴の保存エラー:", error);
+				}
+			});
+
+		// 通知をタップしたときの処理
+		responseListener.current =
+			Notifications.addNotificationResponseReceivedListener((response) => {
+				console.log("👆 通知をタップしました:", response);
+				// 必要に応じて画面遷移などを実装
+			});
+
+		return () => {
+			if (notificationListener.current) {
+				notificationListener.current.remove();
+			}
+			if (responseListener.current) {
+				responseListener.current.remove();
+			}
+		};
+	}, [user]);
 
 	useEffect(() => {
 		if (loading) {

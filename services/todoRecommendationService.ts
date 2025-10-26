@@ -372,12 +372,17 @@ export async function generateTodoRecommendations(
 		todoPatterns.forEach((pattern, normalizedTitle) => {
 			// 周期が判明しているタスク
 			if (pattern.averageInterval) {
-				// 最後に追加された時刻を取得
-				const lastAdded = recentTodos.find(
+				// 最後に追加された時刻を取得（最新のものを見つける）
+				const matchingTodos = recentTodos.filter(
 					(t) => t.title.toLowerCase().trim() === normalizedTitle
 				);
+				
+				if (matchingTodos.length > 0) {
+					// 最新のTODOを取得（createdAtで降順ソート済みなので最初の要素）
+					const lastAdded = matchingTodos.reduce((latest, current) => 
+						current.createdAt > latest.createdAt ? current : latest
+					);
 
-				if (lastAdded) {
 					const hoursSinceLastAdded =
 						(now - lastAdded.createdAt.getTime()) / (1000 * 60 * 60);
 
@@ -403,7 +408,7 @@ export async function generateTodoRecommendations(
 							score,
 							options: {
 								isPeriodicTask: true,
-								interval: pattern.averageInterval,
+								interval: hoursSinceLastAdded, // 実際の経過時間を渡す
 								matchesTimePattern: matchesHour,
 								matchesDayOfWeek: matchesDayOfWeek,
 							},
