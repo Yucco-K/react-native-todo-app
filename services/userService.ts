@@ -43,7 +43,7 @@ export async function saveUserNickname(nickname: string): Promise<void> {
 				nickname: nickname.trim(),
 				updatedAt: new Date(),
 			},
-			{ merge: true },
+			{ merge: true }
 		);
 	} catch (error) {
 		console.error("Error saving user nickname:", error);
@@ -54,7 +54,9 @@ export async function saveUserNickname(nickname: string): Promise<void> {
 /**
  * 指定されたユーザーIDのニックネームを取得
  */
-export async function getUserNicknameById(userId: string): Promise<string | null> {
+export async function getUserNicknameById(
+	userId: string
+): Promise<string | null> {
 	try {
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
@@ -113,7 +115,7 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				notificationEnabled: enabled,
 				updatedAt: new Date(),
 			},
-			{ merge: true },
+			{ merge: true }
 		);
 		console.log(`✅ 通知設定を更新しました: ${enabled ? "ON" : "OFF"}`);
 	} catch (error) {

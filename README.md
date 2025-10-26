@@ -1,4 +1,10 @@
-# React Native Todo App
+# Todo App
+
+**日常にフィットするTODO管理アプリ**  
+あなたのやる気をAIがサポート  
+便利なリマインダー機能付き
+
+---
 
 React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreでデータ管理。
 
