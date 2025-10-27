@@ -74,11 +74,9 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 
 ## デモ動画
 
-[![デモ動画](https://img.youtube.com/vi/3YNxz43t5II/0.jpg)](https://youtube.com/shorts/3YNxz43t5II?feature=share)
+[![デモ動画](https://img.youtube.com/vi/q3WSqAdRkvo/0.jpg)](https://youtu.be/q3WSqAdRkvo)
 
-アプリの使い方や機能の詳細は[こちらのデモ動画](https://youtube.com/shorts/3YNxz43t5II?feature=share)をご覧ください。
-
-> 💡 このデモ動画はグループ機能実装前の収録です。最新版ではグループTodo機能、招待システムなどが追加されています。
+アプリの使い方や機能の詳細は[こちらのデモ動画](https://youtu.be/q3WSqAdRkvo)をご覧ください。
 
 ## 動作確認環境
 
