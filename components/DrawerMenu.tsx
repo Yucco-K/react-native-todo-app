@@ -174,21 +174,23 @@ export function DrawerMenu({
 																: "#6b7280"
 													}
 												/>
-												<Text
-													className="ml-3 text-lg font-noto-regular flex-1"
-													style={{
-														color:
-															selectedOrganization?.id === org.id
-																? isDark
-																	? "#60a5fa"
-																	: "#2563eb"
-																: isDark
-																	? "#d1d5db"
-																	: "#374151",
-													}}
-												>
-													{org.name}
-												</Text>
+											<Text
+												className="ml-3 text-lg font-noto-regular flex-1"
+												style={{
+													color:
+														selectedOrganization?.id === org.id
+															? isDark
+																? "#60a5fa"
+																: "#2563eb"
+															: isDark
+																? "#d1d5db"
+																: "#374151",
+													flexShrink: 1,
+												}}
+												numberOfLines={2}
+											>
+												{org.name}
+											</Text>
 												<TouchableOpacity
 													onPress={() => {
 														onManageOrganization(org);

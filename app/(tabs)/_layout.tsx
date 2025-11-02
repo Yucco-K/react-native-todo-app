@@ -128,13 +128,21 @@ export default function TabLayout() {
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
-					headerTitle: () => (
-						<View>
-							<Text style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>
-								{getHeaderTitle()}
-							</Text>
-						</View>
-					),
+				headerTitle: () => (
+					<View style={{ flex: 1, paddingHorizontal: 10 }}>
+						<Text
+							style={{
+								color: "#fff",
+								fontSize: 20,
+								fontWeight: "bold",
+								flexShrink: 1,
+							}}
+							numberOfLines={2}
+						>
+							{getHeaderTitle()}
+						</Text>
+					</View>
+				),
 				}}
 			>
 				<Stack.Screen name="mylist" />

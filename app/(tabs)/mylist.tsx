@@ -179,56 +179,68 @@ export default function MyListScreen() {
 		>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View className="flex-1 px-4 pt-4">
-					<View className="flex-row justify-between items-center mb-4">
-						<View className="flex-1">
-							{nickname ? (
+					{/* ユーザー名表示エリア */}
+					<View className="mb-3">
+						{nickname ? (
+							<TouchableOpacity
+								onPress={() => setIsNicknameModalVisible(true)}
+								className="flex-row items-center"
+							>
+								<Text
+									className="text-lg font-noto-bold"
+									style={{
+										color: isDark ? "#60a5fa" : "#2563eb",
+										flexShrink: 1,
+									}}
+									numberOfLines={2}
+								>
+									{nickname}さん
+								</Text>
+								<Ionicons
+									name="create-outline"
+									size={16}
+									color={isDark ? "#60a5fa" : "#2563eb"}
+									style={{ marginLeft: 4 }}
+								/>
+							</TouchableOpacity>
+						) : (
+							<>
 								<TouchableOpacity
 									onPress={() => setIsNicknameModalVisible(true)}
-									className="flex-row items-center mt-1"
+									className="flex-row items-center"
 								>
 									<Text
-										className="text-lg font-noto-bold"
-										style={{ color: isDark ? "#60a5fa" : "#2563eb" }}
+										className="text-base font-noto-regular"
+										style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
 									>
-										{nickname}さん
+										ニックネームを設定
 									</Text>
 									<Ionicons
-										name="create-outline"
+										name="add-circle-outline"
 										size={16}
-										color={isDark ? "#60a5fa" : "#2563eb"}
-										className="ml-1"
+										color={isDark ? "#d1d5db" : "#6b7280"}
+										style={{ marginLeft: 4 }}
 									/>
 								</TouchableOpacity>
-							) : (
-								<>
-									<TouchableOpacity
-										onPress={() => setIsNicknameModalVisible(true)}
-										className="flex-row items-center mt-1"
+								{user?.email && (
+									<Text
+										className="text-sm font-noto-regular mt-1"
+										style={{
+											color: isDark ? "#d1d5db" : "#6b7280",
+											flexShrink: 1,
+										}}
+										numberOfLines={2}
 									>
-										<Text
-											className="text-base font-noto-regular"
-											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
-										>
-											ニックネームを設定
-										</Text>
-										<Ionicons
-											name="add-circle-outline"
-											size={16}
-											color={isDark ? "#d1d5db" : "#6b7280"}
-											className="ml-1"
-										/>
-									</TouchableOpacity>
-									{user?.email && (
-										<Text
-											className="text-sm font-noto-regular mt-1"
-											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
-										>
-											{user.email}
-										</Text>
-									)}
-								</>
-							)}
-						</View>
+										{user.email}
+									</Text>
+								)}
+							</>
+						)}
+					</View>
+
+					{/* アイコン・ボタンエリア */}
+					<View className="flex-row justify-between items-center mb-4">
+						<View className="flex-1" />
 						<View className="flex-row items-center gap-2">
 							{/* 通知ON/OFFトグル */}
 							<View className="flex-row items-center">

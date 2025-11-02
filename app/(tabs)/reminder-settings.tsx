@@ -129,23 +129,35 @@ export default function ReminderSettingsScreen() {
 	return (
 		<View style={{ flex: 1, backgroundColor: isDark ? "#111827" : "#ffffff" }}>
 			{/* ヘッダー */}
-			<View
+		<View
+			style={{
+				backgroundColor: "#3b82f6",
+				paddingTop: 52,
+				paddingBottom: 12,
+				paddingHorizontal: 16,
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "space-between",
+			}}
+		>
+			<TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
+				<Ionicons name="chevron-back" size={24} color="#fff" />
+			</TouchableOpacity>
+			<Text
 				style={{
-					backgroundColor: "#3b82f6",
-					paddingTop: 52,
-					paddingBottom: 12,
-					paddingHorizontal: 16,
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					color: "#fff",
+					fontSize: 18,
+					fontWeight: "bold",
+					flex: 1,
+					flexShrink: 1,
+					textAlign: "center",
 				}}
+				numberOfLines={2}
 			>
-				<TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
-					<Ionicons name="chevron-back" size={24} color="#fff" />
-				</TouchableOpacity>
-				<Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>{headerTitle}</Text>
-				<View style={{ width: 32 }} />
-			</View>
+				{headerTitle}
+			</Text>
+			<View style={{ width: 32 }} />
+		</View>
 
 			{/* 全幅レイアウト */}
 			<ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -158,28 +170,30 @@ export default function ReminderSettingsScreen() {
 						backgroundColor: isDark ? "#1f2937" : "#f3f4f6",
 					}}
 				>
-					<Text style={{ color: isDark ? "#d1d5db" : "#6b7280", fontSize: 12 }}>TODO</Text>
+				<Text style={{ color: isDark ? "#d1d5db" : "#6b7280", fontSize: 12 }}>TODO</Text>
+				<Text
+					style={{
+						color: isDark ? "#f3f4f6" : "#111827",
+						fontSize: 16,
+						fontWeight: "700",
+						marginTop: 4,
+						flexShrink: 1,
+					}}
+				>
+					{todo.title}
+				</Text>
+				{!!todo.content && (
 					<Text
 						style={{
-							color: isDark ? "#f3f4f6" : "#111827",
-							fontSize: 16,
-							fontWeight: "700",
-							marginTop: 4,
+							color: isDark ? "#d1d5db" : "#374151",
+							fontSize: 14,
+							marginTop: 6,
+							flexShrink: 1,
 						}}
 					>
-						{todo.title}
+						{todo.content}
 					</Text>
-					{!!todo.content && (
-						<Text
-							style={{
-								color: isDark ? "#d1d5db" : "#374151",
-								fontSize: 14,
-								marginTop: 6,
-							}}
-						>
-							{todo.content}
-						</Text>
-					)}
+				)}
 				</View>
 
 				{/* 日付 */}

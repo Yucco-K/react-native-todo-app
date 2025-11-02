@@ -245,17 +245,21 @@ export default function OrganizationSettingsScreen() {
 		<View className="flex-1" style={{ backgroundColor: isDark ? "#111827" : "#f9fafb" }}>
 			{/* ヘッダー */}
 			<View className="px-6 pt-16 pb-4" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
-				<View className="flex-row items-center">
-					<TouchableOpacity onPress={() => router.back()} className="mr-4">
-						<Ionicons name="arrow-back" size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
-					</TouchableOpacity>
-					<Text
-						className="text-2xl font-noto-bold flex-1"
-						style={{ color: isDark ? "#60a5fa" : "#2563eb" }}
-					>
-						{organization.name}
-					</Text>
-				</View>
+			<View className="flex-row items-center">
+				<TouchableOpacity onPress={() => router.back()} className="mr-4">
+					<Ionicons name="arrow-back" size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
+				</TouchableOpacity>
+				<Text
+					className="text-2xl font-noto-bold flex-1"
+					style={{
+						color: isDark ? "#60a5fa" : "#2563eb",
+						flexShrink: 1,
+					}}
+					numberOfLines={2}
+				>
+					{organization.name}
+				</Text>
+			</View>
 			</View>
 
 			<ScrollView className="flex-1 px-6 py-4">
