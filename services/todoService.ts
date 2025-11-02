@@ -1,7 +1,6 @@
 import {
 	addDoc,
 	collection,
-	type DocumentData,
 	deleteDoc,
 	deleteField,
 	doc,
@@ -11,6 +10,7 @@ import {
 	query,
 	updateDoc,
 	where,
+	type DocumentData,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { TodoCategory } from "../types/Category";
@@ -22,7 +22,9 @@ const COLLECTION_NAME = "todos";
  * Todoを取得（組織IDでフィルタリング）
  * @param organizationId - 組織ID（nullの場合は個人用Todoのみ取得）
  */
-export const getTodos = async (organizationId: string | null = null): Promise<Todo[]> => {
+export const getTodos = async (
+	organizationId: string | null = null
+): Promise<Todo[]> => {
 	try {
 		const userId = auth.currentUser?.uid;
 		if (!userId) {
@@ -35,7 +37,7 @@ export const getTodos = async (organizationId: string | null = null): Promise<To
 			q = query(
 				collection(db, COLLECTION_NAME),
 				where("organizationId", "==", organizationId),
-				orderBy("createdAt", "desc"),
+				orderBy("createdAt", "desc")
 			);
 		} else {
 			// 個人用Todoを取得（organizationIdが存在しない）
@@ -43,7 +45,7 @@ export const getTodos = async (organizationId: string | null = null): Promise<To
 				collection(db, COLLECTION_NAME),
 				where("userId", "==", userId),
 				where("organizationId", "==", null),
-				orderBy("createdAt", "desc"),
+				orderBy("createdAt", "desc")
 			);
 		}
 
@@ -89,7 +91,7 @@ export const createTodo = async (
 	title: string,
 	content: string,
 	category: TodoCategory = "other",
-	organizationId: string | null = null,
+	organizationId: string | null = null
 ): Promise<string> => {
 	try {
 		const userId = auth.currentUser?.uid;
@@ -134,7 +136,10 @@ export const createTodo = async (
 /**
  * Todoを更新
  */
-export const updateTodo = async (id: string, updates: Partial<Omit<Todo, "id">>): Promise<void> => {
+export const updateTodo = async (
+	id: string,
+	updates: Partial<Omit<Todo, "id">>
+): Promise<void> => {
 	try {
 		const todoRef = doc(db, COLLECTION_NAME, id);
 		await updateDoc(todoRef, updates);
@@ -160,7 +165,10 @@ export const deleteTodo = async (id: string): Promise<void> => {
 /**
  * Todoの完了状態をトグル
  */
-export const toggleTodoComplete = async (id: string, currentCompleted: boolean): Promise<void> => {
+export const toggleTodoComplete = async (
+	id: string,
+	currentCompleted: boolean
+): Promise<void> => {
 	try {
 		const userId = auth.currentUser?.uid;
 		if (!userId) {
@@ -196,7 +204,10 @@ export const toggleTodoComplete = async (id: string, currentCompleted: boolean):
 /**
  * Todoの共有状態をトグル
  */
-export const toggleTodoShared = async (id: string, currentShared: boolean): Promise<void> => {
+export const toggleTodoShared = async (
+	id: string,
+	currentShared: boolean
+): Promise<void> => {
 	try {
 		await updateTodo(id, { shared: !currentShared });
 	} catch (error) {
@@ -223,7 +234,7 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		const q = query(
 			collection(db, COLLECTION_NAME),
 			where("userId", "==", userId),
-			where("completed", "==", true),
+			where("completed", "==", true)
 		);
 		const querySnapshot = await getDocs(q);
 
@@ -237,15 +248,18 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 			// 完了日時が48時間以上前の場合、削除対象
 			if (completedAt && completedAt < fortyEightHoursAgo) {
 				// AI統計用に完了履歴を保存
-				const historyPromise: Promise<void> = addDoc(collection(db, "completedTodoHistory"), {
-					userId: data.userId,
-					title: data.title,
-					category: data.category || "other",
-					completedAt: data.completedAt,
-					completedBy: data.completedBy,
-					createdAt: data.createdAt,
-					deletedAt: new Date(), // 削除日時を記録
-				}).then(() => {});
+				const historyPromise: Promise<void> = addDoc(
+					collection(db, "completedTodoHistory"),
+					{
+						userId: data.userId,
+						title: data.title,
+						category: data.category || "other",
+						completedAt: data.completedAt,
+						completedBy: data.completedBy,
+						createdAt: data.createdAt,
+						deletedAt: new Date(), // 削除日時を記録
+					}
+				).then(() => {});
 
 				// Todo本体を削除
 				const deletePromise = deleteDoc(doc(db, COLLECTION_NAME, document.id));
@@ -253,7 +267,7 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 				operations.push(historyPromise, deletePromise);
 				deletedCount++;
 				console.log(
-					`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`,
+					`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`
 				);
 			}
 		});
@@ -262,7 +276,9 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		await Promise.all(operations);
 
 		if (deletedCount > 0) {
-			console.log(`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`);
+			console.log(
+				`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`
+			);
 		}
 
 		return deletedCount;
@@ -277,7 +293,10 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
  * @param todoId - TodoのID
  * @param remindAt - リマインド日時
  */
-export const setTodoReminder = async (todoId: string, remindAt: Date): Promise<void> => {
+export const setTodoReminder = async (
+	todoId: string,
+	remindAt: Date
+): Promise<void> => {
 	try {
 		const userId = auth.currentUser?.uid;
 		if (!userId) {
@@ -290,7 +309,9 @@ export const setTodoReminder = async (todoId: string, remindAt: Date): Promise<v
 			remindNotified: false, // リマインド設定時は未通知状態に
 		});
 
-		console.log(`⏰ リマインド設定: Todo ID ${todoId} - ${remindAt.toLocaleString()}`);
+		console.log(
+			`⏰ リマインド設定: Todo ID ${todoId} - ${remindAt.toLocaleString()}`
+		);
 	} catch (error) {
 		console.error("Error setting reminder:", error);
 		throw error;
@@ -338,7 +359,7 @@ export const getDueReminders = async (): Promise<Todo[]> => {
 		const personalQuery = query(
 			collection(db, COLLECTION_NAME),
 			where("userId", "==", userId),
-			where("remindNotified", "==", false),
+			where("remindNotified", "==", false)
 		);
 
 		// 組織Todoのリマインドを取得（自分が所属する組織のもの）
@@ -440,7 +461,7 @@ export const getReminderHistory = async (): Promise<Todo[]> => {
 		const q = query(
 			collection(db, COLLECTION_NAME),
 			where("userId", "==", userId),
-			where("remindAt", "!=", null),
+			where("remindAt", "!=", null)
 		);
 
 		const querySnapshot = await getDocs(q);

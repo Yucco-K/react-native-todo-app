@@ -222,7 +222,7 @@
 - `tsconfig.json`に`"jsx": "react-native"`を追加
 - 暗黙的な`any`型エラーを修正
   - `components/TodoTable.tsx`: `FlatList`のitem型を明示
-  - `components/ui/ToDoItem.tsx`: `GestureResponderEvent`型を明示
+  - `components/ui/TodoItem.tsx`: `GestureResponderEvent`型を明示
   - `app/(tabs)/organization-settings.tsx`: エラーハンドリングの型を明示
 
 #### ルーティングの改善

@@ -96,18 +96,18 @@ export async function savePushToken(token: string): Promise<void> {
 }
 
 /**
- * 全ユーザーのプッシュトークンを取得（現在のユーザーを除く、通知OFF のユーザーも除外）
+ * 全ユーザーのプッシュトークンとuserIdのペアを取得（通知OFFのユーザーは除外）
  */
-async function getAllPushTokens(
+async function getAllPushTokensWithUserId(
 	excludeCurrentUser: boolean = true
-): Promise<string[]> {
+): Promise<Array<{ userId: string; pushToken: string }>> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
 		const usersRef = collection(db, "users");
 		const q = query(usersRef);
 		const querySnapshot = await getDocs(q);
 
-		const tokenSet = new Set<string>(); // 重複を防ぐ
+		const tokens: Array<{ userId: string; pushToken: string }> = [];
 		let excludedByNotificationOff = 0;
 
 		querySnapshot.forEach((doc) => {
@@ -126,19 +126,21 @@ async function getAllPushTokens(
 			}
 
 			if (data.pushToken) {
-				tokenSet.add(data.pushToken);
+				tokens.push({
+					userId: doc.id,
+					pushToken: data.pushToken,
+				});
 			}
 		});
 
-		const uniqueTokens = Array.from(tokenSet);
 		console.log("📱 プッシュトークン取得:", {
-			総トークン数: querySnapshot.size,
-			重複除外後: uniqueTokens.length,
+			総ユーザー数: querySnapshot.size,
+			取得トークン数: tokens.length,
 			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
 		});
 
-		return uniqueTokens;
+		return tokens;
 	} catch (error) {
 		console.error("Error getting push tokens:", error);
 		return [];
@@ -147,6 +149,8 @@ async function getAllPushTokens(
 
 /**
  * プッシュ通知を送信
+ * 操作者（actionUserId）が設定されている場合、その操作を行ったユーザーには通知しない
+ * ただし、リマインド通知（type: "reminder"）の場合は操作者にも通知する
  */
 export async function sendPushNotification(
 	title: string,
@@ -155,20 +159,47 @@ export async function sendPushNotification(
 	includeCurrentUser: boolean = false
 ): Promise<void> {
 	try {
-		const tokens = await getAllPushTokens(!includeCurrentUser);
+		const tokensWithUserId =
+			await getAllPushTokensWithUserId(!includeCurrentUser);
 
-		if (tokens.length === 0) {
+		if (tokensWithUserId.length === 0) {
 			console.log("送信先のプッシュトークンがありません");
 			return;
 		}
 
-		const messages = tokens.map((token) => ({
-			to: token,
+		// 操作者のuserIdを取得
+		const actionUserId = data?.actionUserId as string | undefined;
+		const notificationType = data?.type as string | undefined;
+
+		// フィルタリング: 操作者には通知しない（ただしリマインドは除く）
+		const filteredTokens = tokensWithUserId.filter((item) => {
+			// リマインド通知の場合は操作者にも送信
+			if (notificationType === "reminder") {
+				return true;
+			}
+			// 操作者が設定されている場合、その操作者には通知しない
+			if (actionUserId && item.userId === actionUserId) {
+				return false;
+			}
+			return true;
+		});
+
+		if (filteredTokens.length === 0) {
+			console.log("フィルタリング後の送信先がありません");
+			return;
+		}
+
+		const messages = filteredTokens.map((item) => ({
+			to: item.pushToken,
 			sound: "default",
 			title,
 			body,
 			data,
 		}));
+
+		console.log(
+			`📤 プッシュ通知送信: ${filteredTokens.length}件（操作者除外済み）`
+		);
 
 		// Expo Push Notification APIに送信
 		for (const message of messages) {
@@ -228,11 +259,12 @@ export async function getCurrentUserDisplayName(): Promise<string> {
  */
 export async function notifyTodoAdded(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
+	const userId = auth.currentUser?.uid;
 
 	await sendPushNotification(
 		"新しい共有Todo",
 		`${displayName} が「${title}」を追加しました`,
-		{ type: "todo_added" }
+		{ type: "todo_added", actionUserId: userId }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -242,11 +274,12 @@ export async function notifyTodoAdded(title: string): Promise<void> {
  */
 export async function notifyTodoUpdated(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
+	const userId = auth.currentUser?.uid;
 
 	await sendPushNotification(
 		"共有Todoが更新されました",
 		`${displayName} が「${title}」を編集しました`,
-		{ type: "todo_updated" }
+		{ type: "todo_updated", actionUserId: userId }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -256,11 +289,12 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
  */
 export async function notifyTodoDeleted(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
+	const userId = auth.currentUser?.uid;
 
 	await sendPushNotification(
 		"共有Todoが削除されました",
 		`${displayName} が「${title}」を削除しました`,
-		{ type: "todo_deleted" }
+		{ type: "todo_deleted", actionUserId: userId }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -282,11 +316,12 @@ function formatDateTime(date: Date): string {
 export async function notifyTodoCompleted(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const completedTime = formatDateTime(new Date());
+	const userId = auth.currentUser?.uid;
 
 	await sendPushNotification(
 		"共有TODO完了",
 		`${displayName} が共有TODO「${title}」を完了しました。完了時刻：${completedTime}`,
-		{ type: "todo_completed" }
+		{ type: "todo_completed", actionUserId: userId }
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
