@@ -133,18 +133,34 @@ async function getAllPushTokensWithUserId(
 			}
 		});
 
+		// プッシュトークンの重複をチェック
+		const tokenCounts = new Map<string, string[]>();
+		tokens.forEach((t) => {
+			const userIds = tokenCounts.get(t.pushToken) || [];
+			userIds.push(t.userId);
+			tokenCounts.set(t.pushToken, userIds);
+		});
+
+		const duplicates = Array.from(tokenCounts.entries()).filter(
+			([_, userIds]) => userIds.length > 1
+		);
+
 		console.log("📱 プッシュトークン取得:", {
 			総ユーザー数: querySnapshot.size,
 			取得トークン数: tokens.length,
 			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
 			currentUserId,
-			"currentUserId型": typeof currentUserId,
+			currentUserId型: typeof currentUserId,
 			取得したuserIds: tokens.map((t) => t.userId),
-			"userId詳細": tokens.map((t) => ({
-				userId: t.userId,
-				"型": typeof t.userId,
-			})),
+			重複トークン数: duplicates.length,
+			重複詳細:
+				duplicates.length > 0
+					? duplicates.map(([token, userIds]) => ({
+							トークン: token.substring(0, 20) + "...",
+							userIds: userIds,
+						}))
+					: "なし",
 		});
 
 		return tokens;
@@ -191,11 +207,10 @@ export async function sendPushNotification(
 				"item.userId": item.userId,
 				"item.userId型": typeof item.userId,
 				actionUserId: actionUserId,
-				"actionUserId型": typeof actionUserId,
+				actionUserId型: typeof actionUserId,
 				notificationType: notificationType,
-				"userId一致(==)": actionUserId && item.userId == actionUserId,
 				"userId一致(===)": actionUserId && item.userId === actionUserId,
-				"actionUserIdが存在": !!actionUserId,
+				actionUserIdが存在: !!actionUserId,
 			});
 
 			// リマインド通知の場合は全員に送信
@@ -219,7 +234,18 @@ export async function sendPushNotification(
 			return;
 		}
 
-		const messages = filteredTokens.map((item) => ({
+		// 同じプッシュトークンに重複して送信しないよう、ユニーク化
+		const uniqueTokens = Array.from(
+			new Map(filteredTokens.map((item) => [item.pushToken, item])).values()
+		);
+
+		if (uniqueTokens.length < filteredTokens.length) {
+			console.log(
+				`⚠️ 重複トークンを除去: ${filteredTokens.length}件 → ${uniqueTokens.length}件`
+			);
+		}
+
+		const messages = uniqueTokens.map((item) => ({
 			to: item.pushToken,
 			sound: "default",
 			title,
@@ -228,7 +254,7 @@ export async function sendPushNotification(
 		}));
 
 		console.log(
-			`📤 プッシュ通知送信: ${filteredTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
+			`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
 		);
 
 		// Expo Push Notification APIに送信
@@ -352,8 +378,8 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 		title,
 		displayName,
 		userId,
-		"userId型": typeof userId,
-		"userIdの値": userId || "undefined/null",
+		userId型: typeof userId,
+		userIdの値: userId || "undefined/null",
 		"auth.currentUser": auth.currentUser ? "存在" : "null",
 	});
 
