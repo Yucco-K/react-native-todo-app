@@ -126,7 +126,22 @@ export default function TodoTable({
 				// ランダムなテーマインデックスを生成（0-24の25種類）
 				const randomThemeIndex = Math.floor(Math.random() * 25);
 
-				console.log("🎨 新しいテーマ:", randomThemeIndex, "褒め言葉:", praiseMessage);
+				// 多様なタイトルメッセージ
+				const titleMessages = [
+					"✨ タスク完了おめでとう！✨",
+					"🎉 やりましたね！完了です！",
+					"👏 お見事！達成しました！",
+					"🌟 素晴らしい！完了です！",
+					"💪 よくやりました！完了！",
+					"🎊 完璧！タスク達成です！",
+					"⭐ ナイス！完了しましたね！",
+					"🚀 成功！タスククリア！",
+					"💯 お疲れ様！完了です！",
+					"🎯 目標達成！完了です！",
+				];
+				const randomTitle = titleMessages[Math.floor(Math.random() * titleMessages.length)];
+
+				console.log("🎨 新しいテーマ:", randomThemeIndex, "タイトル:", randomTitle, "褒め言葉:", praiseMessage);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
 				Toast.hide();
@@ -135,7 +150,7 @@ export default function TodoTable({
 				setTimeout(() => {
 					Toast.show({
 						type: "praise",
-						text1: "✨ タスク完了おめでとう！✨",
+						text1: randomTitle,
 						text2: praiseMessage,
 						visibilityTime: 4000,
 						props: {
