@@ -139,7 +139,7 @@ async function getAllPushTokensWithUserId(
 			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
 			currentUserId,
-			"取得したuserIds": tokens.map((t) => t.userId),
+			取得したuserIds: tokens.map((t) => t.userId),
 		});
 
 		return tokens;
@@ -186,7 +186,7 @@ export async function sendPushNotification(
 				"item.userId": item.userId,
 				actionUserId: actionUserId,
 				notificationType: notificationType,
-				"userId一致": actionUserId && item.userId === actionUserId,
+				userId一致: actionUserId && item.userId === actionUserId,
 			});
 
 			// リマインド通知の場合は全員に送信
