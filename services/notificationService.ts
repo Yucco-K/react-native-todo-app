@@ -138,6 +138,8 @@ async function getAllPushTokensWithUserId(
 			取得トークン数: tokens.length,
 			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
+			currentUserId,
+			"取得したuserIds": tokens.map((t) => t.userId),
 		});
 
 		return tokens;
@@ -180,6 +182,13 @@ export async function sendPushNotification(
 
 		// フィルタリング: 操作者には通知しない（ただしリマインドは除く）
 		const filteredTokens = tokensWithUserId.filter((item) => {
+			console.log(`🔍 フィルタリング判定:`, {
+				"item.userId": item.userId,
+				actionUserId: actionUserId,
+				notificationType: notificationType,
+				"userId一致": actionUserId && item.userId === actionUserId,
+			});
+
 			// リマインド通知の場合は全員に送信
 			if (notificationType === "reminder") {
 				console.log(`✅ リマインド通知: ${item.userId}に送信`);
@@ -329,6 +338,13 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const completedTime = formatDateTime(new Date());
 	const userId = auth.currentUser?.uid;
+
+	console.log("🔔 notifyTodoCompleted呼び出し:", {
+		title,
+		displayName,
+		userId,
+		"auth.currentUser": auth.currentUser ? "存在" : "null",
+	});
 
 	await sendPushNotification(
 		"共有TODO完了",
