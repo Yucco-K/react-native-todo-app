@@ -314,10 +314,8 @@ export async function sendPushNotification(
 		);
 
 		// 操作者以外の全ユーザー（通知設定ONのみ）を取得
-		const actionUserId = data?.actionUserId as string | undefined;
-		const allTargetUserIds = await getAllNotificationTargetUserIds(
-			actionUserId
-		);
+		const allTargetUserIds =
+			await getAllNotificationTargetUserIds(actionUserId);
 
 		console.log(
 			`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
