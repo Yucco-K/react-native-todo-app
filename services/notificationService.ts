@@ -187,7 +187,9 @@ export async function sendPushNotification(
 			}
 			// 操作者が設定されている場合、その操作者には通知しない
 			if (actionUserId && item.userId === actionUserId) {
-				console.log(`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`);
+				console.log(
+					`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`
+				);
 				return false;
 			}
 			console.log(`✅ 通知送信対象: ${item.userId}`);
