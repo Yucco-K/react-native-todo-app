@@ -111,25 +111,30 @@ export default function TodoItem({
 									</View>
 								)}
 
-								<Text
-									className="font-noto-regular text-lg mt-2"
-									style={{
-										color: completed
-											? isDark
-												? "#9ca3af"
-												: "#9ca3af"
-											: isDark
-												? "#e5e7eb"
-												: "#6b7280",
-										textDecorationLine: completed ? "line-through" : "none",
-									}}
-								>
-									{content}
-								</Text>
+								{/* 詳細内容 - contentがある場合のみ表示 */}
+								{content && (
+									<Text
+										className="font-noto-regular text-lg mt-2"
+										style={{
+											color: completed
+												? isDark
+													? "#9ca3af"
+													: "#9ca3af"
+												: isDark
+													? "#e5e7eb"
+													: "#6b7280",
+											textDecorationLine: completed ? "line-through" : "none",
+										}}
+									>
+										{content}
+									</Text>
+								)}
 
 								{/* リマインド情報 */}
 								{remindAt && (
-									<View className="mt-3 flex-row items-center">
+									<View
+										className={`flex-row items-center ${content ? "mt-3" : "mt-2"}`}
+									>
 										<Ionicons
 											name="notifications"
 											size={18}
