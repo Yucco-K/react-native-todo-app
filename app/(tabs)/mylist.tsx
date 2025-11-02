@@ -204,9 +204,9 @@ export default function MyListScreen() {
 			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
 		>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-				<View className="flex-1 px-4 pt-4">
+				<View className="flex-1 px-4" style={{ marginTop: -8 }}>
 					{/* ユーザー名表示エリア */}
-					<View className="mb-3">
+					<View className="mb-2">
 						{nickname ? (
 							<TouchableOpacity
 								onPress={() => setIsNicknameModalVisible(true)}
@@ -347,11 +347,11 @@ export default function MyListScreen() {
 						</View>
 					</View>
 
-				<TodoTable
-					refresh={refreshTrigger}
-					organizationId={selectedOrganization?.id || null}
-					isDark={isDark}
-				/>
+					<TodoTable
+						refresh={refreshTrigger}
+						organizationId={selectedOrganization?.id || null}
+						isDark={isDark}
+					/>
 
 					{/* Floating Action Button */}
 					<TouchableOpacity
