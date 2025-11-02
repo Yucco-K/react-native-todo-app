@@ -65,6 +65,6 @@ jobs:
 
       - name: Publish EAS Update (iOS)
         run: eas update --branch production --message "${{ github.event.head_commit.message }}" --platform ios --non-interactive
-        
+
       - name: Publish EAS Update (Android)
         run: eas update --branch production --message "${{ github.event.head_commit.message }}" --platform android --non-interactive

@@ -171,6 +171,12 @@ export async function sendPushNotification(
 		const actionUserId = data?.actionUserId as string | undefined;
 		const notificationType = data?.type as string | undefined;
 
+		console.log("🔍 プッシュ通知フィルタリング:", {
+			actionUserId,
+			notificationType,
+			totalTokens: tokensWithUserId.length,
+		});
+
 		// フィルタリング: 操作者には通知しない（ただしリマインドは除く）
 		const filteredTokens = tokensWithUserId.filter((item) => {
 			// リマインド通知の場合は操作者にも送信
@@ -179,6 +185,7 @@ export async function sendPushNotification(
 			}
 			// 操作者が設定されている場合、その操作者には通知しない
 			if (actionUserId && item.userId === actionUserId) {
+				console.log(`❌ 操作者を除外: ${item.userId}`);
 				return false;
 			}
 			return true;
@@ -198,7 +205,7 @@ export async function sendPushNotification(
 		}));
 
 		console.log(
-			`📤 プッシュ通知送信: ${filteredTokens.length}件（操作者除外済み）`
+			`📤 プッシュ通知送信: ${filteredTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
 		);
 
 		// Expo Push Notification APIに送信
