@@ -291,11 +291,11 @@ export default function TodoTable({
 			>
 				Todo
 			</Text>
-			
+
 			{/* グループバッジ（グループTODOの場合のみ表示） */}
 			{selectedOrganization && (
 				<View
-					className="px-3 py-1 rounded-full mr-2"
+					className="px-4 py-1.5 rounded-full mr-2"
 					style={{
 						backgroundColor: isDark ? "#3b82f6" : "#dbeafe",
 						borderWidth: 1,
@@ -305,13 +305,12 @@ export default function TodoTable({
 					<Text
 						className="font-noto-bold text-sm"
 						style={{ color: isDark ? "#e5e7eb" : "#1e40af" }}
-						numberOfLines={1}
 					>
-						{selectedOrganization.name}
+						グループ
 					</Text>
 				</View>
 			)}
-			
+
 			{/* 検索アイコンボタン */}
 			<TouchableOpacity
 				onPress={() => setIsSearchModalVisible(true)}
