@@ -257,7 +257,7 @@ export default function AddTodoModal({
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View
 					className="flex-1 justify-center items-center"
-					style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+					style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
 				>
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View

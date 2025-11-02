@@ -42,7 +42,7 @@ export default function ReminderHistoryModal({
 			onRequestClose={onClose}
 		>
 			<Pressable
-				className="flex-1 bg-black/50 justify-center items-center"
+				className="flex-1 bg-black/75 justify-center items-center"
 				onPress={onClose}
 			>
 				<Pressable onPress={(e) => e.stopPropagation()}>

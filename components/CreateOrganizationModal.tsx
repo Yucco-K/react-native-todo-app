@@ -70,7 +70,7 @@ export function CreateOrganizationModal({
 			onRequestClose={handleClose}
 		>
 			<TouchableWithoutFeedback onPress={handleClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
+				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View
 							className="rounded-lg p-6 w-11/12"

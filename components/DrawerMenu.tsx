@@ -54,7 +54,7 @@ export function DrawerMenu({
 		>
 			<Pressable
 				className="flex-1"
-				style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+				style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
 				onPress={onClose}
 			>
 				<Pressable

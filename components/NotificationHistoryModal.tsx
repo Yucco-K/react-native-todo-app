@@ -79,7 +79,7 @@ export default function NotificationHistoryModal({
 				animationType="slide"
 				onRequestClose={onClose}
 			>
-				<Pressable className="flex-1 bg-black/50 justify-end" onPress={onClose}>
+				<Pressable className="flex-1 bg-black/75 justify-end" onPress={onClose}>
 					<Pressable
 						className="rounded-t-3xl overflow-hidden"
 						style={{
@@ -136,7 +136,7 @@ export default function NotificationHistoryModal({
 				onRequestClose={handleCloseDetail}
 			>
 				<Pressable
-					className="flex-1 bg-black/50 justify-center items-center p-6"
+					className="flex-1 bg-black/75 justify-center items-center p-6"
 					onPress={handleCloseDetail}
 				>
 					<Pressable

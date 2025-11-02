@@ -27,7 +27,7 @@ export default function ReminderNotificationModal({
 
 	return (
 		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-			<Pressable className="flex-1 bg-black/50 justify-center items-center" onPress={onClose}>
+			<Pressable className="flex-1 bg-black/75 justify-center items-center" onPress={onClose}>
 				<Pressable onPress={(e) => e.stopPropagation()}>
 					<View
 						className="mx-4 rounded-2xl p-6 w-[340px] max-h-[500px]"

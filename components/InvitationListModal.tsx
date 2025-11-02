@@ -103,7 +103,7 @@ export function InvitationListModal({
 			onRequestClose={onClose}
 		>
 			<TouchableWithoutFeedback onPress={onClose}>
-				<View className="flex-1 justify-center items-center bg-black/50">
+				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback>
 						<View
 							className="rounded-lg p-6 w-11/12"
