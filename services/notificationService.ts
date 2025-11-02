@@ -139,7 +139,12 @@ async function getAllPushTokensWithUserId(
 			通知OFF除外: excludedByNotificationOff,
 			除外設定: excludeCurrentUser ? "現在のユーザーを除外" : "全員",
 			currentUserId,
+			"currentUserId型": typeof currentUserId,
 			取得したuserIds: tokens.map((t) => t.userId),
+			"userId詳細": tokens.map((t) => ({
+				userId: t.userId,
+				"型": typeof t.userId,
+			})),
 		});
 
 		return tokens;
@@ -184,9 +189,13 @@ export async function sendPushNotification(
 		const filteredTokens = tokensWithUserId.filter((item) => {
 			console.log(`🔍 フィルタリング判定:`, {
 				"item.userId": item.userId,
+				"item.userId型": typeof item.userId,
 				actionUserId: actionUserId,
+				"actionUserId型": typeof actionUserId,
 				notificationType: notificationType,
-				userId一致: actionUserId && item.userId === actionUserId,
+				"userId一致(==)": actionUserId && item.userId == actionUserId,
+				"userId一致(===)": actionUserId && item.userId === actionUserId,
+				"actionUserIdが存在": !!actionUserId,
 			});
 
 			// リマインド通知の場合は全員に送信
@@ -343,8 +352,14 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 		title,
 		displayName,
 		userId,
+		"userId型": typeof userId,
+		"userIdの値": userId || "undefined/null",
 		"auth.currentUser": auth.currentUser ? "存在" : "null",
 	});
+
+	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
+	}
 
 	await sendPushNotification(
 		"共有TODO完了",
