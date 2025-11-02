@@ -119,6 +119,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const logout = async () => {
+		// ログアウト時にpushTokenをクリアする（同じデバイスで複数ユーザーを使う場合の対策）
+		if (user) {
+			try {
+				const userDocRef = doc(db, "users", user.uid);
+				await setDoc(
+					userDocRef,
+					{
+						pushToken: null,
+					},
+					{ merge: true }
+				);
+				console.log("✅ プッシュトークンをクリアしました");
+			} catch (error) {
+				console.error("❌ プッシュトークンのクリアに失敗:", error);
+			}
+		}
 		await signOut(auth);
 	};
 

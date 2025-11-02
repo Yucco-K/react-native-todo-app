@@ -257,6 +257,30 @@ export async function sendPushNotification(
 			`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
 		);
 
+		// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
+		const { saveNotificationHistory } = await import(
+			"./notificationHistoryService"
+		);
+		
+		const userIdsToSaveHistory = new Set(
+			filteredTokens.map((item) => item.userId)
+		);
+
+		console.log(
+			`💾 通知履歴を一括保存: ${userIdsToSaveHistory.size}名のユーザー`
+		);
+
+		for (const userId of userIdsToSaveHistory) {
+			try {
+				await saveNotificationHistory(userId, title, body, data);
+			} catch (error) {
+				console.error(
+					`通知履歴の保存エラー (userId: ${userId}):`,
+					error
+				);
+			}
+		}
+
 		// Expo Push Notification APIに送信
 		for (const message of messages) {
 			try {

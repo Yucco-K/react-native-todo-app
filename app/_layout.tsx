@@ -6,8 +6,6 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
-import { saveNotificationHistory } from "@/services/notificationHistoryService";
-import { getNotificationEnabled } from "@/services/userService";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
@@ -51,33 +49,17 @@ function RootLayoutNav() {
 			Notifications.addNotificationReceivedListener(async (notification) => {
 				if (!user) return;
 
-				const { title, body, data } = notification.request.content;
+				const { title, data } = notification.request.content;
 				console.log("📬 通知を受信しました:", {
 					title,
-					"受信ユーザー": user.email,
-					"受信ユーザーID": user.uid,
+					受信ユーザー: user.email,
+					受信ユーザーID: user.uid,
 					"data.actionUserId": data?.actionUserId,
 					"data.type": data?.type,
 				});
 
-				// 通知設定を確認
-				const isEnabled = await getNotificationEnabled();
-				if (!isEnabled) {
-					console.log("⚠️ 通知がOFFのため、履歴に保存しません");
-					return;
-				}
-
-				// 通知履歴を保存
-				try {
-					await saveNotificationHistory(
-						user.uid,
-						title || "通知",
-						body || "",
-						data as Record<string, unknown>
-					);
-				} catch (error) {
-					console.error("通知履歴の保存エラー:", error);
-				}
+				// 通知履歴はサーバー側（sendPushNotification）で保存されるため、
+				// ここでは保存しない（重複を防ぐため）
 			});
 
 		// 通知をタップしたときの処理
