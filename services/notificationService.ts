@@ -171,6 +171,16 @@ async function getAllPushTokensWithUserId(
 
 			// 通知設定を確認（デフォルトはtrue）
 			const notificationEnabled = data.notificationEnabled !== false;
+			
+			// デバッグログ: 各ユーザーの通知設定を出力
+			console.log(`🔔 ユーザー通知設定チェック:`, {
+				userId: doc.id,
+				email: data.email || "不明",
+				notificationEnabled: data.notificationEnabled,
+				判定結果: notificationEnabled ? "ON" : "OFF",
+				pushToken有無: !!data.pushToken,
+			});
+
 			if (!notificationEnabled) {
 				excludedByNotificationOff++;
 				return;

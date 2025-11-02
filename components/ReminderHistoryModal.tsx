@@ -1,7 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { Todo } from "@/types/Todo";
+import { Ionicons } from "@expo/vector-icons";
+import {
+	Modal,
+	Pressable,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 type ReminderHistoryModalProps = {
 	visible: boolean;
@@ -28,8 +35,16 @@ export default function ReminderHistoryModal({
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-			<Pressable className="flex-1 bg-black/50 justify-center items-center" onPress={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="fade"
+			onRequestClose={onClose}
+		>
+			<Pressable
+				className="flex-1 bg-black/50 justify-center items-center"
+				onPress={onClose}
+			>
 				<Pressable onPress={(e) => e.stopPropagation()}>
 					<View
 						className="mx-4 rounded-2xl p-6 w-[340px] max-h-[500px]"
@@ -38,7 +53,11 @@ export default function ReminderHistoryModal({
 						{/* タイトル */}
 						<View className="flex-row items-center justify-between mb-4">
 							<View className="flex-row items-center">
-								<Ionicons name="time" size={28} color={isDark ? "#60a5fa" : "#3b82f6"} />
+								<Ionicons
+									name="time"
+									size={28}
+									color={isDark ? "#60a5fa" : "#3b82f6"}
+								/>
 								<Text
 									className="ml-2 text-xl font-noto-bold"
 									style={{ color: isDark ? "#f3f4f6" : "#111827" }}
@@ -47,7 +66,11 @@ export default function ReminderHistoryModal({
 								</Text>
 							</View>
 							<TouchableOpacity onPress={onClose}>
-								<Ionicons name="close" size={24} color={isDark ? "#9ca3af" : "#6b7280"} />
+								<Ionicons
+									name="close"
+									size={24}
+									color={isDark ? "#9ca3af" : "#6b7280"}
+								/>
 							</TouchableOpacity>
 						</View>
 
@@ -63,13 +86,13 @@ export default function ReminderHistoryModal({
 							</Text>
 						</View>
 
-					{/* リマインドリスト */}
-					{reminders.length > 0 ? (
-						<ScrollView
-							className="mb-4"
-							style={{ maxHeight: 320 }}
-							showsVerticalScrollIndicator={true}
-						>
+						{/* リマインドリスト */}
+						{reminders.length > 0 ? (
+							<ScrollView
+								className="mb-4"
+								style={{ maxHeight: 320 }}
+								showsVerticalScrollIndicator={true}
+							>
 								{reminders.map((todo) => (
 									<View
 										key={todo.id}
@@ -85,7 +108,10 @@ export default function ReminderHistoryModal({
 										}}
 									>
 										{/* 削除ボタン */}
-										<TouchableOpacity onPress={() => onDelete(todo.id)} className="mr-3 mt-1">
+										<TouchableOpacity
+											onPress={() => onDelete(todo.id)}
+											className="mr-3 mt-1"
+										>
 											<Ionicons
 												name="close-circle"
 												size={20}
@@ -160,7 +186,9 @@ export default function ReminderHistoryModal({
 							className="bg-blue-500 rounded-lg p-4 items-center"
 							activeOpacity={0.7}
 						>
-							<Text className="text-white font-noto-bold text-base">閉じる</Text>
+							<Text className="text-white font-noto-bold text-base">
+								閉じる
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</Pressable>

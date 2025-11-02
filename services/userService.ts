@@ -109,15 +109,32 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 		}
 
 		const userRef = doc(db, "users", userId);
-		await setDoc(
-			userRef,
-			{
-				notificationEnabled: enabled,
-				updatedAt: new Date(),
-			},
-			{ merge: true }
-		);
-		console.log(`✅ 通知設定を更新しました: ${enabled ? "ON" : "OFF"}`);
+		
+		// 通知をOFFにする場合、プッシュトークンも削除
+		if (!enabled) {
+			await setDoc(
+				userRef,
+				{
+					notificationEnabled: enabled,
+					pushToken: null, // プッシュトークンを削除
+					updatedAt: new Date(),
+				},
+				{ merge: true }
+			);
+			console.log(`✅ 通知設定をOFFにし、プッシュトークンを削除しました`);
+		} else {
+			// 通知をONにする場合は、notificationEnabledのみ更新
+			// （プッシュトークンは次回アプリ起動時に再登録される）
+			await setDoc(
+				userRef,
+				{
+					notificationEnabled: enabled,
+					updatedAt: new Date(),
+				},
+				{ merge: true }
+			);
+			console.log(`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`);
+		}
 	} catch (error) {
 		console.error("Error setting notification enabled:", error);
 		throw error;

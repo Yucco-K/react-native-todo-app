@@ -12,6 +12,10 @@ import {
 	getNotificationHistory,
 	type NotificationHistory,
 } from "@/services/notificationHistoryService";
+import {
+	registerForPushNotificationsAsync,
+	savePushToken,
+} from "@/services/notificationService";
 import { getReminderHistory, removeTodoReminder } from "@/services/todoService";
 import {
 	getNotificationEnabled,
@@ -160,6 +164,28 @@ export default function MyListScreen() {
 		try {
 			setNotificationEnabledState(value);
 			await setNotificationEnabled(value);
+
+			// 通知をONにした場合、プッシュトークンを即座に再登録
+			if (value) {
+				try {
+					const token = await registerForPushNotificationsAsync();
+					if (token) {
+						await savePushToken(token);
+						console.log("✅ プッシュトークンを再登録しました");
+					}
+				} catch (tokenError) {
+					console.error("プッシュトークン再登録エラー:", tokenError);
+					// トークン再登録の失敗は通知設定の変更自体は成功しているので、エラーを投げない
+				}
+			}
+
+			Toast.show({
+				type: "success",
+				text1: "設定変更",
+				text2: value
+					? "通知をONにしました"
+					: "通知をOFFにしました（プッシュトークンも削除されました）",
+			});
 		} catch (error) {
 			console.error("通知設定エラー:", error);
 			// エラー時は元に戻す

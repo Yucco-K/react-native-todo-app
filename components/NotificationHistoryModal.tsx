@@ -115,13 +115,13 @@ export default function NotificationHistoryModal({
 									</Text>
 								</View>
 							) : (
-							<FlatList
-								data={notifications}
-								renderItem={renderNotificationItem}
-								keyExtractor={(item) => item.id}
-								style={{ maxHeight: 400 }}
-								showsVerticalScrollIndicator={true}
-							/>
+								<FlatList
+									data={notifications}
+									renderItem={renderNotificationItem}
+									keyExtractor={(item) => item.id}
+									style={{ maxHeight: 400 }}
+									showsVerticalScrollIndicator={true}
+								/>
 							)}
 						</View>
 					</Pressable>
@@ -160,7 +160,10 @@ export default function NotificationHistoryModal({
 							</TouchableOpacity>
 						</View>
 
-						<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={true}>
+						<ScrollView
+							style={{ maxHeight: 400 }}
+							showsVerticalScrollIndicator={true}
+						>
 							<View className="mb-4">
 								<Text
 									className="font-noto-bold text-sm mb-1"
@@ -222,4 +225,3 @@ export default function NotificationHistoryModal({
 		</>
 	);
 }
-
