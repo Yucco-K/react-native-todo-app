@@ -389,6 +389,19 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
 
+	console.log("➕ notifyTodoAdded呼び出し:", {
+		title,
+		displayName,
+		userId,
+		userId型: typeof userId,
+		userIdの値: userId || "undefined/null",
+		"auth.currentUser": auth.currentUser ? "存在" : "null",
+	});
+
+	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
+	}
+
 	await sendPushNotification(
 		"新しい共有Todo",
 		`${displayName} が「${title}」を追加しました`,
@@ -404,6 +417,19 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
 
+	console.log("✏️ notifyTodoUpdated呼び出し:", {
+		title,
+		displayName,
+		userId,
+		userId型: typeof userId,
+		userIdの値: userId || "undefined/null",
+		"auth.currentUser": auth.currentUser ? "存在" : "null",
+	});
+
+	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
+	}
+
 	await sendPushNotification(
 		"共有Todoが更新されました",
 		`${displayName} が「${title}」を編集しました`,
@@ -418,6 +444,19 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 export async function notifyTodoDeleted(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
+
+	console.log("🗑️ notifyTodoDeleted呼び出し:", {
+		title,
+		displayName,
+		userId,
+		userId型: typeof userId,
+		userIdの値: userId || "undefined/null",
+		"auth.currentUser": auth.currentUser ? "存在" : "null",
+	});
+
+	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
+	}
 
 	await sendPushNotification(
 		"共有Todoが削除されました",
