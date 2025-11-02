@@ -7,6 +7,7 @@ import {
 	getDocs,
 	query,
 	setDoc,
+	where,
 } from "firebase/firestore";
 import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
@@ -72,6 +73,7 @@ export async function registerForPushNotificationsAsync(): Promise<
 
 /**
  * ユーザーのプッシュトークンをFirestoreに保存
+ * 同じトークンを持つ他のユーザーからはトークンを削除（デバイスの重複登録を防ぐ）
  */
 export async function savePushToken(token: string): Promise<void> {
 	const userId = auth.currentUser?.uid;
@@ -80,6 +82,40 @@ export async function savePushToken(token: string): Promise<void> {
 	}
 
 	try {
+		// 1. 同じプッシュトークンを持つ他のユーザーを検索
+		const usersRef = collection(db, "users");
+		const q = query(usersRef, where("pushToken", "==", token));
+		const querySnapshot = await getDocs(q);
+
+		// 2. 現在のユーザー以外から、このトークンを削除
+		const deletePromises: Promise<void>[] = [];
+		querySnapshot.forEach((docSnap) => {
+			if (docSnap.id !== userId) {
+				console.log(
+					`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`
+				);
+				deletePromises.push(
+					setDoc(
+						doc(db, "users", docSnap.id),
+						{
+							pushToken: null,
+							updatedAt: new Date(),
+						},
+						{ merge: true }
+					)
+				);
+			}
+		});
+
+		// 重複トークンを削除
+		if (deletePromises.length > 0) {
+			await Promise.all(deletePromises);
+			console.log(
+				`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`
+			);
+		}
+
+		// 3. 現在のユーザーにトークンを保存
 		await setDoc(
 			doc(db, "users", userId),
 			{
@@ -88,7 +124,7 @@ export async function savePushToken(token: string): Promise<void> {
 			},
 			{ merge: true }
 		);
-		console.log("Push token saved to Firestore");
+		console.log("✅ プッシュトークンを保存しました");
 	} catch (error) {
 		console.error("Error saving push token:", error);
 		throw error;
@@ -171,7 +207,7 @@ async function getAllPushTokensWithUserId(
 
 			// 通知設定を確認（デフォルトはtrue）
 			const notificationEnabled = data.notificationEnabled !== false;
-			
+
 			// デバッグログ: 各ユーザーの通知設定を出力
 			console.log(`🔔 ユーザー通知設定チェック:`, {
 				userId: doc.id,
