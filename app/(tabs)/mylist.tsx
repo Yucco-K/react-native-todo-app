@@ -350,7 +350,6 @@ export default function MyListScreen() {
 				<TodoTable
 					refresh={refreshTrigger}
 					organizationId={selectedOrganization?.id || null}
-					selectedOrganization={selectedOrganization}
 					isDark={isDark}
 				/>
 

@@ -215,18 +215,18 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 			}}
 			pointerEvents="box-none"
 		>
-		{/* フィードバックボタン（左端下） */}
-		<View
-			style={{
-				position: "absolute",
-				left: 16,
-				bottom: -8,
-				gap: 14,
-				zIndex: 10,
-				marginRight: 24,
-			}}
-			pointerEvents="box-none"
-		>
+			{/* フィードバックボタン（左端下） */}
+			<View
+				style={{
+					position: "absolute",
+					left: 16,
+					bottom: -8,
+					gap: 14,
+					zIndex: 10,
+					marginRight: 24,
+				}}
+				pointerEvents="box-none"
+			>
 				{/* ライクボタン */}
 				<Pressable
 					onPress={() => {

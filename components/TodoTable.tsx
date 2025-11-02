@@ -13,7 +13,6 @@ import {
 	getUserStats,
 	incrementCompletedTaskCount,
 } from "@/services/userStatsService";
-import type { Organization } from "@/types/Organization";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -33,14 +32,12 @@ import TodoItem from "./ui/TodoItem";
 type TodoTableProps = {
 	refresh?: number;
 	organizationId?: string | null;
-	selectedOrganization?: Organization | null;
 	isDark?: boolean;
 };
 
 export default function TodoTable({
 	refresh,
 	organizationId = null,
-	selectedOrganization = null,
 	isDark = false,
 }: TodoTableProps) {
 	const router = useRouter();
@@ -291,25 +288,6 @@ export default function TodoTable({
 			>
 				Todo
 			</Text>
-
-			{/* グループバッジ（グループTODOの場合のみ表示） */}
-			{selectedOrganization && (
-				<View
-					className="px-4 py-1.5 rounded-full mr-2"
-					style={{
-						backgroundColor: isDark ? "#3b82f6" : "#dbeafe",
-						borderWidth: 1,
-						borderColor: isDark ? "#60a5fa" : "#93c5fd",
-					}}
-				>
-					<Text
-						className="font-noto-bold text-sm"
-						style={{ color: isDark ? "#e5e7eb" : "#1e40af" }}
-					>
-						グループ
-					</Text>
-				</View>
-			)}
 
 			{/* 検索アイコンボタン */}
 			<TouchableOpacity

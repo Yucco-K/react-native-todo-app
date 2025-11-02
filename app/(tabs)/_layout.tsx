@@ -145,22 +145,44 @@ export default function TabLayout() {
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
-					headerTitle: () => (
-						<View style={{ flex: 1, paddingHorizontal: 10 }}>
+				headerTitle: () => (
+					<View style={{ flex: 1, paddingHorizontal: 10 }}>
+						<Text
+							style={{
+								color: "#fff",
+								fontSize: 20,
+								fontWeight: "bold",
+								flexShrink: 1,
+							}}
+							numberOfLines={2}
+						>
+							{getHeaderTitle()}
+						</Text>
+					</View>
+				),
+				headerRight: () =>
+					selectedOrganization ? (
+						<View
+							style={{
+								backgroundColor: "#ffffff",
+								paddingHorizontal: 12,
+								paddingVertical: 6,
+								borderRadius: 20,
+								marginRight: 15,
+							}}
+						>
 							<Text
 								style={{
-									color: "#fff",
-									fontSize: 20,
+									color: "#3b82f6",
+									fontSize: 12,
 									fontWeight: "bold",
-									flexShrink: 1,
 								}}
-								numberOfLines={2}
 							>
-								{getHeaderTitle()}
+								グループ
 							</Text>
 						</View>
-					),
-				}}
+					) : null,
+			}}
 			>
 				<Stack.Screen name="mylist" />
 				<Stack.Screen
