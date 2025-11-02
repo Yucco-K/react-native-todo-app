@@ -52,7 +52,13 @@ function RootLayoutNav() {
 				if (!user) return;
 
 				const { title, body, data } = notification.request.content;
-				console.log("📬 通知を受信しました:", title);
+				console.log("📬 通知を受信しました:", {
+					title,
+					"受信ユーザー": user.email,
+					"受信ユーザーID": user.uid,
+					"data.actionUserId": data?.actionUserId,
+					"data.type": data?.type,
+				});
 
 				// 通知設定を確認
 				const isEnabled = await getNotificationEnabled();

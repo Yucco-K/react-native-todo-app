@@ -29,6 +29,13 @@ export async function saveNotificationHistory(
 	data?: Record<string, unknown>
 ): Promise<void> {
 	try {
+		console.log("💾 通知履歴を保存中:", {
+			userId,
+			title,
+			"data.type": data?.type,
+			"data.actionUserId": data?.actionUserId,
+		});
+
 		await addDoc(collection(db, "notificationHistory"), {
 			userId,
 			title,
@@ -52,6 +59,11 @@ export async function getNotificationHistory(
 ): Promise<NotificationHistory[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
+		console.log("📥 通知履歴を取得中:", {
+			userId,
+			currentUserId,
+		});
+
 		if (!currentUserId) {
 			return [];
 		}
@@ -63,7 +75,10 @@ export async function getNotificationHistory(
 		);
 
 		const snapshot = await getDocs(q);
+		console.log(`📥 Firestoreから取得: ${snapshot.docs.length}件`);
+
 		const history: NotificationHistory[] = [];
+		let filteredCount = 0;
 
 		for (const docSnap of snapshot.docs) {
 			const data = docSnap.data();
@@ -81,8 +96,18 @@ export async function getNotificationHistory(
 				].includes(notificationData.type as string) &&
 				notificationData.actionUserId
 			) {
+				console.log("🔍 通知履歴フィルタリング判定:", {
+					title: data.title,
+					type: notificationData.type,
+					actionUserId: notificationData.actionUserId,
+					currentUserId: currentUserId,
+					一致: notificationData.actionUserId === currentUserId,
+				});
+
 				// 自分が行った操作による通知は除外
 				if (notificationData.actionUserId === currentUserId) {
+					console.log(`❌ 自分の操作なので除外: ${data.title}`);
+					filteredCount++;
 					continue;
 				}
 			}
@@ -98,7 +123,7 @@ export async function getNotificationHistory(
 		}
 
 		console.log(
-			`✅ 通知履歴を取得しました: ${history.length}件（自分が行った操作による通知は除外、リマインド通知は全て表示）`
+			`✅ 通知履歴を取得しました: Firestore=${snapshot.docs.length}件 → フィルタリング後=${history.length}件（除外=${filteredCount}件）`
 		);
 		return history;
 	} catch (error) {
