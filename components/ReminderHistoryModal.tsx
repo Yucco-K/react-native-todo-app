@@ -63,9 +63,13 @@ export default function ReminderHistoryModal({
 							</Text>
 						</View>
 
-						{/* リマインドリスト */}
-						{reminders.length > 0 ? (
-							<ScrollView className="mb-4" style={{ maxHeight: 320 }}>
+					{/* リマインドリスト */}
+					{reminders.length > 0 ? (
+						<ScrollView
+							className="mb-4"
+							style={{ maxHeight: 320 }}
+							showsVerticalScrollIndicator={true}
+						>
 								{reminders.map((todo) => (
 									<View
 										key={todo.id}
