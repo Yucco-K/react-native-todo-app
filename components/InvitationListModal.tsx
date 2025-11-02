@@ -154,18 +154,24 @@ export function InvitationListModal({
 													: "#93c5fd",
 											}}
 										>
-											<Text
-												className="text-xl font-noto-bold mb-2"
-												style={{ color: isDark ? "#d1d5db" : "#1f2937" }}
-											>
-												{invitation.organizationName}
-											</Text>
-											<Text
-												className="text-sm font-noto-regular mb-4"
-												style={{ color: isDark ? "#9ca3af" : "#4b5563" }}
-											>
-												グループへの招待が届いています
-											</Text>
+										<Text
+											className="text-xl font-noto-bold mb-2"
+											style={{
+												color: isDark ? "#d1d5db" : "#1f2937",
+												flexShrink: 1,
+											}}
+										>
+											{invitation.organizationName}
+										</Text>
+										<Text
+											className="text-sm font-noto-regular mb-4"
+											style={{
+												color: isDark ? "#9ca3af" : "#4b5563",
+												flexShrink: 1,
+											}}
+										>
+											グループへの招待が届いています
+										</Text>
 
 											<View className="flex-row space-x-2">
 												<TouchableHighlight
