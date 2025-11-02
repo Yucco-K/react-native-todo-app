@@ -347,11 +347,12 @@ export default function MyListScreen() {
 						</View>
 					</View>
 
-					<TodoTable
-						refresh={refreshTrigger}
-						organizationId={selectedOrganization?.id || null}
-						isDark={isDark}
-					/>
+				<TodoTable
+					refresh={refreshTrigger}
+					organizationId={selectedOrganization?.id || null}
+					selectedOrganization={selectedOrganization}
+					isDark={isDark}
+				/>
 
 					{/* Floating Action Button */}
 					<TouchableOpacity

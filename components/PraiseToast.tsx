@@ -1,9 +1,9 @@
+import { savePraiseFeedback } from "@/services/praiseFeedbackService";
+import type { TodoCategory } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import type { ToastConfigParams } from "react-native-toast-message";
-import { savePraiseFeedback } from "@/services/praiseFeedbackService";
-import type { TodoCategory } from "@/types/Category";
 
 const { height } = Dimensions.get("window");
 
@@ -215,39 +215,39 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 			}}
 			pointerEvents="box-none"
 		>
-		{/* フィードバックボタン（左端下寄り） */}
+		{/* フィードバックボタン（左端下） */}
 		<View
 			style={{
 				position: "absolute",
 				left: 16,
-				bottom: 12,
-				gap: 16,
+				bottom: -8,
+				gap: 14,
 				zIndex: 10,
 				marginRight: 24,
 			}}
 			pointerEvents="box-none"
 		>
-			{/* ライクボタン */}
-			<Pressable
-				onPress={() => {
-					console.log("👍 Like button pressed");
-					handleFeedback("like");
-				}}
-				style={({ pressed }) => ({
-					width: 72,
-					height: 72,
-					borderRadius: 36,
-					backgroundColor: feedback === "like" ? "#6b7280" : "white",
-					justifyContent: "center",
-					alignItems: "center",
-					shadowColor: "#000",
-					shadowOffset: { width: 0, height: 2 },
-					shadowOpacity: 0.2,
-					shadowRadius: 4,
-					elevation: 3,
-					opacity: pressed ? 0.7 : 1,
-				})}
-			>
+				{/* ライクボタン */}
+				<Pressable
+					onPress={() => {
+						console.log("👍 Like button pressed");
+						handleFeedback("like");
+					}}
+					style={({ pressed }) => ({
+						width: 72,
+						height: 72,
+						borderRadius: 36,
+						backgroundColor: feedback === "like" ? "#6b7280" : "white",
+						justifyContent: "center",
+						alignItems: "center",
+						shadowColor: "#000",
+						shadowOffset: { width: 0, height: 2 },
+						shadowOpacity: 0.2,
+						shadowRadius: 4,
+						elevation: 3,
+						opacity: pressed ? 0.7 : 1,
+					})}
+				>
 					<Ionicons
 						name={feedback === "like" ? "thumbs-up" : "thumbs-up-outline"}
 						size={36}
@@ -277,7 +277,9 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 					})}
 				>
 					<Ionicons
-						name={feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"}
+						name={
+							feedback === "dislike" ? "thumbs-down" : "thumbs-down-outline"
+						}
 						size={36}
 						color={feedback === "dislike" ? "white" : "#6b7280"}
 					/>

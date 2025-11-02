@@ -1,9 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
-import { notifyTodoCompleted, notifyTodoDeleted } from "@/services/notificationService";
+import {
+	notifyTodoCompleted,
+	notifyTodoDeleted,
+} from "@/services/notificationService";
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteExpiredCompletedTodos,
@@ -11,8 +9,23 @@ import {
 	getTodos as getTodosService,
 	toggleTodoComplete,
 } from "@/services/todoService";
-import { getUserStats, incrementCompletedTaskCount } from "@/services/userStatsService";
+import {
+	getUserStats,
+	incrementCompletedTaskCount,
+} from "@/services/userStatsService";
+import type { Organization } from "@/types/Organization";
 import type { Todo } from "@/types/Todo";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import {
+	ActivityIndicator,
+	FlatList,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
 import SearchModal from "./SearchModal";
 import TodoItem from "./ui/TodoItem";
@@ -20,12 +33,14 @@ import TodoItem from "./ui/TodoItem";
 type TodoTableProps = {
 	refresh?: number;
 	organizationId?: string | null;
+	selectedOrganization?: Organization | null;
 	isDark?: boolean;
 };
 
 export default function TodoTable({
 	refresh,
 	organizationId = null,
+	selectedOrganization = null,
 	isDark = false,
 }: TodoTableProps) {
 	const router = useRouter();
@@ -66,7 +81,8 @@ export default function TodoTable({
 								"インデックスが必要です。Firestore Consoleでインデックスを作成してください。";
 							break;
 						case "unavailable":
-							errorMessage = "Firestoreに接続できません。インターネット接続を確認してください。";
+							errorMessage =
+								"Firestoreに接続できません。インターネット接続を確認してください。";
 							break;
 						default:
 							errorMessage = `読み込みエラー: ${error.code}`;
@@ -139,9 +155,17 @@ export default function TodoTable({
 					"💯 お疲れ様！完了です！",
 					"🎯 目標達成！完了です！",
 				];
-				const randomTitle = titleMessages[Math.floor(Math.random() * titleMessages.length)];
+				const randomTitle =
+					titleMessages[Math.floor(Math.random() * titleMessages.length)];
 
-				console.log("🎨 新しいテーマ:", randomThemeIndex, "タイトル:", randomTitle, "褒め言葉:", praiseMessage);
+				console.log(
+					"🎨 新しいテーマ:",
+					randomThemeIndex,
+					"タイトル:",
+					randomTitle,
+					"褒め言葉:",
+					praiseMessage
+				);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
 				Toast.hide();
@@ -248,7 +272,7 @@ export default function TodoTable({
 	useFocusEffect(
 		useCallback(() => {
 			getTodos();
-		}, [getTodos]),
+		}, [getTodos])
 	);
 
 	return (
@@ -260,17 +284,45 @@ export default function TodoTable({
 					borderColor: isDark ? "#4b5563" : "#9ca3af",
 				}}
 			>
-				<View style={{ width: 32 }} className="mr-2" />
-				<Text
-					className="flex-1 font-noto-bold text-lg"
-					style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+			<View style={{ width: 32 }} className="mr-2" />
+			<Text
+				className="flex-1 font-noto-bold text-lg"
+				style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+			>
+				Todo
+			</Text>
+			
+			{/* グループバッジ（グループTODOの場合のみ表示） */}
+			{selectedOrganization && (
+				<View
+					className="px-3 py-1 rounded-full mr-2"
+					style={{
+						backgroundColor: isDark ? "#3b82f6" : "#dbeafe",
+						borderWidth: 1,
+						borderColor: isDark ? "#60a5fa" : "#93c5fd",
+					}}
 				>
-					Todo
-				</Text>
-				{/* 検索アイコンボタン */}
-				<TouchableOpacity onPress={() => setIsSearchModalVisible(true)} className="p-2">
-					<Ionicons name="search" size={24} color={isDark ? "#60a5fa" : "#3b82f6"} />
-				</TouchableOpacity>
+					<Text
+						className="font-noto-bold text-sm"
+						style={{ color: isDark ? "#e5e7eb" : "#1e40af" }}
+						numberOfLines={1}
+					>
+						{selectedOrganization.name}
+					</Text>
+				</View>
+			)}
+			
+			{/* 検索アイコンボタン */}
+			<TouchableOpacity
+				onPress={() => setIsSearchModalVisible(true)}
+				className="p-2"
+			>
+				<Ionicons
+					name="search"
+					size={24}
+					color={isDark ? "#60a5fa" : "#3b82f6"}
+				/>
+			</TouchableOpacity>
 			</View>
 			{isLoading ? (
 				<View className="py-4">
