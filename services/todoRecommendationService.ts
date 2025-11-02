@@ -244,39 +244,60 @@ function generateFriendlyMessage(
 ): string {
 	const messages: Record<TodoCategory, string[]> = {
 		work: [
-			"仕事が忙しいですね。そろそろ{title}はいかがですか？",
+			"仕事が忙しいですね。{title}はいかがですか？",
 			"お仕事頑張ってますね！{title}も忘れずに✨",
-			"そろそろ{title}の時間かもしれません💼",
+			"{title}の時間かもしれません💼",
+			"今日は{title}に取り組む良い日ですよ",
+			"お疲れ様です！{title}もよろしくお願いします",
+			"{title}、今がちょうどいいタイミングかも",
 		],
 		shopping: [
-			"そろそろ{title}が必要な頃では？🛒",
+			"{title}が必要な頃では？🛒",
 			"いつもの{title}、忘れていませんか？",
-			"{title}、そろそろストックが切れる頃かも？",
+			"{title}、ストックが切れる頃かも？",
+			"今日は{title}に行くのはどうでしょう？",
+			"{title}のタイミングじゃないですか？",
+			"週末は{title}の予定を入れてみては？",
 		],
 		housework: [
 			"お家のメンテナンス、{title}はいかがですか？🏠",
-			"そろそろ{title}の時間かもしれませんね",
+			"{title}の時間かもしれませんね",
 			"{title}、やっておくとスッキリしますよ✨",
+			"今日は{title}日和ですね！",
+			"{title}で快適な空間づくりを🌟",
+			"お家がもっと快適に！{title}はどうですか？",
 		],
 		study: [
 			"継続は力なり！{title}はいかがですか？📚",
 			"学びの時間、{title}はどうでしょう？",
-			"そろそろ{title}で自己投資を💡",
+			"{title}で自己投資を💡",
+			"今日も成長の一歩！{title}で学びませんか？",
+			"新しい知識を！{title}はいかがですか？",
+			"{title}、続けることが大切ですね",
 		],
 		school: [
 			"学校のこと、{title}は大丈夫ですか？📖",
-			"そろそろ{title}をやっておきませんか？",
+			"{title}をやっておきませんか？",
 			"{title}、期限は大丈夫ですか？",
+			"今日は{title}に取り組む良い機会です",
+			"{title}、計画的に進めましょう✨",
+			"頑張って！{title}もお忘れなく",
 		],
 		personal: [
 			"自分の時間も大切に。{title}はいかがですか？💖",
 			"リフレッシュに{title}はどうでしょう？",
-			"そろそろ{title}で気分転換しませんか？",
+			"{title}で気分転換しませんか？",
+			"今日は{title}を楽しむ日にしましょう🌈",
+			"自分へのご褒美に{title}はどう？",
+			"{title}で心をリセット✨",
 		],
 		other: [
-			"そろそろ{title}はいかがですか？",
+			"{title}はいかがですか？",
 			"{title}、思い出しましたか？💭",
 			"{title}も忘れずに！",
+			"今日は{title}のタイミングかも",
+			"{title}、今やっておきませんか？",
+			"{title}、ちょうど良い機会ですよ",
 		],
 	};
 
@@ -284,9 +305,12 @@ function generateFriendlyMessage(
 	if (options?.isPeriodicTask && options?.interval) {
 		const intervalStr = formatInterval(options.interval);
 		const periodicMessages = [
-			`いつもの{title}、そろそろ${intervalStr}ぶりではないですか？`,
+			`いつもの{title}、${intervalStr}ぶりではないですか？`,
 			`前回から${intervalStr}経ちました。{title}の時間ですね⏰`,
 			`${intervalStr}ごとの{title}、忘れていませんか？`,
+			`もう${intervalStr}経ちました！{title}はいかがですか？`,
+			`${intervalStr}に一度の{title}、今日はどうでしょう？`,
+			`いつもの周期です。{title}をやっておきませんか？`,
 		];
 		const template =
 			periodicMessages[Math.floor(Math.random() * periodicMessages.length)];
@@ -299,6 +323,9 @@ function generateFriendlyMessage(
 			`この時間はいつも{title}をしていますね！`,
 			`いつもこの時間に{title}をされてますね💡`,
 			`タイミングぴったり！{title}はいかがですか？`,
+			`今日もこの時間に{title}をやりませんか？`,
+			`いつものパターンですね。{title}の時間です✨`,
+			`このタイミングで{title}、習慣になってますね`,
 		];
 		const template =
 			timingMessages[Math.floor(Math.random() * timingMessages.length)];
