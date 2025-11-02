@@ -96,6 +96,57 @@ export async function savePushToken(token: string): Promise<void> {
 }
 
 /**
+ * 通知履歴保存対象の全ユーザーIDを取得（プッシュトークンの有無に関係なく）
+ * - 通知設定がOFFのユーザーは除外
+ * - 指定されたuserIdを除外可能
+ */
+async function getAllNotificationTargetUserIds(
+	excludeUserId?: string
+): Promise<string[]> {
+	try {
+		const usersRef = collection(db, "users");
+		const q = query(usersRef);
+		const querySnapshot = await getDocs(q);
+
+		const userIds: string[] = [];
+		let excludedByNotificationOff = 0;
+		let excludedByUserId = 0;
+
+		querySnapshot.forEach((doc) => {
+			const data = doc.data();
+
+			// 指定されたユーザーを除外
+			if (excludeUserId && doc.id === excludeUserId) {
+				excludedByUserId++;
+				return;
+			}
+
+			// 通知設定を確認（デフォルトはtrue）
+			const notificationEnabled = data.notificationEnabled !== false;
+			if (!notificationEnabled) {
+				excludedByNotificationOff++;
+				return;
+			}
+
+			userIds.push(doc.id);
+		});
+
+		console.log("👥 通知履歴保存対象ユーザー取得:", {
+			総ユーザー数: querySnapshot.size,
+			対象ユーザー数: userIds.length,
+			通知OFF除外: excludedByNotificationOff,
+			userId除外: excludedByUserId,
+			除外対象userId: excludeUserId || "なし",
+		});
+
+		return userIds;
+	} catch (error) {
+		console.error("Error getting notification target users:", error);
+		return [];
+	}
+}
+
+/**
  * 全ユーザーのプッシュトークンとuserIdのペアを取得（通知OFFのユーザーは除外）
  */
 async function getAllPushTokensWithUserId(
@@ -261,23 +312,22 @@ export async function sendPushNotification(
 		const { saveNotificationHistory } = await import(
 			"./notificationHistoryService"
 		);
-		
-		const userIdsToSaveHistory = new Set(
-			filteredTokens.map((item) => item.userId)
+
+		// 操作者以外の全ユーザー（通知設定ONのみ）を取得
+		const actionUserId = data?.actionUserId as string | undefined;
+		const allTargetUserIds = await getAllNotificationTargetUserIds(
+			actionUserId
 		);
 
 		console.log(
-			`💾 通知履歴を一括保存: ${userIdsToSaveHistory.size}名のユーザー`
+			`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
 		);
 
-		for (const userId of userIdsToSaveHistory) {
+		for (const userId of allTargetUserIds) {
 			try {
 				await saveNotificationHistory(userId, title, body, data);
 			} catch (error) {
-				console.error(
-					`通知履歴の保存エラー (userId: ${userId}):`,
-					error
-				);
+				console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
 			}
 		}
 
