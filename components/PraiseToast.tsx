@@ -220,7 +220,7 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				style={{
 					position: "absolute",
 					left: 16,
-					bottom: -8,
+					bottom: 8,
 					gap: 14,
 					zIndex: 10,
 					marginRight: 24,
