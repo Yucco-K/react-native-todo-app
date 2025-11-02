@@ -159,8 +159,8 @@ export async function sendPushNotification(
 	includeCurrentUser: boolean = false
 ): Promise<void> {
 	try {
-		const tokensWithUserId =
-			await getAllPushTokensWithUserId(!includeCurrentUser);
+		// 全ユーザーのトークンを取得（actionUserIdでフィルタリングするため）
+		const tokensWithUserId = await getAllPushTokensWithUserId(false);
 
 		if (tokensWithUserId.length === 0) {
 			console.log("送信先のプッシュトークンがありません");
@@ -175,19 +175,22 @@ export async function sendPushNotification(
 			actionUserId,
 			notificationType,
 			totalTokens: tokensWithUserId.length,
+			includeCurrentUser,
 		});
 
 		// フィルタリング: 操作者には通知しない（ただしリマインドは除く）
 		const filteredTokens = tokensWithUserId.filter((item) => {
-			// リマインド通知の場合は操作者にも送信
+			// リマインド通知の場合は全員に送信
 			if (notificationType === "reminder") {
+				console.log(`✅ リマインド通知: ${item.userId}に送信`);
 				return true;
 			}
 			// 操作者が設定されている場合、その操作者には通知しない
 			if (actionUserId && item.userId === actionUserId) {
-				console.log(`❌ 操作者を除外: ${item.userId}`);
+				console.log(`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`);
 				return false;
 			}
+			console.log(`✅ 通知送信対象: ${item.userId}`);
 			return true;
 		});
 
