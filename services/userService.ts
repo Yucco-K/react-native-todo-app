@@ -140,3 +140,75 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 		throw error;
 	}
 }
+
+/**
+ * ユーザーのアバターURLを取得
+ */
+export async function getUserAvatarUrl(): Promise<string | null> {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			return null;
+		}
+
+		const userRef = doc(db, "users", userId);
+		const userDoc = await getDoc(userRef);
+
+		if (userDoc.exists()) {
+			const data = userDoc.data();
+			return data.avatarUrl || null;
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error getting user avatar URL:", error);
+		return null;
+	}
+}
+
+/**
+ * ユーザーのアバターURLを保存
+ */
+export async function saveUserAvatarUrl(avatarUrl: string): Promise<void> {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		const userRef = doc(db, "users", userId);
+		await setDoc(
+			userRef,
+			{
+				avatarUrl: avatarUrl.trim(),
+				updatedAt: new Date(),
+			},
+			{ merge: true }
+		);
+	} catch (error) {
+		console.error("Error saving user avatar URL:", error);
+		throw error;
+	}
+}
+
+/**
+ * 指定されたユーザーIDのアバターURLを取得
+ */
+export async function getUserAvatarUrlById(
+	userId: string
+): Promise<string | null> {
+	try {
+		const userRef = doc(db, "users", userId);
+		const userDoc = await getDoc(userRef);
+
+		if (userDoc.exists()) {
+			const data = userDoc.data();
+			return data.avatarUrl || null;
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error getting user avatar URL by ID:", error);
+		return null;
+	}
+}

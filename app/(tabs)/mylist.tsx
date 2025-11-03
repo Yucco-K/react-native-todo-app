@@ -3,6 +3,7 @@ import NicknameModal from "@/components/NicknameModal";
 import NotificationHistoryModal from "@/components/NotificationHistoryModal";
 import ReminderHistoryModal from "@/components/ReminderHistoryModal";
 import TodoTable from "@/components/TodoTable";
+import { Avatar } from "@/components/ui/Avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -16,9 +17,12 @@ import {
 	registerForPushNotificationsAsync,
 	savePushToken,
 } from "@/services/notificationService";
+import { getOrganizationMembers } from "@/services/organizationService";
 import { getReminderHistory, removeTodoReminder } from "@/services/todoService";
 import {
 	getNotificationEnabled,
+	getUserAvatarUrl,
+	getUserAvatarUrlById,
 	setNotificationEnabled,
 } from "@/services/userService";
 import type { Todo } from "@/types/Todo";
@@ -54,6 +58,10 @@ export default function MyListScreen() {
 		NotificationHistory[]
 	>([]);
 	const [notificationEnabled, setNotificationEnabledState] = useState(true);
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+	const [memberAvatars, setMemberAvatars] = useState<
+		Array<{ userId: string; avatarUrl: string | null }>
+	>([]);
 
 	console.log("📱 MyListScreen: レンダリング", {
 		selectedOrganization: selectedOrganization?.name || "My List",
@@ -68,6 +76,40 @@ export default function MyListScreen() {
 		};
 		loadNotificationSetting();
 	}, []);
+
+	// ユーザーアバターを読み込み
+	useEffect(() => {
+		const loadAvatar = async () => {
+			const url = await getUserAvatarUrl();
+			setAvatarUrl(url);
+		};
+		loadAvatar();
+	}, []);
+
+	// グループメンバーのアバターを読み込み
+	useEffect(() => {
+		const loadMemberAvatars = async () => {
+			if (!selectedOrganization) {
+				setMemberAvatars([]);
+				return;
+			}
+
+			try {
+				const members = await getOrganizationMembers(selectedOrganization.id);
+				const avatars = await Promise.all(
+					members.map(async (member) => ({
+						userId: member.userId,
+						avatarUrl: await getUserAvatarUrlById(member.userId),
+					}))
+				);
+				setMemberAvatars(avatars);
+			} catch (error) {
+				console.error("メンバーアバター読み込みエラー:", error);
+				setMemberAvatars([]);
+			}
+		};
+		loadMemberAvatars();
+	}, [selectedOrganization]);
 
 	// アプリがフォアグラウンドに戻った時にリストを更新（remindNotifiedの更新を反映）
 	useEffect(() => {
@@ -239,60 +281,112 @@ export default function MyListScreen() {
 				<View className="flex-1 px-4" style={{ marginTop: -8 }}>
 					{/* ユーザー名表示エリア */}
 					<View className="mb-2">
+						{/* グループの場合はメンバーアバター表示 */}
+						{selectedOrganization && memberAvatars.length > 0 && (
+							<View className="flex-row justify-end mb-2" style={{ marginRight: -4 }}>
+								{memberAvatars.slice(0, 5).map((member, index) => (
+									<View
+										key={member.userId}
+										style={{
+											marginLeft: index > 0 ? -8 : 0,
+											zIndex: memberAvatars.length - index,
+										}}
+									>
+										<Avatar avatarUrl={member.avatarUrl} size={32} />
+									</View>
+								))}
+								{memberAvatars.length > 5 && (
+									<View
+										style={{
+											marginLeft: -8,
+											zIndex: 0,
+										}}
+									>
+										<View
+											style={{
+												width: 32,
+												height: 32,
+												borderRadius: 16,
+												backgroundColor: isDark ? "#374151" : "#e5e7eb",
+												justifyContent: "center",
+												alignItems: "center",
+											}}
+										>
+											<Text
+												style={{
+													color: isDark ? "#d1d5db" : "#6b7280",
+													fontSize: 12,
+													fontWeight: "bold",
+												}}
+											>
+												+{memberAvatars.length - 5}
+											</Text>
+										</View>
+									</View>
+								)}
+							</View>
+						)}
+
 						{nickname ? (
-							<TouchableOpacity
-								onPress={() => setIsNicknameModalVisible(true)}
-								className="flex-row items-center"
-							>
-								<Text
-									className="text-lg font-noto-bold"
-									style={{
-										color: isDark ? "#60a5fa" : "#2563eb",
-										flexShrink: 1,
-									}}
-									numberOfLines={2}
-								>
-									{nickname}さん
-								</Text>
-								<Ionicons
-									name="create-outline"
-									size={16}
-									color={isDark ? "#60a5fa" : "#2563eb"}
-									style={{ marginLeft: 4 }}
-								/>
-							</TouchableOpacity>
-						) : (
-							<>
+							<View className="flex-row items-center">
+								<Avatar avatarUrl={avatarUrl} size={40} style={{ marginRight: 12 }} />
 								<TouchableOpacity
 									onPress={() => setIsNicknameModalVisible(true)}
-									className="flex-row items-center"
+									className="flex-row items-center flex-1"
 								>
 									<Text
-										className="text-base font-noto-regular"
-										style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
-									>
-										ニックネームを設定
-									</Text>
-									<Ionicons
-										name="add-circle-outline"
-										size={16}
-										color={isDark ? "#d1d5db" : "#6b7280"}
-										style={{ marginLeft: 4 }}
-									/>
-								</TouchableOpacity>
-								{user?.email && (
-									<Text
-										className="text-sm font-noto-regular mt-1"
+										className="text-lg font-noto-bold"
 										style={{
-											color: isDark ? "#d1d5db" : "#6b7280",
+											color: isDark ? "#60a5fa" : "#2563eb",
 											flexShrink: 1,
 										}}
 										numberOfLines={2}
 									>
-										{user.email}
+										{nickname}さん
 									</Text>
-								)}
-							</>
+									<Ionicons
+										name="create-outline"
+										size={16}
+										color={isDark ? "#60a5fa" : "#2563eb"}
+										style={{ marginLeft: 4 }}
+									/>
+								</TouchableOpacity>
+							</View>
+						) : (
+							<View className="flex-row items-center">
+								<Avatar avatarUrl={avatarUrl} size={40} style={{ marginRight: 12 }} />
+								<View className="flex-1">
+									<TouchableOpacity
+										onPress={() => setIsNicknameModalVisible(true)}
+										className="flex-row items-center"
+									>
+										<Text
+											className="text-base font-noto-regular"
+											style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
+										>
+											ニックネームを設定
+										</Text>
+										<Ionicons
+											name="add-circle-outline"
+											size={16}
+											color={isDark ? "#d1d5db" : "#6b7280"}
+											style={{ marginLeft: 4 }}
+										/>
+									</TouchableOpacity>
+									{user?.email && (
+										<Text
+											className="text-sm font-noto-regular mt-1"
+											style={{
+												color: isDark ? "#d1d5db" : "#6b7280",
+												flexShrink: 1,
+											}}
+											numberOfLines={2}
+										>
+											{user.email}
+										</Text>
+									)}
+								</View>
+							</View>
 						)}
 					</View>
 
