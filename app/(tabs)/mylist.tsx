@@ -511,17 +511,17 @@ export default function MyListScreen() {
 				organizationId={selectedOrganization?.id || null}
 			/>
 
-		<NicknameModal
-			visible={isNicknameModalVisible}
-			currentNickname={nickname || ""}
-			currentAvatarUrl={avatarUrl}
-			onClose={() => setIsNicknameModalVisible(false)}
-			onSave={async (newNickname, newAvatarUrl) => {
-				await updateNickname(newNickname);
-				await saveUserAvatarUrl(newAvatarUrl || "");
-				setAvatarUrl(newAvatarUrl);
-			}}
-		/>
+			<NicknameModal
+				visible={isNicknameModalVisible}
+				currentNickname={nickname || ""}
+				currentAvatarUrl={avatarUrl}
+				onClose={() => setIsNicknameModalVisible(false)}
+				onSave={async (newNickname, newAvatarUrl) => {
+					await updateNickname(newNickname);
+					await saveUserAvatarUrl(newAvatarUrl || "");
+					setAvatarUrl(newAvatarUrl);
+				}}
+			/>
 
 			<NotificationHistoryModal
 				visible={isNotificationHistoryVisible}

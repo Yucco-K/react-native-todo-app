@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import {
 	ActivityIndicator,
@@ -77,8 +78,48 @@ export default function NicknameModal({
 		setAvatarUrl("");
 	};
 
+	const handlePickImage = async () => {
+		try {
+			// パーミッションをリクエスト
+			const { status } =
+				await ImagePicker.requestMediaLibraryPermissionsAsync();
+			if (status !== "granted") {
+				Toast.show({
+					type: "error",
+					text1: "権限エラー",
+					text2: "画像ライブラリへのアクセス権限が必要です",
+				});
+				return;
+			}
+
+			// 画像を選択
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				aspect: [1, 1],
+				quality: 0.8,
+			});
+
+			if (!result.canceled && result.assets[0]) {
+				setAvatarUrl(result.assets[0].uri);
+			}
+		} catch (error) {
+			console.error("画像選択エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "エラー",
+				text2: "画像の選択に失敗しました",
+			});
+		}
+	};
+
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			onRequestClose={onClose}
+		>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -108,17 +149,7 @@ export default function NicknameModal({
 									<View className="flex-row items-center">
 										<Avatar avatarUrl={avatarUrl || null} size={80} />
 										<View className="ml-4 flex-1">
-											<TouchableOpacity
-												onPress={() => {
-													// 将来的に画像選択機能を追加
-													Toast.show({
-														type: "info",
-														text1: "アバター設定",
-														text2: "画像URLを下の入力欄に貼り付けてください",
-													});
-												}}
-												className="mb-2"
-											>
+											<TouchableOpacity onPress={handlePickImage} className="mb-2">
 												<View
 													className="px-4 py-2 rounded-md"
 													style={{
@@ -149,8 +180,14 @@ export default function NicknameModal({
 											)}
 										</View>
 									</View>
+									<Text
+										className="text-xs font-noto-regular mt-3 mb-2"
+										style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+									>
+										または画像URLを直接入力:
+									</Text>
 									<TextInput
-										className="border-2 rounded-md p-3 text-sm font-noto-regular mt-3"
+										className="border-2 rounded-md p-3 text-sm font-noto-regular"
 										style={{
 											borderColor: isDark ? "#4b5563" : "#d1d5db",
 											backgroundColor: isDark ? "#374151" : "#ffffff",
@@ -222,7 +259,9 @@ export default function NicknameModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">保存</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">
+											保存
+										</Text>
 									)}
 								</TouchableHighlight>
 							</View>
