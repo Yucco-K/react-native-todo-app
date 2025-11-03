@@ -10,7 +10,6 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import * as Crypto from "expo-crypto";
-import * as Random from "expo-random";
 import { auth, db } from "../config/firebase";
 import {
 	registerForPushNotificationsAsync,
@@ -151,12 +150,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const clientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "";
 			if (!clientId) throw new Error("EXPO_PUBLIC_GOOGLE_CLIENT_ID が未設定です");
 
-			// PKCE: code_verifier / code_challenge 生成
-			const randomBytes = await Random.getRandomBytesAsync(32);
-			const codeVerifier = Buffer.from(randomBytes).toString("base64")
-				.replace(/\+/g, "-")
-				.replace(/\//g, "_")
-				.replace(/=+$/, "");
+			// PKCE: code_verifier / code_challenge 生成（Buffer非依存・URLセーフ）
+			const allowed =
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+			const bytes = await Crypto.getRandomBytesAsync(64);
+			let codeVerifier = "";
+			for (const b of bytes) {
+				codeVerifier += allowed.charAt(b % allowed.length);
+			}
 			const challengeBuffer = await Crypto.digestStringAsync(
 				Crypto.CryptoDigestAlgorithm.SHA256,
 				codeVerifier,
@@ -203,7 +204,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				const errText = await tokenResp.text();
 				throw new Error(`トークン交換に失敗: ${tokenResp.status} ${errText}`);
 			}
-			const tokenJson: any = await tokenResp.json();
+			type TokenResponse = { id_token?: string; email?: string };
+			const tokenJson: TokenResponse = await tokenResp.json();
 			const idToken: string | undefined = tokenJson.id_token;
 			const userEmailFromToken: string | undefined = tokenJson.email;
 			if (!idToken) throw new Error("id_tokenの取得に失敗しました");
