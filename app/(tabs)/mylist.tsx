@@ -23,11 +23,12 @@ import {
 	getNotificationEnabled,
 	getUserAvatarUrl,
 	getUserAvatarUrlById,
+	saveUserAvatarUrl,
 	setNotificationEnabled,
 } from "@/services/userService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	AppState,
 	type AppStateStatus,
@@ -117,7 +118,9 @@ export default function MyListScreen() {
 			"change",
 			(nextAppState: AppStateStatus) => {
 				if (nextAppState === "active") {
-					console.log("📱 アプリがフォアグラウンドに戻りました → Todoリストを更新");
+					console.log(
+						"📱 アプリがフォアグラウンドに戻りました → Todoリストを更新"
+					);
 					triggerRefresh();
 				}
 			}
@@ -283,7 +286,10 @@ export default function MyListScreen() {
 					<View className="mb-2">
 						{/* グループの場合はメンバーアバター表示 */}
 						{selectedOrganization && memberAvatars.length > 0 && (
-							<View className="flex-row justify-end mb-2" style={{ marginRight: -4 }}>
+							<View
+								className="flex-row justify-end mb-2"
+								style={{ marginRight: -4 }}
+							>
 								{memberAvatars.slice(0, 5).map((member, index) => (
 									<View
 										key={member.userId}
@@ -329,7 +335,11 @@ export default function MyListScreen() {
 
 						{nickname ? (
 							<View className="flex-row items-center">
-								<Avatar avatarUrl={avatarUrl} size={40} style={{ marginRight: 12 }} />
+								<Avatar
+									avatarUrl={avatarUrl}
+									size={40}
+									style={{ marginRight: 12 }}
+								/>
 								<TouchableOpacity
 									onPress={() => setIsNicknameModalVisible(true)}
 									className="flex-row items-center flex-1"
@@ -354,7 +364,11 @@ export default function MyListScreen() {
 							</View>
 						) : (
 							<View className="flex-row items-center">
-								<Avatar avatarUrl={avatarUrl} size={40} style={{ marginRight: 12 }} />
+								<Avatar
+									avatarUrl={avatarUrl}
+									size={40}
+									style={{ marginRight: 12 }}
+								/>
 								<View className="flex-1">
 									<TouchableOpacity
 										onPress={() => setIsNicknameModalVisible(true)}
@@ -497,12 +511,17 @@ export default function MyListScreen() {
 				organizationId={selectedOrganization?.id || null}
 			/>
 
-			<NicknameModal
-				visible={isNicknameModalVisible}
-				currentNickname={nickname || ""}
-				onClose={() => setIsNicknameModalVisible(false)}
-				onSave={updateNickname}
-			/>
+		<NicknameModal
+			visible={isNicknameModalVisible}
+			currentNickname={nickname || ""}
+			currentAvatarUrl={avatarUrl}
+			onClose={() => setIsNicknameModalVisible(false)}
+			onSave={async (newNickname, newAvatarUrl) => {
+				await updateNickname(newNickname);
+				await saveUserAvatarUrl(newAvatarUrl || "");
+				setAvatarUrl(newAvatarUrl);
+			}}
+		/>
 
 			<NotificationHistoryModal
 				visible={isNotificationHistoryVisible}

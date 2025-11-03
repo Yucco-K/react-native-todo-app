@@ -39,4 +39,3 @@ export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
 		</View>
 	);
 }
-

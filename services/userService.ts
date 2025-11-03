@@ -109,7 +109,7 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 		}
 
 		const userRef = doc(db, "users", userId);
-		
+
 		// 通知をOFFにする場合、プッシュトークンも削除
 		if (!enabled) {
 			await setDoc(
@@ -133,7 +133,9 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				},
 				{ merge: true }
 			);
-			console.log(`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`);
+			console.log(
+				`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`
+			);
 		}
 	} catch (error) {
 		console.error("Error setting notification enabled:", error);
