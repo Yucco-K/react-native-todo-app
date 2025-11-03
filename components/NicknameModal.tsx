@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -36,6 +36,15 @@ export default function NicknameModal({
 	const [avatarUrl, setAvatarUrl] = useState(currentAvatarUrl || "");
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+
+	// モーダルが開かれた時に現在の値を反映
+	useEffect(() => {
+		if (visible) {
+			setNickname(currentNickname);
+			setAvatarUrl(currentAvatarUrl || "");
+			setError(null);
+		}
+	}, [visible, currentNickname, currentAvatarUrl]);
 
 	const handleSave = async () => {
 		setError(null);
@@ -119,68 +128,68 @@ export default function NicknameModal({
 								プロフィール設定
 							</Text>
 
-						<ScrollView showsVerticalScrollIndicator={false}>
-							{/* エラーメッセージ */}
-							{error && (
-								<View
-									className="mb-4 p-3 rounded-md"
-									style={{ backgroundColor: isDark ? "#7f1d1d" : "#fee2e2" }}
-								>
-									<Text
-										className="text-sm font-noto-regular"
-										style={{ color: isDark ? "#fca5a5" : "#dc2626" }}
+							<ScrollView showsVerticalScrollIndicator={false}>
+								{/* エラーメッセージ */}
+								{error && (
+									<View
+										className="mb-4 p-3 rounded-md"
+										style={{ backgroundColor: isDark ? "#7f1d1d" : "#fee2e2" }}
 									>
-										{error}
-									</Text>
-								</View>
-							)}
-
-							{/* アバター設定 */}
-							<View className="mb-6">
-								<Text
-									className="text-base font-noto-bold mb-3"
-									style={{ color: isDark ? "#d1d5db" : "#4b5563" }}
-								>
-									アバター
-								</Text>
-								<View className="flex-row items-center">
-									<Avatar avatarUrl={avatarUrl || null} size={80} />
-									<View className="ml-4 flex-1">
-										<TouchableOpacity
-											onPress={handlePickImage}
-											className="mb-2"
+										<Text
+											className="text-sm font-noto-regular"
+											style={{ color: isDark ? "#fca5a5" : "#dc2626" }}
 										>
-											<View
-												className="px-4 py-2 rounded-md"
-												style={{
-													backgroundColor: isDark ? "#374151" : "#e5e7eb",
-												}}
+											{error}
+										</Text>
+									</View>
+								)}
+
+								{/* アバター設定 */}
+								<View className="mb-6">
+									<Text
+										className="text-base font-noto-bold mb-3"
+										style={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+									>
+										アバター
+									</Text>
+									<View className="flex-row items-center">
+										<Avatar avatarUrl={avatarUrl || null} size={80} />
+										<View className="ml-4 flex-1">
+											<TouchableOpacity
+												onPress={handlePickImage}
+												className="mb-2"
 											>
-												<Text
-													className="text-center font-noto-bold"
-													style={{ color: isDark ? "#d1d5db" : "#374151" }}
+												<View
+													className="px-4 py-2 rounded-md"
+													style={{
+														backgroundColor: isDark ? "#374151" : "#e5e7eb",
+													}}
 												>
-													画像を選択
-												</Text>
-											</View>
-										</TouchableOpacity>
-										{avatarUrl && (
-											<TouchableOpacity onPress={handleDeleteAvatar}>
-												<View className="flex-row items-center justify-center">
-													<Ionicons
-														name="trash-outline"
-														size={16}
-														color="#ef4444"
-													/>
-													<Text className="text-red-500 font-noto-regular ml-1">
-														削除
+													<Text
+														className="text-center font-noto-bold"
+														style={{ color: isDark ? "#d1d5db" : "#374151" }}
+													>
+														画像を選択
 													</Text>
 												</View>
 											</TouchableOpacity>
-										)}
+											{avatarUrl && (
+												<TouchableOpacity onPress={handleDeleteAvatar}>
+													<View className="flex-row items-center justify-center">
+														<Ionicons
+															name="trash-outline"
+															size={16}
+															color="#ef4444"
+														/>
+														<Text className="text-red-500 font-noto-regular ml-1">
+															削除
+														</Text>
+													</View>
+												</TouchableOpacity>
+											)}
+										</View>
 									</View>
 								</View>
-							</View>
 
 								{/* ニックネーム設定 */}
 								<View className="mb-4">

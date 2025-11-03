@@ -356,9 +356,9 @@ export default function MyListScreen() {
 									</Text>
 									<Ionicons
 										name="create-outline"
-										size={16}
+										size={24}
 										color={isDark ? "#60a5fa" : "#2563eb"}
-										style={{ marginLeft: 4 }}
+										style={{ marginLeft: 8 }}
 									/>
 								</TouchableOpacity>
 							</View>
@@ -382,9 +382,9 @@ export default function MyListScreen() {
 										</Text>
 										<Ionicons
 											name="add-circle-outline"
-											size={16}
+											size={24}
 											color={isDark ? "#d1d5db" : "#6b7280"}
-											style={{ marginLeft: 4 }}
+											style={{ marginLeft: 8 }}
 										/>
 									</TouchableOpacity>
 									{user?.email && (
