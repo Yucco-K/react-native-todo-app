@@ -152,7 +152,6 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
   - Firestoreの`notificationHistory`コレクションに保存
   - 通知OFFの場合は履歴にも保存されません
 - **Expo Push API使用**: トークン管理とFirestoreに保存
-- **既知の問題**: グループTodo編集時の通知が送信されない場合あり（`ISSUES.md`参照）
 
 #### テスト環境での注意事項
 

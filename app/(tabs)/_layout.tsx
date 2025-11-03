@@ -14,7 +14,7 @@ import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Platform, Text, TouchableOpacity, View } from "react-native";
+import { AppState, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -126,6 +126,7 @@ export default function TabLayout() {
 
 	return (
 		<>
+			<StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
 		<Stack
 			screenOptions={{
 				headerShown: true,
@@ -145,29 +146,29 @@ export default function TabLayout() {
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
-					headerTitle: () => (
-						<View
+				headerTitle: () => (
+					<View
+						style={{
+							flex: 1,
+							paddingHorizontal: 10,
+							paddingBottom: 8,
+							alignItems: "center",
+							minHeight: 70,
+						}}
+					>
+						<Text
 							style={{
-								flex: 1,
-								paddingHorizontal: 10,
-								paddingVertical: 8,
-								alignItems: "center",
-								minHeight: 70,
+								color: "#fff",
+								fontSize: 18,
+								fontWeight: "bold",
+								textAlign: "center",
 							}}
+							numberOfLines={3}
 						>
-							<Text
-								style={{
-									color: "#fff",
-									fontSize: 18,
-									fontWeight: "bold",
-									textAlign: "center",
-								}}
-								numberOfLines={3}
-							>
-								{getHeaderTitle()}
-							</Text>
-						</View>
-					),
+							{getHeaderTitle()}
+						</Text>
+					</View>
+				),
 					headerRight: () =>
 						selectedOrganization ? (
 							<View
