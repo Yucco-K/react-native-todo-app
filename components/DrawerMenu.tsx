@@ -193,16 +193,16 @@ export function DrawerMenu({
 												</Text>
 												<TouchableOpacity
 													onPress={() => {
-												onManageOrganization(org);
-												onClose();
-											}}
-										>
-											<Ionicons
-												name="settings-outline"
-												size={28}
-												color={isDark ? "#d1d5db" : "#6b7280"}
-											/>
-										</TouchableOpacity>
+														onManageOrganization(org);
+														onClose();
+													}}
+												>
+													<Ionicons
+														name="settings-outline"
+														size={28}
+														color={isDark ? "#d1d5db" : "#6b7280"}
+													/>
+												</TouchableOpacity>
 											</TouchableOpacity>
 										</View>
 									))

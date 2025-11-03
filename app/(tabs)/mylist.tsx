@@ -96,13 +96,21 @@ export default function MyListScreen() {
 			}
 
 			try {
+				console.log("👥 グループメンバーのアバターを読み込み中...", selectedOrganization.id);
 				const members = await getOrganizationMembers(selectedOrganization.id);
+				console.log("👥 取得したメンバー:", members);
+				
 				const avatars = await Promise.all(
-					members.map(async (member) => ({
-						userId: member.userId,
-						avatarUrl: await getUserAvatarUrlById(member.userId),
-					}))
+					members.map(async (member) => {
+						const avatarUrl = await getUserAvatarUrlById(member.userId);
+						console.log(`👤 メンバー ${member.userId} のアバター:`, avatarUrl);
+						return {
+							userId: member.userId,
+							avatarUrl,
+						};
+					})
 				);
+				console.log("👥 最終的なアバター配列:", avatars);
 				setMemberAvatars(avatars);
 			} catch (error) {
 				console.error("メンバーアバター読み込みエラー:", error);

@@ -200,14 +200,18 @@ export async function getUserAvatarUrlById(
 	userId: string
 ): Promise<string | null> {
 	try {
+		console.log(`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`);
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
 
 		if (userDoc.exists()) {
 			const data = userDoc.data();
+			console.log(`✅ ユーザー ${userId} のデータ:`, data);
+			console.log(`📸 アバターURL:`, data.avatarUrl || "なし");
 			return data.avatarUrl || null;
 		}
 
+		console.log(`❌ ユーザー ${userId} のドキュメントが存在しません`);
 		return null;
 	} catch (error) {
 		console.error("Error getting user avatar URL by ID:", error);
