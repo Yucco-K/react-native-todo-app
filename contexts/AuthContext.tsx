@@ -138,10 +138,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const { makeRedirectUri } = await import("expo-auth-session");
 			const WebBrowser = await import("expo-web-browser");
 
-			// useProxy: false でカスタムURLスキームを使用
+			// カスタムURLスキームでリダイレクト
 			const redirectUri = makeRedirectUri({
 				scheme: "reactnativetodoapp",
-				useProxy: false,
 			});
 
 			console.log("🔐 Google認証を開始:", redirectUri);
