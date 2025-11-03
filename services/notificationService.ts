@@ -344,11 +344,8 @@ export async function sendPushNotification(
 			return true;
 		});
 
-		if (filteredTokens.length === 0) {
-			console.log("フィルタリング後の送信先がありません");
-			return;
-		}
-
+	// プッシュ通知の送信（トークンがある場合のみ）
+	if (filteredTokens.length > 0) {
 		// 同じプッシュトークンに重複して送信しないよう、ユニーク化
 		const uniqueTokens = Array.from(
 			new Map(filteredTokens.map((item) => [item.pushToken, item])).values()
@@ -372,7 +369,29 @@ export async function sendPushNotification(
 			`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
 		);
 
-		// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
+		// Expo Push APIに送信
+		for (const message of messages) {
+			try {
+				const response = await fetch("https://exp.host/--/api/v2/push/send", {
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(message),
+				});
+
+				const result = await response.json();
+				console.log("Push notification sent:", result);
+			} catch (error) {
+				console.error("Error sending push notification:", error);
+			}
+		}
+	} else {
+		console.log("⚠️ プッシュ通知の送信先がありません（通知履歴は保存します）");
+	}
+
+	// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
 		const { saveNotificationHistory } = await import(
 			"./notificationHistoryService"
 		);
@@ -385,33 +404,13 @@ export async function sendPushNotification(
 			`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
 		);
 
-		for (const userId of allTargetUserIds) {
-			try {
-				await saveNotificationHistory(userId, title, body, data);
-			} catch (error) {
-				console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
-			}
+	for (const userId of allTargetUserIds) {
+		try {
+			await saveNotificationHistory(userId, title, body, data);
+		} catch (error) {
+			console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
 		}
-
-		// Expo Push Notification APIに送信
-		for (const message of messages) {
-			try {
-				const response = await fetch("https://exp.host/--/api/v2/push/send", {
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Accept-encoding": "gzip, deflate",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(message),
-				});
-
-				const result = await response.json();
-				console.log("Push notification sent:", result);
-			} catch (error) {
-				console.error("Error sending individual notification:", error);
-			}
-		}
+	}
 	} catch (error) {
 		console.error("Error in sendPushNotification:", error);
 	}
