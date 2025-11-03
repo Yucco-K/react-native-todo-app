@@ -3,6 +3,7 @@ import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
 	ActivityIndicator,
+	Image,
 	KeyboardAvoidingView,
 	Platform,
 	Text,
@@ -240,32 +241,53 @@ export default function SignupScreen() {
 						<View className="flex-1 h-px bg-gray-300" />
 					</View>
 
-					{/* Googleサインインボタン */}
+					{/* Googleサインインボタン（Google公式ガイドラインに準拠） */}
 					<TouchableOpacity
 						onPress={handleGoogleSignIn}
 						disabled={isGoogleLoading}
 						activeOpacity={0.7}
-						className="bg-white border-2 border-gray-300 rounded-md p-4 mb-6"
+						style={{
+							backgroundColor: "#ffffff",
+							borderColor: "#dadce0",
+							borderWidth: 1,
+							borderRadius: 4,
+							height: 48,
+							justifyContent: "center",
+							alignItems: "center",
+							marginBottom: 24,
+							opacity: isGoogleLoading ? 0.7 : 1,
+						}}
 					>
 						{isGoogleLoading ? (
 							<ActivityIndicator color="#4285F4" />
 						) : (
-							<View className="flex-row items-center justify-center">
-								<View
-									className="mr-3 rounded-full items-center justify-center"
-									style={{
-										width: 24,
-										height: 24,
-										backgroundColor: "#4285F4",
+							<View
+								style={{
+									width: "100%",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<Image
+									source={{
+										uri: "https://developers.google.com/identity/images/g-logo.png",
 									}}
+									style={{
+										width: 18,
+										height: 18,
+										position: "absolute",
+										left: 16,
+									}}
+									resizeMode="contain"
+								/>
+								<Text
+									style={{
+										color: "#3c4043",
+										fontSize: 16,
+										fontWeight: "600",
+									}}
+									className="font-noto-bold"
 								>
-									<Text
-										style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
-									>
-										G
-									</Text>
-								</View>
-								<Text className="text-gray-700 font-noto-bold text-base">
 									Googleで登録
 								</Text>
 							</View>

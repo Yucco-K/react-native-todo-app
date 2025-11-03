@@ -1,8 +1,10 @@
+import { useAuth } from "@/contexts/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Image,
 	KeyboardAvoidingView,
 	Platform,
 	Text,
@@ -14,7 +16,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
-import { useAuth } from "@/contexts/AuthContext";
 
 // バリデーションスキーマ
 const loginSchema = z.object({
@@ -31,7 +32,9 @@ export default function LoginScreen() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+	const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+		{}
+	);
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
 	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -41,7 +44,9 @@ export default function LoginScreen() {
 
 	const checkLockoutStatus = useCallback(async () => {
 		try {
-			const lockoutTimeStr = await AsyncStorage.getItem(STORAGE_KEY_LOCKOUT_TIME);
+			const lockoutTimeStr = await AsyncStorage.getItem(
+				STORAGE_KEY_LOCKOUT_TIME
+			);
 			if (lockoutTimeStr) {
 				const lockoutTime = Number.parseInt(lockoutTimeStr, 10);
 				const now = Date.now();
@@ -52,7 +57,10 @@ export default function LoginScreen() {
 					setRemainingTime(Math.ceil(timeRemaining / 1000));
 				} else {
 					// ロックアウト期間が過ぎた場合、カウントをリセット
-					await AsyncStorage.multiRemove([STORAGE_KEY_FAILED_ATTEMPTS, STORAGE_KEY_LOCKOUT_TIME]);
+					await AsyncStorage.multiRemove([
+						STORAGE_KEY_FAILED_ATTEMPTS,
+						STORAGE_KEY_LOCKOUT_TIME,
+					]);
 				}
 			}
 		} catch (error) {
@@ -85,14 +93,19 @@ export default function LoginScreen() {
 
 	const incrementFailedAttempts = async () => {
 		try {
-			const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
+			const attemptsStr = await AsyncStorage.getItem(
+				STORAGE_KEY_FAILED_ATTEMPTS
+			);
 			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
 			const newAttempts = attempts + 1;
 
 			if (newAttempts >= MAX_ATTEMPTS) {
 				// 7回目の失敗でロックアウト
 				const lockoutTime = Date.now() + LOCKOUT_DURATION_MS;
-				await AsyncStorage.setItem(STORAGE_KEY_LOCKOUT_TIME, lockoutTime.toString());
+				await AsyncStorage.setItem(
+					STORAGE_KEY_LOCKOUT_TIME,
+					lockoutTime.toString()
+				);
 				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, "0");
 				setIsLockedOut(true);
 				setRemainingTime(Math.ceil(LOCKOUT_DURATION_MS / 1000));
@@ -104,7 +117,10 @@ export default function LoginScreen() {
 					visibilityTime: 8000,
 				});
 			} else {
-				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, newAttempts.toString());
+				await AsyncStorage.setItem(
+					STORAGE_KEY_FAILED_ATTEMPTS,
+					newAttempts.toString()
+				);
 				const remainingAttempts = MAX_ATTEMPTS - newAttempts;
 				if (remainingAttempts <= 3) {
 					Toast.show({
@@ -122,7 +138,10 @@ export default function LoginScreen() {
 
 	const resetFailedAttempts = async () => {
 		try {
-			await AsyncStorage.multiRemove([STORAGE_KEY_FAILED_ATTEMPTS, STORAGE_KEY_LOCKOUT_TIME]);
+			await AsyncStorage.multiRemove([
+				STORAGE_KEY_FAILED_ATTEMPTS,
+				STORAGE_KEY_LOCKOUT_TIME,
+			]);
 		} catch (error) {
 			console.log("失敗回数のリセットエラー:", error);
 		}
@@ -199,10 +218,12 @@ export default function LoginScreen() {
 							errorMessage = "このアカウントは無効化されています";
 							break;
 						case "auth/too-many-requests":
-							errorMessage = "ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
+							errorMessage =
+								"ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
 							break;
 						case "auth/network-request-failed":
-							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							errorMessage =
+								"ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `ログインエラー: ${error.code}`;
@@ -215,33 +236,35 @@ export default function LoginScreen() {
 				}
 			}
 
-		// 認証エラーの場合のみ失敗回数をカウント
-		if (isAuthError) {
-			await incrementFailedAttempts();
-			// incrementFailedAttempts内でToastを表示しない場合もあるため、
-			// ここでも基本的なエラーメッセージを表示
-			const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
-			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
-			const remainingAttempts = MAX_ATTEMPTS - attempts;
-			
-			// 残り試行回数が4回以上の場合は通常のエラーメッセージを表示
-			if (remainingAttempts > 3) {
+			// 認証エラーの場合のみ失敗回数をカウント
+			if (isAuthError) {
+				await incrementFailedAttempts();
+				// incrementFailedAttempts内でToastを表示しない場合もあるため、
+				// ここでも基本的なエラーメッセージを表示
+				const attemptsStr = await AsyncStorage.getItem(
+					STORAGE_KEY_FAILED_ATTEMPTS
+				);
+				const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
+				const remainingAttempts = MAX_ATTEMPTS - attempts;
+
+				// 残り試行回数が4回以上の場合は通常のエラーメッセージを表示
+				if (remainingAttempts > 3) {
+					Toast.show({
+						type: "error",
+						text1: errorTitle,
+						text2: errorMessage,
+						visibilityTime: 4000,
+					});
+				}
+			} else {
+				// 認証エラー以外の場合は通常のトーストを表示
 				Toast.show({
 					type: "error",
 					text1: errorTitle,
 					text2: errorMessage,
-					visibilityTime: 4000,
+					visibilityTime: 6000,
 				});
 			}
-		} else {
-			// 認証エラー以外の場合は通常のトーストを表示
-			Toast.show({
-				type: "error",
-				text1: errorTitle,
-				text2: errorMessage,
-				visibilityTime: 6000,
-			});
-		}
 		} finally {
 			setIsLoading(false);
 		}
@@ -273,7 +296,9 @@ export default function LoginScreen() {
 				className="flex-1"
 			>
 				<View className="flex-1 justify-center px-8">
-					<Text className="text-4xl font-noto-bold text-center mb-8">Todo App</Text>
+					<Text className="text-4xl font-noto-bold text-center mb-8">
+						Todo App
+					</Text>
 					<Text className="text-2xl font-noto-bold mb-6">ログイン</Text>
 
 					<View className="mb-4">
@@ -287,7 +312,9 @@ export default function LoginScreen() {
 							autoComplete="email"
 						/>
 						{errors.email && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">{errors.email}</Text>
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
+								{errors.email}
+							</Text>
 						)}
 					</View>
 
@@ -314,7 +341,8 @@ export default function LoginScreen() {
 								⚠️ ログインが一時停止されています
 							</Text>
 							<Text className="text-red-600 font-noto-regular text-sm text-center">
-								セキュリティのため、{Math.floor(remainingTime / 60)}分{remainingTime % 60}
+								セキュリティのため、{Math.floor(remainingTime / 60)}分
+								{remainingTime % 60}
 								秒後に再試行できます
 							</Text>
 						</View>
@@ -330,7 +358,9 @@ export default function LoginScreen() {
 						{isLoading ? (
 							<ActivityIndicator color="white" />
 						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">ログイン</Text>
+							<Text className="text-white text-center font-noto-bold text-xl">
+								ログイン
+							</Text>
 						)}
 					</TouchableHighlight>
 
@@ -341,32 +371,54 @@ export default function LoginScreen() {
 						<View className="flex-1 h-px bg-gray-300" />
 					</View>
 
-					{/* Googleサインインボタン */}
+					{/* Googleサインインボタン（Google公式ガイドラインに準拠） */}
 					<TouchableOpacity
 						onPress={handleGoogleSignIn}
 						disabled={isGoogleLoading || isLockedOut}
 						activeOpacity={0.7}
-						className={`rounded-md p-4 mb-6 border-2 ${
-							isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"
-						}`}
+						style={{
+							backgroundColor: "#ffffff",
+							borderColor: "#dadce0",
+							borderWidth: 1,
+							borderRadius: 4,
+							height: 48,
+							justifyContent: "center",
+							alignItems: "center",
+							marginBottom: 24,
+							opacity: isGoogleLoading || isLockedOut ? 0.7 : 1,
+						}}
 					>
 						{isGoogleLoading ? (
 							<ActivityIndicator color="#4285F4" />
 						) : (
-							<View className="flex-row items-center justify-center">
-								<View
-									className="mr-3 rounded-full items-center justify-center"
-									style={{
-										width: 24,
-										height: 24,
-										backgroundColor: "#4285F4",
+							<View
+								style={{
+									width: "100%",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								{/* 左端のGロゴ（公式アセット） */}
+								<Image
+									source={{
+										uri: "https://developers.google.com/identity/images/g-logo.png",
 									}}
+									style={{
+										width: 18,
+										height: 18,
+										position: "absolute",
+										left: 16,
+									}}
+									resizeMode="contain"
+								/>
+								<Text
+									style={{
+										color: "#3c4043",
+										fontSize: 16,
+										fontWeight: "600",
+									}}
+									className="font-noto-bold"
 								>
-									<Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-										G
-									</Text>
-								</View>
-								<Text className="text-gray-700 font-noto-bold text-base">
 									Googleでログイン
 								</Text>
 							</View>
@@ -374,7 +426,9 @@ export default function LoginScreen() {
 					</TouchableOpacity>
 
 					<View className="flex-row justify-center">
-						<Text className="text-gray-600 font-noto-regular">アカウントをお持ちでない方は </Text>
+						<Text className="text-gray-600 font-noto-regular">
+							アカウントをお持ちでない方は{" "}
+						</Text>
 						<Link href="/signup" asChild>
 							<TouchableHighlight>
 								<Text className="text-blue-500 font-noto-bold">新規登録</Text>
