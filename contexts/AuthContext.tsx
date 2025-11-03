@@ -9,6 +9,8 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
+import * as Crypto from "expo-crypto";
+import * as Random from "expo-random";
 import { auth, db } from "../config/firebase";
 import {
 	registerForPushNotificationsAsync,
@@ -134,11 +136,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const signInWithGoogle = async () => {
 		try {
-			// カスタムURLスキームを使用したGoogle認証
+			// カスタムURLスキームを使用したGoogle認証（Authorization Code + PKCE）
 			const { makeRedirectUri } = await import("expo-auth-session");
 			const WebBrowser = await import("expo-web-browser");
 
-			// カスタムURLスキームでリダイレクト（iOS用URLスキームが指定されている場合はそれを使用）
+			// リダイレクトURI
 			const iosScheme = process.env.EXPO_PUBLIC_IOS_URL_SCHEME; // 例: com.googleusercontent.apps.XXXX
 			const redirectUri = iosScheme
 				? makeRedirectUri({ native: `${iosScheme}:/oauthredirect` })
@@ -146,59 +148,80 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 			console.log("🔐 Google認証を開始:", redirectUri);
 
-			// Google OAuth 2.0の認証URLを構築
 			const clientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "";
-			const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(
-				{
-					client_id: clientId,
-					redirect_uri: redirectUri,
-					response_type: "id_token",
-					scope: "openid email profile",
-					nonce: Math.random().toString(36).substring(7),
-				}
-			)}`;
+			if (!clientId) throw new Error("EXPO_PUBLIC_GOOGLE_CLIENT_ID が未設定です");
 
-			// WebBrowserでGoogle認証画面を開く
-			const result = await WebBrowser.openAuthSessionAsync(
-				authUrl,
-				redirectUri
+			// PKCE: code_verifier / code_challenge 生成
+			const randomBytes = await Random.getRandomBytesAsync(32);
+			const codeVerifier = Buffer.from(randomBytes).toString("base64")
+				.replace(/\+/g, "-")
+				.replace(/\//g, "_")
+				.replace(/=+$/, "");
+			const challengeBuffer = await Crypto.digestStringAsync(
+				Crypto.CryptoDigestAlgorithm.SHA256,
+				codeVerifier,
+				{ encoding: Crypto.CryptoEncoding.BASE64 }
 			);
+			const codeChallenge = challengeBuffer
+				.replace(/\+/g, "-")
+				.replace(/\//g, "_")
+				.replace(/=+$/, "");
 
-			if (result.type === "success" && result.url) {
-				// URLからid_tokenを抽出
-				const url = new URL(result.url);
-				const idToken =
-					url.searchParams.get("id_token") ||
-					url.hash.match(/id_token=([^&]+)/)?.[1];
+			// 認可エンドポイント（コードフロー + PKCE）
+			const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+				client_id: clientId,
+				redirect_uri: redirectUri,
+				response_type: "code",
+				scope: "openid email profile",
+				code_challenge: codeChallenge,
+				code_challenge_method: "S256",
+			}).toString()}`;
 
-				if (!idToken) {
-					throw new Error("Google認証に失敗しました");
-				}
-
-				// Firebase認証
-				const credential = GoogleAuthProvider.credential(idToken);
-				const userCredential = await signInWithCredential(auth, credential);
-				const userId = userCredential.user.uid;
-				const userEmail = userCredential.user.email;
-
-				// Firestoreにユーザー情報を保存
-				if (userEmail) {
-					const userDocRef = doc(db, "users", userId);
-					const userDocSnap = await getDoc(userDocRef);
-
-					if (!userDocSnap.exists()) {
-						await setDoc(userDocRef, {
-							email: userEmail,
-							createdAt: new Date(),
-						});
-						console.log("✅ Google認証: ユーザー情報を新規作成:", {
-							userId,
-							email: userEmail,
-						});
-					}
-				}
-			} else {
+			const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+			if (result.type !== "success" || !result.url) {
 				throw new Error("Google認証がキャンセルされました");
+			}
+
+			// URLから code を取得
+			const url = new URL(result.url);
+			const authCode = url.searchParams.get("code") || url.hash.match(/code=([^&]+)/)?.[1];
+			if (!authCode) throw new Error("認可コードを取得できませんでした");
+
+			// トークンエンドポイントで交換（client_secret不要: PKCE）
+			const tokenResp = await fetch("https://oauth2.googleapis.com/token", {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					client_id: clientId,
+					code: authCode,
+					code_verifier: codeVerifier,
+					grant_type: "authorization_code",
+					redirect_uri: redirectUri,
+				}).toString(),
+			});
+			if (!tokenResp.ok) {
+				const errText = await tokenResp.text();
+				throw new Error(`トークン交換に失敗: ${tokenResp.status} ${errText}`);
+			}
+			const tokenJson: any = await tokenResp.json();
+			const idToken: string | undefined = tokenJson.id_token;
+			const userEmailFromToken: string | undefined = tokenJson.email;
+			if (!idToken) throw new Error("id_tokenの取得に失敗しました");
+
+			// Firebase認証
+			const credential = GoogleAuthProvider.credential(idToken);
+			const userCredential = await signInWithCredential(auth, credential);
+			const userId = userCredential.user.uid;
+			const userEmail = userCredential.user.email ?? userEmailFromToken;
+
+			// Firestoreにユーザー情報を保存
+			if (userEmail) {
+				const userDocRef = doc(db, "users", userId);
+				const userDocSnap = await getDoc(userDocRef);
+				if (!userDocSnap.exists()) {
+					await setDoc(userDocRef, { email: userEmail, createdAt: new Date() });
+					console.log("✅ Google認証: ユーザー情報を新規作成:", { userId, email: userEmail });
+				}
 			}
 		} catch (error) {
 			console.error("❌ Google認証エラー:", error);
