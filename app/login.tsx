@@ -213,18 +213,33 @@ export default function LoginScreen() {
 				}
 			}
 
-			// 認証エラーの場合のみ失敗回数をカウント
-			if (isAuthError) {
-				await incrementFailedAttempts();
-			} else {
-				// 認証エラー以外の場合は通常のトーストを表示
+		// 認証エラーの場合のみ失敗回数をカウント
+		if (isAuthError) {
+			await incrementFailedAttempts();
+			// incrementFailedAttempts内でToastを表示しない場合もあるため、
+			// ここでも基本的なエラーメッセージを表示
+			const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
+			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
+			const remainingAttempts = MAX_ATTEMPTS - attempts;
+			
+			// 残り試行回数が4回以上の場合は通常のエラーメッセージを表示
+			if (remainingAttempts > 3) {
 				Toast.show({
 					type: "error",
 					text1: errorTitle,
 					text2: errorMessage,
-					visibilityTime: 6000,
+					visibilityTime: 4000,
 				});
 			}
+		} else {
+			// 認証エラー以外の場合は通常のトーストを表示
+			Toast.show({
+				type: "error",
+				text1: errorTitle,
+				text2: errorMessage,
+				visibilityTime: 6000,
+			});
+		}
 		} finally {
 			setIsLoading(false);
 		}
