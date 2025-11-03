@@ -330,15 +330,23 @@ export default function OrganizationSettingsScreen() {
 								setIsEditingName(true);
 							}}
 						>
-							<Text
-								className="text-2xl font-noto-bold"
-								style={{
-									color: isDark ? "#60a5fa" : "#2563eb",
-								}}
-								numberOfLines={3}
-							>
-								{organization.name}
-							</Text>
+							<View className="flex-row items-center">
+								<Text
+									className="text-2xl font-noto-bold flex-1"
+									style={{
+										color: isDark ? "#60a5fa" : "#2563eb",
+									}}
+									numberOfLines={3}
+								>
+									{organization.name}
+								</Text>
+								<Ionicons
+									name="create-outline"
+									size={24}
+									color={isDark ? "#60a5fa" : "#2563eb"}
+									style={{ marginLeft: 8 }}
+								/>
+							</View>
 							<Text
 								className="text-sm font-noto-regular mt-1"
 								style={{ color: isDark ? "#9ca3af" : "#6b7280" }}

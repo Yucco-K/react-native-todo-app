@@ -146,14 +146,15 @@ export default function TabLayout() {
 						</TouchableOpacity>
 					),
 				headerTitle: () => (
-					<View style={{ flex: 1, paddingHorizontal: 10, maxWidth: 250 }}>
+					<View style={{ flex: 1, paddingHorizontal: 10, alignItems: "center" }}>
 						<Text
 							style={{
 								color: "#fff",
-								fontSize: 20,
+								fontSize: 18,
 								fontWeight: "bold",
+								textAlign: "center",
 							}}
-							numberOfLines={2}
+							numberOfLines={3}
 						>
 							{getHeaderTitle()}
 						</Text>
