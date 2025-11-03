@@ -119,22 +119,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const logout = async () => {
-		// ログアウト時にpushTokenをクリアする（同じデバイスで複数ユーザーを使う場合の対策）
-		if (user) {
-			try {
-				const userDocRef = doc(db, "users", user.uid);
-				await setDoc(
-					userDocRef,
-					{
-						pushToken: null,
-					},
-					{ merge: true }
-				);
-				console.log("✅ プッシュトークンをクリアしました");
-			} catch (error) {
-				console.error("❌ プッシュトークンのクリアに失敗:", error);
-			}
-		}
+		// ログアウト時にpushTokenをクリアしない
+		// 理由: savePushToken()で重複トークンは自動的に削除されるため、
+		// ログアウト時にクリアする必要はない。
+		// また、同じデバイスで複数ユーザーをテストする場合、
+		// ログアウトするとそのユーザーのトークンが失われてしまう。
+		console.log("🚪 ログアウト（プッシュトークンは保持）");
 		await signOut(auth);
 	};
 
