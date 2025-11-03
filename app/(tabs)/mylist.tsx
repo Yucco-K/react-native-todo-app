@@ -23,8 +23,10 @@ import {
 } from "@/services/userService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+	AppState,
+	type AppStateStatus,
 	Keyboard,
 	Switch,
 	Text,
@@ -66,6 +68,23 @@ export default function MyListScreen() {
 		};
 		loadNotificationSetting();
 	}, []);
+
+	// アプリがフォアグラウンドに戻った時にリストを更新（remindNotifiedの更新を反映）
+	useEffect(() => {
+		const subscription = AppState.addEventListener(
+			"change",
+			(nextAppState: AppStateStatus) => {
+				if (nextAppState === "active") {
+					console.log("📱 アプリがフォアグラウンドに戻りました → Todoリストを更新");
+					triggerRefresh();
+				}
+			}
+		);
+
+		return () => {
+			subscription.remove();
+		};
+	}, [triggerRefresh]);
 
 	// ログインしていない場合は何も表示しない
 	if (!user) {
@@ -203,7 +222,10 @@ export default function MyListScreen() {
 			Toast.show({
 				type: "error",
 				text1: "エラー",
-				text2: error instanceof Error ? error.message : "通知設定の変更に失敗しました",
+				text2:
+					error instanceof Error
+						? error.message
+						: "通知設定の変更に失敗しました",
 			});
 		}
 	};
