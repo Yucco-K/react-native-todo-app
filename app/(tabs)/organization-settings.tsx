@@ -49,6 +49,7 @@ export default function OrganizationSettingsScreen() {
 	const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [newName, setNewName] = useState("");
+	const [editNameError, setEditNameError] = useState<string | null>(null);
 
 	// URLパラメータから組織IDを取得
 	const organizationId = params.id as string;
@@ -244,21 +245,14 @@ export default function OrganizationSettingsScreen() {
 
 	// 組織名を更新
 	const handleUpdateName = async () => {
+		setEditNameError(null);
 		const trimmedName = newName.trim();
 		if (!trimmedName) {
-			Toast.show({
-				type: "error",
-				text1: "入力エラー",
-				text2: "グループ名を入力してください",
-			});
+			setEditNameError("グループ名を入力してください");
 			return;
 		}
 		if (trimmedName.length > 30) {
-			Toast.show({
-				type: "error",
-				text1: "文字数エラー",
-				text2: "グループ名は30文字以内で入力してください",
-			});
+			setEditNameError("グループ名は30文字以内で入力してください");
 			return;
 		}
 
@@ -267,6 +261,7 @@ export default function OrganizationSettingsScreen() {
 			await refreshOrganizations();
 			setIsEditingName(false);
 			setNewName("");
+			setEditNameError(null);
 			Toast.show({
 				type: "success",
 				text1: "更新成功",
@@ -274,11 +269,7 @@ export default function OrganizationSettingsScreen() {
 			});
 		} catch (error) {
 			console.error("Error updating organization name:", error);
-			Toast.show({
-				type: "error",
-				text1: "更新失敗",
-				text2: "グループ名の更新に失敗しました",
-			});
+			setEditNameError("グループ名の更新に失敗しました");
 		}
 	};
 
@@ -561,9 +552,17 @@ export default function OrganizationSettingsScreen() {
 				visible={isEditingName}
 				transparent
 				animationType="fade"
-				onRequestClose={() => setIsEditingName(false)}
+				onRequestClose={() => {
+					setIsEditingName(false);
+					setEditNameError(null);
+				}}
 			>
-				<TouchableWithoutFeedback onPress={() => setIsEditingName(false)}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						setIsEditingName(false);
+						setEditNameError(null);
+					}}
+				>
 					<View className="flex-1 justify-center items-center bg-black/75">
 						<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 							<View
@@ -583,25 +582,47 @@ export default function OrganizationSettingsScreen() {
 									<TextInput
 										className="border-2 rounded-md px-4 py-3 text-lg font-noto-regular"
 										style={{
-											borderColor: isDark ? "#4b5563" : "#d1d5db",
+											borderColor: editNameError
+												? "#ef4444"
+												: isDark
+													? "#4b5563"
+													: "#d1d5db",
 											backgroundColor: isDark ? "#374151" : "#ffffff",
 											color: isDark ? "#f3f4f6" : "#000000",
 										}}
 										placeholder="新しいグループ名"
 										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
 										value={newName}
-										onChangeText={setNewName}
+										onChangeText={(text) => {
+											setNewName(text);
+											setEditNameError(null);
+										}}
 										autoFocus
 										multiline
 										textAlignVertical="top"
 										maxLength={30}
 									/>
-									<Text
-										className="text-sm font-noto-regular mt-1"
-										style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-									>
-										{newName.length}/30文字
-									</Text>
+									<View className="flex-row justify-between items-center mt-1">
+										<Text
+											className="text-sm font-noto-regular"
+											style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+										>
+											{newName.length}/30文字
+										</Text>
+									</View>
+									{editNameError && (
+										<View
+											className="mt-2 p-3 rounded-md"
+											style={{ backgroundColor: isDark ? "#7f1d1d" : "#fee2e2" }}
+										>
+											<Text
+												className="text-sm font-noto-regular"
+												style={{ color: isDark ? "#fca5a5" : "#dc2626" }}
+											>
+												{editNameError}
+											</Text>
+										</View>
+									)}
 								</View>
 
 								<View className="flex-row gap-3">
@@ -609,6 +630,7 @@ export default function OrganizationSettingsScreen() {
 										onPress={() => {
 											setIsEditingName(false);
 											setNewName("");
+											setEditNameError(null);
 										}}
 										activeOpacity={0.7}
 										className="flex-1 bg-gray-300 rounded-md py-3"

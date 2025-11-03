@@ -146,7 +146,9 @@ export default function TabLayout() {
 						</TouchableOpacity>
 					),
 				headerTitle: () => (
-					<View style={{ flex: 1, paddingHorizontal: 10, alignItems: "center" }}>
+					<View
+						style={{ flex: 1, paddingHorizontal: 10, paddingBottom: 8, alignItems: "center" }}
+					>
 						<Text
 							style={{
 								color: "#fff",
@@ -160,29 +162,29 @@ export default function TabLayout() {
 						</Text>
 					</View>
 				),
-				headerRight: () =>
-					selectedOrganization ? (
-						<View
-							style={{
-								backgroundColor: "#ffffff",
-								paddingHorizontal: 12,
-								paddingVertical: 6,
-								borderRadius: 20,
-								marginRight: 15,
-							}}
-						>
-							<Text
+					headerRight: () =>
+						selectedOrganization ? (
+							<View
 								style={{
-									color: "#3b82f6",
-									fontSize: 12,
-									fontWeight: "bold",
+									backgroundColor: "#ffffff",
+									paddingHorizontal: 12,
+									paddingVertical: 6,
+									borderRadius: 20,
+									marginRight: 15,
 								}}
 							>
-								グループ
-							</Text>
-						</View>
-					) : null,
-			}}
+								<Text
+									style={{
+										color: "#3b82f6",
+										fontSize: 12,
+										fontWeight: "bold",
+									}}
+								>
+									グループ
+								</Text>
+							</View>
+						) : null,
+				}}
 			>
 				<Stack.Screen name="mylist" />
 				<Stack.Screen
