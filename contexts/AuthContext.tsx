@@ -10,7 +10,10 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../config/firebase";
-import { registerForPushNotificationsAsync, savePushToken } from "../services/notificationService";
+import {
+	registerForPushNotificationsAsync,
+	savePushToken,
+} from "../services/notificationService";
 import { getUserNickname, saveUserNickname } from "../services/userService";
 
 type AuthContextType = {
@@ -70,7 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const signUp = async (email: string, password: string) => {
-		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+		const userCredential = await createUserWithEmailAndPassword(
+			auth,
+			email,
+			password
+		);
 		const userId = userCredential.user.uid;
 
 		// Firestoreのusersコレクションにユーザー情報を保存
@@ -83,7 +90,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const signIn = async (email: string, password: string) => {
-		const userCredential = await signInWithEmailAndPassword(auth, email, password);
+		const userCredential = await signInWithEmailAndPassword(
+			auth,
+			email,
+			password
+		);
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
 
@@ -110,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						{
 							email: userEmail,
 						},
-						{ merge: true },
+						{ merge: true }
 					);
 					console.log("✅ ユーザー情報を更新（email追加）:", {
 						userId,
@@ -123,33 +134,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const signInWithGoogle = async () => {
 		try {
-			// Web版のGoogle認証（Expo WebBrowserを使用）
+			// カスタムURLスキームを使用したGoogle認証
 			const { makeRedirectUri } = await import("expo-auth-session");
 			const WebBrowser = await import("expo-web-browser");
-			
+
+			// useProxy: false でカスタムURLスキームを使用
 			const redirectUri = makeRedirectUri({
-				scheme: "react-native-todo-app",
+				scheme: "reactnativetodoapp",
+				useProxy: false,
 			});
 
 			console.log("🔐 Google認証を開始:", redirectUri);
 
 			// Google OAuth 2.0の認証URLを構築
 			const clientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "";
-			const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
-				client_id: clientId,
-				redirect_uri: redirectUri,
-				response_type: "id_token",
-				scope: "openid email profile",
-				nonce: Math.random().toString(36).substring(7),
-			})}`;
+			const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(
+				{
+					client_id: clientId,
+					redirect_uri: redirectUri,
+					response_type: "id_token",
+					scope: "openid email profile",
+					nonce: Math.random().toString(36).substring(7),
+				}
+			)}`;
 
 			// WebBrowserでGoogle認証画面を開く
-			const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+			const result = await WebBrowser.openAuthSessionAsync(
+				authUrl,
+				redirectUri
+			);
 
 			if (result.type === "success" && result.url) {
 				// URLからid_tokenを抽出
 				const url = new URL(result.url);
-				const idToken = url.searchParams.get("id_token") || url.hash.match(/id_token=([^&]+)/)?.[1];
+				const idToken =
+					url.searchParams.get("id_token") ||
+					url.hash.match(/id_token=([^&]+)/)?.[1];
 
 				if (!idToken) {
 					throw new Error("Google認証に失敗しました");
