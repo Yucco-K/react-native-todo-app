@@ -457,17 +457,28 @@ export const getReminderHistory = async (): Promise<Todo[]> => {
 			return [];
 		}
 
-		// remindAtが設定されているTodoを取得
-		const q = query(
+		// 1. 個人のTodo（userId == currentUserId）
+		const personalQuery = query(
 			collection(db, COLLECTION_NAME),
 			where("userId", "==", userId),
 			where("remindAt", "!=", null)
 		);
 
-		const querySnapshot = await getDocs(q);
+		// 2. 所属している組織のTodoを取得
+		const orgsSnapshot = await getDocs(
+			query(
+				collection(db, "organizations"),
+				where("members", "array-contains", userId)
+			)
+		);
+
+		const organizationIds = orgsSnapshot.docs.map((doc) => doc.id);
 
 		const reminders: Todo[] = [];
-		querySnapshot.forEach((doc) => {
+
+		// 個人のTodoを取得
+		const personalSnapshot = await getDocs(personalQuery);
+		personalSnapshot.forEach((doc) => {
 			const data = doc.data() as DocumentData;
 			reminders.push({
 				id: doc.id,
@@ -486,10 +497,48 @@ export const getReminderHistory = async (): Promise<Todo[]> => {
 			});
 		});
 
+		// 組織のTodoを取得（操作者を含む全員のリマインド設定履歴）
+		for (const orgId of organizationIds) {
+			const orgQuery = query(
+				collection(db, COLLECTION_NAME),
+				where("organizationId", "==", orgId),
+				where("remindAt", "!=", null)
+			);
+
+			const orgSnapshot = await getDocs(orgQuery);
+			orgSnapshot.forEach((doc) => {
+				const data = doc.data() as DocumentData;
+				// 重複チェック（個人Todoとして既に追加されている場合はスキップ）
+				if (!reminders.some((r) => r.id === doc.id)) {
+					reminders.push({
+						id: doc.id,
+						userId: data.userId,
+						title: data.title,
+						content: data.content,
+						completed: data.completed,
+						shared: data.shared || false,
+						organizationId: data.organizationId,
+						category: data.category || "other",
+						createdAt: data.createdAt?.toDate(),
+						completedAt: data.completedAt?.toDate(),
+						completedBy: data.completedBy,
+						remindAt: data.remindAt?.toDate(),
+						remindNotified: data.remindNotified || false,
+					});
+				}
+			});
+		}
+
 		// remindAtで降順ソート（新しい順）
 		reminders.sort((a, b) => {
 			if (!a.remindAt || !b.remindAt) return 0;
 			return b.remindAt.getTime() - a.remindAt.getTime();
+		});
+
+		console.log("📋 リマインド履歴取得:", {
+			個人TODO: personalSnapshot.size,
+			組織数: organizationIds.length,
+			総リマインド数: reminders.length,
 		});
 
 		return reminders;
