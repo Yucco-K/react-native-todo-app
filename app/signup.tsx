@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -13,7 +14,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
-import { useAuth } from "@/contexts/AuthContext";
 
 // バリデーションスキーマ
 const signupSchema = z
@@ -58,7 +58,11 @@ export default function SignupScreen() {
 			} = {};
 			result.error.errors.forEach((err) => {
 				const field = err.path[0];
-				if (field === "email" || field === "password" || field === "confirmPassword") {
+				if (
+					field === "email" ||
+					field === "password" ||
+					field === "confirmPassword"
+				) {
 					fieldErrors[field] = err.message;
 				}
 			});
@@ -107,7 +111,8 @@ export default function SignupScreen() {
 								"メール/パスワード認証が有効化されていません。Firebase Consoleで有効にしてください。";
 							break;
 						case "auth/network-request-failed":
-							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							errorMessage =
+								"ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `登録エラー: ${error.code}`;
@@ -156,7 +161,9 @@ export default function SignupScreen() {
 				className="flex-1"
 			>
 				<View className="flex-1 justify-center px-8">
-					<Text className="text-4xl font-noto-bold text-center mb-8">Todo App</Text>
+					<Text className="text-4xl font-noto-bold text-center mb-8">
+						Todo App
+					</Text>
 					<Text className="text-2xl font-noto-bold mb-6">新規登録</Text>
 
 					<View className="mb-4">
@@ -170,7 +177,9 @@ export default function SignupScreen() {
 							autoComplete="email"
 						/>
 						{errors.email && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">{errors.email}</Text>
+							<Text className="text-red-500 text-base mt-1 font-noto-regular">
+								{errors.email}
+							</Text>
 						)}
 					</View>
 
@@ -218,7 +227,9 @@ export default function SignupScreen() {
 						{isLoading ? (
 							<ActivityIndicator color="white" />
 						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">登録</Text>
+							<Text className="text-white text-center font-noto-bold text-xl">
+								登録
+							</Text>
 						)}
 					</TouchableHighlight>
 
@@ -248,7 +259,9 @@ export default function SignupScreen() {
 										backgroundColor: "#4285F4",
 									}}
 								>
-									<Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+									<Text
+										style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
+									>
 										G
 									</Text>
 								</View>
@@ -260,7 +273,9 @@ export default function SignupScreen() {
 					</TouchableOpacity>
 
 					<View className="flex-row justify-center">
-						<Text className="text-gray-600 font-noto-regular">既にアカウントをお持ちの方は </Text>
+						<Text className="text-gray-600 font-noto-regular">
+							既にアカウントをお持ちの方は{" "}
+						</Text>
 						<Link href="/login" asChild>
 							<TouchableHighlight>
 								<Text className="text-blue-500 font-noto-bold">ログイン</Text>

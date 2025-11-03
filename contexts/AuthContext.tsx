@@ -125,6 +125,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		try {
 			// Web版のGoogle認証（Expo WebBrowserを使用）
 			const { makeRedirectUri } = await import("expo-auth-session");
+			const WebBrowser = await import("expo-web-browser");
+			
 			const redirectUri = makeRedirectUri({
 				scheme: "react-native-todo-app",
 			});
@@ -142,7 +144,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			})}`;
 
 			// WebBrowserでGoogle認証画面を開く
-			const { WebBrowser } = await import("expo-web-browser");
 			const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
 
 			if (result.type === "success" && result.url) {

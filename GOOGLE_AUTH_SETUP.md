@@ -5,10 +5,12 @@
 ## 1. Google Cloud Consoleでの設定
 
 ### 1.1 プロジェクトの作成または選択
+
 1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
 2. 既存のプロジェクトを選択するか、新しいプロジェクトを作成
 
 ### 1.2 OAuth 2.0認証情報の作成
+
 1. 左側のメニューから「APIとサービス」→「認証情報」を選択
 2. 「認証情報を作成」→「OAuth クライアント ID」をクリック
 3. アプリケーションの種類を選択：
@@ -17,26 +19,31 @@
    - **Android**（Androidアプリの場合）
 
 ### 1.3 Webアプリケーション用の設定
+
 1. 名前: 任意の名前（例: "Todo App Web"）
 2. 承認済みのJavaScript生成元:
    ```
    https://auth.expo.io
    ```
 3. 承認済みのリダイレクトURI:
+
    ```
    https://auth.expo.io/@your-expo-username/react-native-todo-app
    ```
+
    ※ `your-expo-username`は実際のExpoユーザー名に置き換えてください
 
 4. 「作成」をクリック
 5. **クライアントID**をコピーして保存
 
 ### 1.4 iOS用の設定（オプション）
+
 1. アプリケーションの種類: **iOS**
 2. バンドルID: `com.yourcompany.reactnativetodoapp`（app.jsonのbundleIdentifierと一致させる）
 3. 「作成」をクリック
 
 ### 1.5 Android用の設定（オプション）
+
 1. アプリケーションの種類: **Android**
 2. パッケージ名: `com.yourcompany.reactnativetodoapp`（app.jsonのpackageと一致させる）
 3. SHA-1証明書フィンガープリント:
@@ -49,6 +56,7 @@
 ## 2. Firebase Consoleでの設定
 
 ### 2.1 Google認証プロバイダーの有効化
+
 1. [Firebase Console](https://console.firebase.google.com/)にアクセス
 2. プロジェクトを選択
 3. 左側のメニューから「Authentication」→「Sign-in method」を選択
@@ -58,6 +66,7 @@
 7. 「保存」をクリック
 
 ### 2.2 承認済みドメインの追加
+
 1. Firebase Console の「Authentication」→「Settings」→「Authorized domains」
 2. 以下のドメインが追加されていることを確認：
    - `localhost`
@@ -87,27 +96,30 @@ EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 
 ```json
 {
-  "expo": {
-    "scheme": "react-native-todo-app",
-    "ios": {
-      "bundleIdentifier": "com.yourcompany.reactnativetodoapp"
-    },
-    "android": {
-      "package": "com.yourcompany.reactnativetodoapp"
-    }
-  }
+	"expo": {
+		"scheme": "react-native-todo-app",
+		"ios": {
+			"bundleIdentifier": "com.yourcompany.reactnativetodoapp"
+		},
+		"android": {
+			"package": "com.yourcompany.reactnativetodoapp"
+		}
+	}
 }
 ```
 
 ## 5. テスト
 
 ### 5.1 Expo Goでのテスト
+
 ```bash
 npm start
 ```
+
 Expo Goアプリでスキャンして、Google認証ボタンをタップしてテスト
 
 ### 5.2 本番ビルドでのテスト
+
 ```bash
 # iOSの場合
 eas build --platform ios
@@ -119,14 +131,17 @@ eas build --platform android
 ## トラブルシューティング
 
 ### エラー: "redirect_uri_mismatch"
+
 - Google Cloud Consoleの承認済みリダイレクトURIが正しく設定されているか確認
 - Expoのユーザー名とプロジェクト名が正しいか確認
 
 ### エラー: "Google認証に失敗しました"
+
 - `.env`ファイルの`EXPO_PUBLIC_GOOGLE_CLIENT_ID`が正しく設定されているか確認
 - Firebase Consoleで Google認証プロバイダーが有効になっているか確認
 
 ### エラー: "auth/operation-not-allowed"
+
 - Firebase Consoleで Google認証プロバイダーが有効になっているか確認
 
 ## セキュリティに関する注意事項
@@ -147,4 +162,3 @@ eas build --platform android
 - [Firebase Authentication - Google](https://firebase.google.com/docs/auth/web/google-signin)
 - [Expo Authentication](https://docs.expo.dev/guides/authentication/)
 - [Google Cloud Console](https://console.cloud.google.com/)
-
