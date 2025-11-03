@@ -65,6 +65,47 @@ export async function createOrganization(name: string): Promise<Organization> {
 }
 
 /**
+ * 組織名を更新
+ */
+export async function updateOrganizationName(
+	organizationId: string,
+	newName: string
+): Promise<void> {
+	const userId = auth.currentUser?.uid;
+	if (!userId) {
+		throw new Error("ユーザーがログインしていません");
+	}
+
+	const trimmedName = newName.trim();
+	if (!trimmedName) {
+		throw new Error("グループ名が空です");
+	}
+	if (trimmedName.length > 30) {
+		throw new Error("グループ名は30文字以内で入力してください");
+	}
+
+	// 組織が存在するか確認
+	const orgRef = doc(db, ORGANIZATIONS_COLLECTION, organizationId);
+	const orgDoc = await getDoc(orgRef);
+
+	if (!orgDoc.exists()) {
+		throw new Error("組織が見つかりません");
+	}
+
+	const orgData = orgDoc.data();
+
+	// オーナーのみが名前を変更できる
+	if (orgData.ownerId !== userId) {
+		throw new Error("組織名を変更する権限がありません");
+	}
+
+	await updateDoc(orgRef, {
+		name: trimmedName,
+		updatedAt: new Date(),
+	});
+}
+
+/**
  * 自分が所属する組織一覧を取得
  */
 export async function getMyOrganizations(): Promise<Organization[]> {

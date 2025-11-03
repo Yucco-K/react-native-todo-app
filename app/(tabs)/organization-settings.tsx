@@ -6,6 +6,7 @@ import {
 	ActivityIndicator,
 	Alert,
 	Keyboard,
+	Modal,
 	ScrollView,
 	Text,
 	TextInput,
@@ -28,6 +29,7 @@ import {
 	inviteByEmail,
 	leaveOrganization,
 	removeMember,
+	updateOrganizationName,
 } from "../../services/organizationService";
 
 export default function OrganizationSettingsScreen() {
@@ -45,6 +47,8 @@ export default function OrganizationSettingsScreen() {
 	const [isInviting, setIsInviting] = useState(false);
 	const [inviteError, setInviteError] = useState<string | null>(null);
 	const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
+	const [isEditingName, setIsEditingName] = useState(false);
+	const [newName, setNewName] = useState("");
 
 	// URLパラメータから組織IDを取得
 	const organizationId = params.id as string;
@@ -238,6 +242,46 @@ export default function OrganizationSettingsScreen() {
 		);
 	};
 
+	// 組織名を更新
+	const handleUpdateName = async () => {
+		const trimmedName = newName.trim();
+		if (!trimmedName) {
+			Toast.show({
+				type: "error",
+				text1: "入力エラー",
+				text2: "グループ名を入力してください",
+			});
+			return;
+		}
+		if (trimmedName.length > 30) {
+			Toast.show({
+				type: "error",
+				text1: "文字数エラー",
+				text2: "グループ名は30文字以内で入力してください",
+			});
+			return;
+		}
+
+		try {
+			await updateOrganizationName(organizationId, trimmedName);
+			await refreshOrganizations();
+			setIsEditingName(false);
+			setNewName("");
+			Toast.show({
+				type: "success",
+				text1: "更新成功",
+				text2: "グループ名を更新しました",
+			});
+		} catch (error) {
+			console.error("Error updating organization name:", error);
+			Toast.show({
+				type: "error",
+				text1: "更新失敗",
+				text2: "グループ名の更新に失敗しました",
+			});
+		}
+	};
+
 	if (!organization) {
 		return (
 			<View
@@ -278,17 +322,43 @@ export default function OrganizationSettingsScreen() {
 							color={isDark ? "#60a5fa" : "#2563eb"}
 						/>
 					</TouchableOpacity>
-					<Text
-						className="text-2xl font-noto-bold flex-1"
-						style={{
-							color: isDark ? "#60a5fa" : "#2563eb",
-							flexShrink: 1,
-							flexWrap: "wrap",
-						}}
-						numberOfLines={2}
-					>
-						{organization.name}
-					</Text>
+					{isOwner ? (
+						<TouchableOpacity
+							className="flex-1"
+							onPress={() => {
+								setNewName(organization.name);
+								setIsEditingName(true);
+							}}
+						>
+							<Text
+								className="text-2xl font-noto-bold"
+								style={{
+									color: isDark ? "#60a5fa" : "#2563eb",
+								}}
+								numberOfLines={3}
+							>
+								{organization.name}
+							</Text>
+							<Text
+								className="text-sm font-noto-regular mt-1"
+								style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+							>
+								タップして編集
+							</Text>
+						</TouchableOpacity>
+					) : (
+						<View className="flex-1">
+							<Text
+								className="text-2xl font-noto-bold"
+								style={{
+									color: isDark ? "#60a5fa" : "#2563eb",
+								}}
+								numberOfLines={3}
+							>
+								{organization.name}
+							</Text>
+						</View>
+					)}
 				</View>
 			</View>
 
@@ -477,6 +547,86 @@ export default function OrganizationSettingsScreen() {
 					</TouchableHighlight>
 				</View>
 			</ScrollView>
+
+			{/* グループ名編集モーダル */}
+			<Modal
+				visible={isEditingName}
+				transparent
+				animationType="fade"
+				onRequestClose={() => setIsEditingName(false)}
+			>
+				<TouchableWithoutFeedback onPress={() => setIsEditingName(false)}>
+					<View className="flex-1 justify-center items-center bg-black/75">
+						<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+							<View
+								className="rounded-lg p-6 w-11/12"
+								style={{
+									backgroundColor: isDark ? "#1f2937" : "#ffffff",
+								}}
+							>
+								<Text
+									className="text-xl font-noto-bold mb-4"
+									style={{ color: isDark ? "#f3f4f6" : "#111827" }}
+								>
+									グループ名を編集
+								</Text>
+
+								<View className="mb-4">
+									<TextInput
+										className="border-2 rounded-md px-4 py-3 text-lg font-noto-regular"
+										style={{
+											borderColor: isDark ? "#4b5563" : "#d1d5db",
+											backgroundColor: isDark ? "#374151" : "#ffffff",
+											color: isDark ? "#f3f4f6" : "#000000",
+										}}
+										placeholder="新しいグループ名"
+										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+										value={newName}
+										onChangeText={setNewName}
+										autoFocus
+										multiline
+										textAlignVertical="top"
+										maxLength={30}
+									/>
+									<Text
+										className="text-sm font-noto-regular mt-1"
+										style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+									>
+										{newName.length}/30文字
+									</Text>
+								</View>
+
+								<View className="flex-row gap-3">
+									<TouchableHighlight
+										onPress={() => {
+											setIsEditingName(false);
+											setNewName("");
+										}}
+										activeOpacity={0.7}
+										className="flex-1 bg-gray-300 rounded-md py-3"
+										underlayColor="#d1d5db"
+									>
+										<Text className="text-gray-700 font-noto-bold text-lg text-center">
+											キャンセル
+										</Text>
+									</TouchableHighlight>
+
+									<TouchableHighlight
+										onPress={handleUpdateName}
+										activeOpacity={0.7}
+										className="flex-1 bg-blue-600 rounded-md py-3"
+										underlayColor="#2563eb"
+									>
+										<Text className="text-white font-noto-bold text-lg text-center">
+											更新
+										</Text>
+									</TouchableHighlight>
+								</View>
+							</View>
+						</TouchableWithoutFeedback>
+					</View>
+				</TouchableWithoutFeedback>
+			</Modal>
 		</View>
 	);
 }
