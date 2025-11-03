@@ -73,7 +73,14 @@ export async function registerForPushNotificationsAsync(): Promise<
 
 /**
  * ユーザーのプッシュトークンをFirestoreに保存
- * 同じトークンを持つ他のユーザーからはトークンを削除（デバイスの重複登録を防ぐ）
+ * 
+ * 【開発環境での注意】
+ * 同じデバイスで複数ユーザーをテストする場合、重複トークン削除を無効化してください。
+ * 環境変数 EXPO_PUBLIC_ALLOW_DUPLICATE_TOKENS=true を設定すると、
+ * 複数ユーザーが同じトークンを持つことを許可します。
+ * 
+ * 【本番環境】
+ * 各ユーザーが異なるデバイスを使用するため、重複トークン削除が正常に機能します。
  */
 export async function savePushToken(token: string): Promise<void> {
 	const userId = auth.currentUser?.uid;
@@ -82,37 +89,44 @@ export async function savePushToken(token: string): Promise<void> {
 	}
 
 	try {
-		// 1. 同じプッシュトークンを持つ他のユーザーを検索
-		const usersRef = collection(db, "users");
-		const q = query(usersRef, where("pushToken", "==", token));
-		const querySnapshot = await getDocs(q);
+		// 開発環境で重複トークンを許可するかどうか
+		const allowDuplicates = process.env.EXPO_PUBLIC_ALLOW_DUPLICATE_TOKENS === "true";
 
-		// 2. 現在のユーザー以外から、このトークンを削除
-		const deletePromises: Promise<void>[] = [];
-		querySnapshot.forEach((docSnap) => {
-			if (docSnap.id !== userId) {
+		if (!allowDuplicates) {
+			// 1. 同じプッシュトークンを持つ他のユーザーを検索
+			const usersRef = collection(db, "users");
+			const q = query(usersRef, where("pushToken", "==", token));
+			const querySnapshot = await getDocs(q);
+
+			// 2. 現在のユーザー以外から、このトークンを削除
+			const deletePromises: Promise<void>[] = [];
+			querySnapshot.forEach((docSnap) => {
+				if (docSnap.id !== userId) {
+					console.log(
+						`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`
+					);
+					deletePromises.push(
+						setDoc(
+							doc(db, "users", docSnap.id),
+							{
+								pushToken: null,
+								updatedAt: new Date(),
+							},
+							{ merge: true }
+						)
+					);
+				}
+			});
+
+			// 重複トークンを削除
+			if (deletePromises.length > 0) {
+				await Promise.all(deletePromises);
 				console.log(
-					`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`
-				);
-				deletePromises.push(
-					setDoc(
-						doc(db, "users", docSnap.id),
-						{
-							pushToken: null,
-							updatedAt: new Date(),
-						},
-						{ merge: true }
-					)
+					`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`
 				);
 			}
-		});
-
-		// 重複トークンを削除
-		if (deletePromises.length > 0) {
-			await Promise.all(deletePromises);
-			console.log(
-				`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`
-			);
+		} else {
+			console.log("🔧 開発モード: 重複トークンを許可します");
 		}
 
 		// 3. 現在のユーザーにトークンを保存
