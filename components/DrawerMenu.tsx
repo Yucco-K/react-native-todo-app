@@ -186,8 +186,8 @@ export function DrawerMenu({
 																	? "#d1d5db"
 																	: "#374151",
 														flexShrink: 1,
+														flexWrap: "wrap",
 													}}
-													numberOfLines={2}
 												>
 													{org.name}
 												</Text>

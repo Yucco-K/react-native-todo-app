@@ -119,10 +119,10 @@ export function InvitationListModal({
 								招待一覧
 							</Text>
 
-						<ScrollView
-							style={{ maxHeight: 400 }}
-							showsVerticalScrollIndicator={true}
-						>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={true}
+							>
 								{isLoading ? (
 									<View className="py-8">
 										<ActivityIndicator
@@ -159,6 +159,7 @@ export function InvitationListModal({
 												style={{
 													color: isDark ? "#d1d5db" : "#1f2937",
 													flexShrink: 1,
+													flexWrap: "wrap",
 												}}
 											>
 												{invitation.organizationName}

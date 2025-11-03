@@ -1,3 +1,10 @@
+import { useTheme } from "@/contexts/ThemeContext";
+import { AICategoryError, predictCategory } from "@/services/aiCategoryService";
+import { notifyTodoUpdated } from "@/services/notificationService";
+import { updateTodo } from "@/services/todoService";
+import type { TodoCategory } from "@/types/Category";
+import { CATEGORY_OPTIONS } from "@/types/Category";
+import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -14,13 +21,6 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
-import { useTheme } from "@/contexts/ThemeContext";
-import { AICategoryError, predictCategory } from "@/services/aiCategoryService";
-import { notifyTodoUpdated } from "@/services/notificationService";
-import { updateTodo } from "@/services/todoService";
-import type { TodoCategory } from "@/types/Category";
-import { CATEGORY_OPTIONS } from "@/types/Category";
-import type { Todo } from "@/types/Todo";
 
 // バリデーションスキーマ
 const todoSchema = z.object({
@@ -28,7 +28,11 @@ const todoSchema = z.object({
 		.string()
 		.min(1, "タイトルを入力してください")
 		.max(50, "タイトルは50文字以内で入力してください"),
-	content: z.string().max(200, "内容は200文字以内で入力してください").optional().or(z.literal("")),
+	content: z
+		.string()
+		.max(200, "内容は200文字以内で入力してください")
+		.optional()
+		.or(z.literal("")),
 });
 
 type EditTodoModalProps = {
@@ -38,14 +42,23 @@ type EditTodoModalProps = {
 	onSave: () => void;
 };
 
-export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTodoModalProps) {
+export default function EditTodoModal({
+	visible,
+	todo,
+	onClose,
+	onSave,
+}: EditTodoModalProps) {
 	const { isDark } = useTheme();
 	const [title, setTitle] = useState(todo?.title || "");
 	const [content, setContent] = useState(todo?.content || "");
-	const [category, setCategory] = useState<TodoCategory>(todo?.category || "other");
+	const [category, setCategory] = useState<TodoCategory>(
+		todo?.category || "other"
+	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isPredicting, setIsPredicting] = useState(false);
-	const [errors, setErrors] = useState<{ title?: string; content?: string }>({});
+	const [errors, setErrors] = useState<{ title?: string; content?: string }>(
+		{}
+	);
 
 	React.useEffect(() => {
 		if (todo) {
@@ -173,7 +186,12 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			onRequestClose={onClose}
+		>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -209,6 +227,8 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 									value={title}
 									onChangeText={setTitle}
 									autoFocus={true}
+									multiline
+									textAlignVertical="top"
 								/>
 								{errors.title && (
 									<Text className="text-red-500 text-lg mt-1 font-noto-regular">
@@ -254,7 +274,11 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 								>
 									カテゴリ
 								</Text>
-								<ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+								<ScrollView
+									horizontal
+									showsHorizontalScrollIndicator={false}
+									className="flex-row"
+								>
 									{CATEGORY_OPTIONS.map((option) => (
 										<TouchableOpacity
 											key={option.value}
@@ -267,7 +291,9 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 										>
 											<Text
 												className={`font-noto-regular text-base ${
-													category === option.value ? "text-white" : "text-gray-700"
+													category === option.value
+														? "text-white"
+														: "text-gray-700"
 												}`}
 											>
 												{option.icon} {option.label}
@@ -293,7 +319,9 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 									)}
 									<Text
 										className={`ml-2 font-noto-bold text-base ${
-											isPredicting || !title.trim() ? "text-gray-400" : "text-purple-600"
+											isPredicting || !title.trim()
+												? "text-gray-400"
+												: "text-purple-600"
 										}`}
 									>
 										{isPredicting ? "AI推測中..." : "AIでカテゴリを推測"}
@@ -324,7 +352,9 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">保存</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">
+											保存
+										</Text>
 									)}
 								</TouchableHighlight>
 							</View>

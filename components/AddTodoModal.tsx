@@ -1,3 +1,10 @@
+import { useTheme } from "@/contexts/ThemeContext";
+import { AICategoryError, predictCategory } from "@/services/aiCategoryService";
+import { notifyTodoAdded } from "@/services/notificationService";
+import { generateTodoRecommendations } from "@/services/todoRecommendationService";
+import { createTodo } from "@/services/todoService";
+import type { TodoCategory } from "@/types/Category";
+import { CATEGORY_OPTIONS } from "@/types/Category";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -14,13 +21,6 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
-import { useTheme } from "@/contexts/ThemeContext";
-import { AICategoryError, predictCategory } from "@/services/aiCategoryService";
-import { notifyTodoAdded } from "@/services/notificationService";
-import { generateTodoRecommendations } from "@/services/todoRecommendationService";
-import { createTodo } from "@/services/todoService";
-import type { TodoCategory } from "@/types/Category";
-import { CATEGORY_OPTIONS } from "@/types/Category";
 
 // バリデーションスキーマ
 const todoSchema = z.object({
@@ -28,7 +28,11 @@ const todoSchema = z.object({
 		.string()
 		.min(1, "タイトルを入力してください")
 		.max(50, "タイトルは50文字以内で入力してください"),
-	content: z.string().max(200, "内容は200文字以内で入力してください").optional().or(z.literal("")),
+	content: z
+		.string()
+		.max(200, "内容は200文字以内で入力してください")
+		.optional()
+		.or(z.literal("")),
 });
 
 type AddTodoModalProps = {
@@ -50,11 +54,14 @@ export default function AddTodoModal({
 	const [category, setCategory] = useState<TodoCategory>("other");
 	const [isLoading, setIsLoading] = useState(false);
 	const [isPredicting, setIsPredicting] = useState(false);
-	const [errors, setErrors] = useState<{ title?: string; content?: string }>({});
+	const [errors, setErrors] = useState<{ title?: string; content?: string }>(
+		{}
+	);
 	const [recommendations, setRecommendations] = useState<
 		Array<{ title: string; category: TodoCategory; message: string }>
 	>([]);
-	const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+	const [isLoadingRecommendations, setIsLoadingRecommendations] =
+		useState(false);
 	const shownRecommendationsRef = useRef<string[]>([]);
 
 	// おすすめTODOを取得
@@ -62,11 +69,16 @@ export default function AddTodoModal({
 		setIsLoadingRecommendations(true);
 		try {
 			// refから最新の表示済みリストを取得
-			const newRecs = await generateTodoRecommendations(shownRecommendationsRef.current);
+			const newRecs = await generateTodoRecommendations(
+				shownRecommendationsRef.current
+			);
 			setRecommendations(newRecs);
 			// 表示済みリストに追加
 			const newTitles = newRecs.map((r) => r.title.toLowerCase().trim());
-			shownRecommendationsRef.current = [...shownRecommendationsRef.current, ...newTitles];
+			shownRecommendationsRef.current = [
+				...shownRecommendationsRef.current,
+				...newTitles,
+			];
 		} catch (error) {
 			console.error("おすすめTODO取得エラー:", error);
 			setRecommendations([]);
@@ -221,7 +233,7 @@ export default function AddTodoModal({
 				recommendation.title,
 				"", // 内容は空
 				recommendation.category,
-				organizationId,
+				organizationId
 			);
 
 			console.log("✅ TODO保存成功");
@@ -253,7 +265,12 @@ export default function AddTodoModal({
 	};
 
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			onRequestClose={handleClose}
+		>
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View
 					className="flex-1 justify-center items-center"
@@ -274,7 +291,10 @@ export default function AddTodoModal({
 								Todo追加
 							</Text>
 
-							<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
+							<ScrollView
+								style={{ maxHeight: 400 }}
+								showsVerticalScrollIndicator={false}
+							>
 								{/* おすすめTODO */}
 								{isLoadingRecommendations ? (
 									<View className="mb-4 p-3 bg-blue-50 rounded-lg">
@@ -302,7 +322,11 @@ export default function AddTodoModal({
 													{rec.message}
 												</Text>
 												<View className="flex-row items-center mt-1">
-													<Ionicons name="add-circle" size={20} color="#22c55e" />
+													<Ionicons
+														name="add-circle"
+														size={20}
+														color="#22c55e"
+													/>
 													<Text className="ml-2 text-green-700 font-noto-bold text-base">
 														{rec.title}
 													</Text>
@@ -323,26 +347,28 @@ export default function AddTodoModal({
 									</View>
 								) : null}
 
-								{/* タイトル入力 */}
-								<View className="mb-3">
-									<TextInput
-										className="border-2 rounded-md text-lg"
-										style={{
-											fontFamily: "System",
-											lineHeight: undefined,
-											paddingVertical: 14,
-											paddingHorizontal: 12,
-											fontSize: 18,
-											borderColor: isDark ? "#4b5563" : "#d1d5db",
-											backgroundColor: isDark ? "#374151" : "#ffffff",
-											color: isDark ? "#f3f4f6" : "#000000",
-										}}
-										placeholder="タイトル"
-										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-										value={title}
-										onChangeText={setTitle}
-										autoFocus={true}
-									/>
+							{/* タイトル入力 */}
+							<View className="mb-3">
+								<TextInput
+									className="border-2 rounded-md text-lg"
+									style={{
+										fontFamily: "System",
+										lineHeight: undefined,
+										paddingVertical: 14,
+										paddingHorizontal: 12,
+										fontSize: 18,
+										borderColor: isDark ? "#4b5563" : "#d1d5db",
+										backgroundColor: isDark ? "#374151" : "#ffffff",
+										color: isDark ? "#f3f4f6" : "#000000",
+									}}
+									placeholder="タイトル"
+									placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
+									value={title}
+									onChangeText={setTitle}
+									autoFocus={true}
+									multiline={true}
+									textAlignVertical="top"
+								/>
 									{errors.title && (
 										<Text className="text-red-500 text-lg mt-1 font-noto-regular">
 											{errors.title}
@@ -388,7 +414,11 @@ export default function AddTodoModal({
 									>
 										カテゴリ
 									</Text>
-									<ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
+									<ScrollView
+										horizontal
+										showsHorizontalScrollIndicator={false}
+										className="mb-2"
+									>
 										{CATEGORY_OPTIONS.map((option) => (
 											<TouchableOpacity
 												key={option.value}
@@ -401,13 +431,17 @@ export default function AddTodoModal({
 											>
 												<Text
 													className={`font-noto-regular text-base ${
-														category === option.value ? "text-white" : "text-gray-700"
+														category === option.value
+															? "text-white"
+															: "text-gray-700"
 													}`}
 												>
 													{option.icon}{" "}
 													<Text
 														className={`ml-2 font-noto-bold text-base ${
-															category === option.value ? "text-white" : "text-gray-700"
+															category === option.value
+																? "text-white"
+																: "text-gray-700"
 														}`}
 													>
 														{option.label}
@@ -430,7 +464,9 @@ export default function AddTodoModal({
 										<Ionicons
 											name="sparkles"
 											size={18}
-											color={isPredicting || !title.trim() ? "#9ca3af" : "#9333ea"}
+											color={
+												isPredicting || !title.trim() ? "#9ca3af" : "#9333ea"
+											}
 										/>
 										<Text className="text-gray-700 font-noto-bold text-lg ml-2">
 											{isPredicting ? "推測中..." : "AIカテゴリ推測"}
@@ -463,7 +499,9 @@ export default function AddTodoModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">保存</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">
+											保存
+										</Text>
 									)}
 								</TouchableHighlight>
 							</View>

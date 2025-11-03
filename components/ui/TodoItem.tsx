@@ -91,8 +91,10 @@ export default function TodoItem({
 										? "#e5e7eb"
 										: "#000000",
 								textDecorationLine: completed ? "line-through" : "none",
+								flexShrink: 1,
+								flexWrap: "wrap",
+								width: "100%",
 							}}
-							numberOfLines={1}
 						>
 							{title}
 						</Text>
@@ -193,7 +195,7 @@ export default function TodoItem({
 				onRequestClose={() => setMenuVisible(false)}
 			>
 				<Pressable
-					className="flex-1 bg-black/50"
+					className="flex-1 bg-black/75"
 					onPress={() => setMenuVisible(false)}
 				>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">

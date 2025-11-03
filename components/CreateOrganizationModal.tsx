@@ -29,7 +29,8 @@ export function CreateOrganizationModal({
 	const { refreshOrganizations } = useOrganization();
 
 	const handleCreate = async () => {
-		if (!name.trim()) {
+		const trimmedName = name.trim();
+		if (!trimmedName) {
 			Toast.show({
 				type: "error",
 				text1: "入力エラー",
@@ -37,10 +38,18 @@ export function CreateOrganizationModal({
 			});
 			return;
 		}
+		if (trimmedName.length > 30) {
+			Toast.show({
+				type: "error",
+				text1: "文字数エラー",
+				text2: "グループ名は30文字以内で入力してください",
+			});
+			return;
+		}
 
 		setIsLoading(true);
 		try {
-			await createOrganization(name.trim());
+			await createOrganization(trimmedName);
 			await refreshOrganizations();
 
 			setName("");
@@ -110,6 +119,9 @@ export function CreateOrganizationModal({
 									value={name}
 									onChangeText={setName}
 									autoFocus
+									multiline
+									textAlignVertical="top"
+									maxLength={30}
 								/>
 							</View>
 

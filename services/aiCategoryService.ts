@@ -1,5 +1,5 @@
-import { httpsCallable } from "firebase/functions";
 import type { TodoCategory } from "@/types/Category";
+import { httpsCallable } from "firebase/functions";
 import { functions } from "../config/firebase";
 
 /**
@@ -20,14 +20,17 @@ export class AICategoryError extends Error {
 	constructor(
 		message: string,
 		public readonly userMessage: string,
-		public readonly code?: string,
+		public readonly code?: string
 	) {
 		super(message);
 		this.name = "AICategoryError";
 	}
 }
 
-export async function predictCategory(title: string, content: string): Promise<TodoCategory> {
+export async function predictCategory(
+	title: string,
+	content: string
+): Promise<TodoCategory> {
 	try {
 		if (!title.trim()) {
 			return "other";
@@ -42,16 +45,18 @@ export async function predictCategory(title: string, content: string): Promise<T
 		console.log(`🤖 AIカテゴリ推測を開始: "${title}"`);
 
 		// タイムアウト処理（7秒）
-		const timeoutPromise = new Promise<{ data: { category: TodoCategory } }>((_, reject) => {
-			setTimeout(() => {
-				reject(new Error("AI推測がタイムアウトしました（7秒）"));
-			}, 7000);
-		});
+		const timeoutPromise = new Promise<{ data: { category: TodoCategory } }>(
+			(_, reject) => {
+				setTimeout(() => {
+					reject(new Error("AI推測がタイムアウトしました（7秒）"));
+				}, 7000);
+			}
+		);
 
 		// Cloud Functionの呼び出しとタイムアウトを競争させる
 		const result = await Promise.race([
 			predictCategoryFn({ title, content }),
-			timeoutPromise
+			timeoutPromise,
 		]);
 
 		const category = result.data.category;
@@ -65,7 +70,9 @@ export async function predictCategory(title: string, content: string): Promise<T
 
 		// タイムアウトエラーの場合は"other"を返す
 		if (errorMessage?.includes("タイムアウト")) {
-			console.warn("⏱️ AI推測がタイムアウトしました（7秒） → カテゴリを「その他」に設定");
+			console.warn(
+				"⏱️ AI推測がタイムアウトしました（7秒） → カテゴリを「その他」に設定"
+			);
 			return "other";
 		}
 
@@ -74,28 +81,28 @@ export async function predictCategory(title: string, content: string): Promise<T
 			throw new AICategoryError(
 				"認証エラー",
 				"ログインが必要です。再度ログインしてください。",
-				errorCode,
+				errorCode
 			);
 		} else if (errorCode === "functions/resource-exhausted") {
 			console.warn("⚠️ レート制限: 1日の上限に達しました");
 			throw new AICategoryError(
 				"レート制限",
 				"AI推測の1日の上限（100回）に達しました。明日再度お試しください。",
-				errorCode,
+				errorCode
 			);
 		} else if (errorCode === "functions/internal") {
 			console.error("❌ サーバーエラー:", errorMessage);
 			throw new AICategoryError(
 				"サーバーエラー",
 				"サーバーで問題が発生しました。しばらくしてから再度お試しください。",
-				errorCode,
+				errorCode
 			);
 		} else {
 			console.error("❌ AIカテゴリ推測エラー:", error);
 			throw new AICategoryError(
 				"AI推測エラー",
 				"AI推測に失敗しました。手動でカテゴリを選択してください。",
-				"unknown",
+				"unknown"
 			);
 		}
 	}

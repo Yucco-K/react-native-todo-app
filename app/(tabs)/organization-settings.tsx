@@ -283,6 +283,7 @@ export default function OrganizationSettingsScreen() {
 						style={{
 							color: isDark ? "#60a5fa" : "#2563eb",
 							flexShrink: 1,
+							flexWrap: "wrap",
 						}}
 						numberOfLines={2}
 					>

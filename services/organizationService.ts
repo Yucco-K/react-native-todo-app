@@ -39,9 +39,17 @@ export async function createOrganization(name: string): Promise<Organization> {
 		throw new Error("ユーザーがログインしていません");
 	}
 
+	const trimmedName = name.trim();
+	if (!trimmedName) {
+		throw new Error("グループ名が空です");
+	}
+	if (trimmedName.length > 30) {
+		throw new Error("グループ名は30文字以内で入力してください");
+	}
+
 	const inviteCode = generateInviteCode();
 	const newOrg = {
-		name,
+		name: trimmedName,
 		ownerId: userId,
 		inviteCode,
 		members: [userId],

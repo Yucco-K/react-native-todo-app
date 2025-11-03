@@ -123,14 +123,14 @@ export default function ReminderHistoryModal({
 										<View className="flex-1">
 											<Text
 												className="font-noto-bold text-base mb-1"
-												style={{ color: isDark ? "#f3f4f6" : "#111827" }}
+												style={{ color: isDark ? "#f3f4f6" : "#111827", flexWrap: "wrap" }}
 											>
 												{todo.title}
 											</Text>
 											{todo.content && (
 												<Text
 													className="font-noto-regular text-sm mb-2"
-													style={{ color: isDark ? "#d1d5db" : "#6b7280" }}
+													style={{ color: isDark ? "#d1d5db" : "#6b7280", flexWrap: "wrap" }}
 													numberOfLines={2}
 												>
 													{todo.content}

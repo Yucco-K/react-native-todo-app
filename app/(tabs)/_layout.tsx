@@ -153,8 +153,8 @@ export default function TabLayout() {
 								fontSize: 20,
 								fontWeight: "bold",
 								flexShrink: 1,
+								flexWrap: "wrap",
 							}}
-							numberOfLines={2}
 						>
 							{getHeaderTitle()}
 						</Text>
