@@ -250,6 +250,10 @@ async function getAllPushTokensWithUserId(
 			currentUserId,
 			currentUserId型: typeof currentUserId,
 			取得したuserIds: tokens.map((t) => t.userId),
+			取得したトークン一覧: tokens.map((t) => ({
+				userId: t.userId,
+				token: t.pushToken.substring(0, 30) + "...",
+			})),
 			重複トークン数: duplicates.length,
 			重複詳細:
 				duplicates.length > 0
