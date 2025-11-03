@@ -151,9 +151,9 @@ export default function TabLayout() {
 						style={{
 							flex: 1,
 							paddingHorizontal: 10,
-							paddingBottom: 8,
+							paddingVertical: 4,
 							alignItems: "center",
-							minHeight: 70,
+							justifyContent: "center",
 						}}
 					>
 						<Text
