@@ -6,7 +6,7 @@
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
-		"scheme": "reactnativetodoapp",
+		"scheme": "com.googleusercontent.apps.386143300405-4l3dnd98a9nal2q453mpn8inrmbufqrm",
 		"userInterfaceStyle": "automatic",
 		"splash": {
 			"image": "./assets/images/splash-icon.png",

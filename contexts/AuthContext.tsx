@@ -138,10 +138,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const { makeRedirectUri } = await import("expo-auth-session");
 			const WebBrowser = await import("expo-web-browser");
 
-			// カスタムURLスキームでリダイレクト
-			const redirectUri = makeRedirectUri({
-				scheme: "reactnativetodoapp",
-			});
+			// カスタムURLスキームでリダイレクト（iOS用URLスキームが指定されている場合はそれを使用）
+			const iosScheme = process.env.EXPO_PUBLIC_IOS_URL_SCHEME; // 例: com.googleusercontent.apps.XXXX
+			const redirectUri = iosScheme
+				? makeRedirectUri({ native: `${iosScheme}:/oauthredirect` })
+				: makeRedirectUri();
 
 			console.log("🔐 Google認証を開始:", redirectUri);
 
