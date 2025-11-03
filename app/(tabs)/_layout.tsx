@@ -14,7 +14,14 @@ import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import {
+	AppState,
+	Platform,
+	StatusBar,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -127,17 +134,17 @@ export default function TabLayout() {
 	return (
 		<>
 			<StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
-		<Stack
-			screenOptions={{
-				headerShown: true,
-				headerStyle: {
-					backgroundColor: "#3b82f6",
-				},
-				headerTintColor: "#fff",
-				headerTitleStyle: {
-					fontWeight: "bold",
-					fontSize: 20,
-				},
+			<Stack
+				screenOptions={{
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: "#3b82f6",
+					},
+					headerTintColor: "#fff",
+					headerTitleStyle: {
+						fontWeight: "bold",
+						fontSize: 20,
+					},
 					headerLeft: () => (
 						<TouchableOpacity
 							onPress={() => setDrawerVisible(true)}
@@ -146,51 +153,29 @@ export default function TabLayout() {
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
-				headerTitle: () => (
-					<View
-						style={{
-							flex: 1,
-							paddingHorizontal: 10,
-							paddingVertical: 4,
-							alignItems: "center",
-							justifyContent: "center",
-						}}
-					>
-						<Text
+					headerTitle: () => (
+						<View
 							style={{
-								color: "#fff",
-								fontSize: 18,
-								fontWeight: "bold",
-								textAlign: "center",
+								flex: 1,
+								paddingHorizontal: 10,
+								paddingVertical: 4,
+								alignItems: "center",
+								justifyContent: "center",
 							}}
-							numberOfLines={3}
 						>
-							{getHeaderTitle()}
-						</Text>
-					</View>
-				),
-					headerRight: () =>
-						selectedOrganization ? (
-							<View
+							<Text
 								style={{
-									backgroundColor: "#ffffff",
-									paddingHorizontal: 12,
-									paddingVertical: 6,
-									borderRadius: 20,
-									marginRight: 15,
+									color: "#fff",
+									fontSize: 18,
+									fontWeight: "bold",
+									textAlign: "center",
 								}}
+								numberOfLines={3}
 							>
-								<Text
-									style={{
-										color: "#3b82f6",
-										fontSize: 12,
-										fontWeight: "bold",
-									}}
-								>
-									グループ
-								</Text>
-							</View>
-						) : null,
+								{getHeaderTitle()}
+							</Text>
+						</View>
+				),
 				}}
 			>
 				<Stack.Screen name="mylist" />
