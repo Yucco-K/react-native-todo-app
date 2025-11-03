@@ -13,7 +13,6 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import { useTheme } from "../contexts/ThemeContext";
 import { Avatar } from "./ui/Avatar";
 
@@ -36,25 +35,19 @@ export default function NicknameModal({
 	const [nickname, setNickname] = useState(currentNickname);
 	const [avatarUrl, setAvatarUrl] = useState(currentAvatarUrl || "");
 	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
 	const handleSave = async () => {
+		setError(null);
 		const trimmedNickname = nickname.trim();
 
 		if (!trimmedNickname) {
-			Toast.show({
-				type: "error",
-				text1: "入力エラー",
-				text2: "ニックネームを入力してください",
-			});
+			setError("ニックネームを入力してください");
 			return;
 		}
 
 		if (trimmedNickname.length > 20) {
-			Toast.show({
-				type: "error",
-				text1: "入力エラー",
-				text2: "ニックネームは20文字以内で入力してください",
-			});
+			setError("ニックネームは20文字以内で入力してください");
 			return;
 		}
 
@@ -64,11 +57,7 @@ export default function NicknameModal({
 			onClose();
 		} catch (error) {
 			console.error(error);
-			Toast.show({
-				type: "error",
-				text1: "保存失敗",
-				text2: "プロフィールの保存に失敗しました",
-			});
+			setError("プロフィールの保存に失敗しました");
 		} finally {
 			setIsLoading(false);
 		}
@@ -79,16 +68,13 @@ export default function NicknameModal({
 	};
 
 	const handlePickImage = async () => {
+		setError(null);
 		try {
 			// パーミッションをリクエスト
 			const { status } =
 				await ImagePicker.requestMediaLibraryPermissionsAsync();
 			if (status !== "granted") {
-				Toast.show({
-					type: "error",
-					text1: "権限エラー",
-					text2: "画像ライブラリへのアクセス権限が必要です",
-				});
+				setError("画像ライブラリへのアクセス権限が必要です");
 				return;
 			}
 
@@ -105,11 +91,7 @@ export default function NicknameModal({
 			}
 		} catch (error) {
 			console.error("画像選択エラー:", error);
-			Toast.show({
-				type: "error",
-				text1: "エラー",
-				text2: "画像の選択に失敗しました",
-			});
+			setError("画像の選択に失敗しました");
 		}
 	};
 
@@ -137,68 +119,68 @@ export default function NicknameModal({
 								プロフィール設定
 							</Text>
 
-							<ScrollView showsVerticalScrollIndicator={false}>
-								{/* アバター設定 */}
-								<View className="mb-6">
+						<ScrollView showsVerticalScrollIndicator={false}>
+							{/* エラーメッセージ */}
+							{error && (
+								<View
+									className="mb-4 p-3 rounded-md"
+									style={{ backgroundColor: isDark ? "#7f1d1d" : "#fee2e2" }}
+								>
 									<Text
-										className="text-base font-noto-bold mb-3"
-										style={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+										className="text-sm font-noto-regular"
+										style={{ color: isDark ? "#fca5a5" : "#dc2626" }}
 									>
-										アバター
+										{error}
 									</Text>
-									<View className="flex-row items-center">
-										<Avatar avatarUrl={avatarUrl || null} size={80} />
-										<View className="ml-4 flex-1">
-											<TouchableOpacity onPress={handlePickImage} className="mb-2">
-												<View
-													className="px-4 py-2 rounded-md"
-													style={{
-														backgroundColor: isDark ? "#374151" : "#e5e7eb",
-													}}
+								</View>
+							)}
+
+							{/* アバター設定 */}
+							<View className="mb-6">
+								<Text
+									className="text-base font-noto-bold mb-3"
+									style={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+								>
+									アバター
+								</Text>
+								<View className="flex-row items-center">
+									<Avatar avatarUrl={avatarUrl || null} size={80} />
+									<View className="ml-4 flex-1">
+										<TouchableOpacity
+											onPress={handlePickImage}
+											className="mb-2"
+										>
+											<View
+												className="px-4 py-2 rounded-md"
+												style={{
+													backgroundColor: isDark ? "#374151" : "#e5e7eb",
+												}}
+											>
+												<Text
+													className="text-center font-noto-bold"
+													style={{ color: isDark ? "#d1d5db" : "#374151" }}
 												>
-													<Text
-														className="text-center font-noto-bold"
-														style={{ color: isDark ? "#d1d5db" : "#374151" }}
-													>
-														画像を選択
+													画像を選択
+												</Text>
+											</View>
+										</TouchableOpacity>
+										{avatarUrl && (
+											<TouchableOpacity onPress={handleDeleteAvatar}>
+												<View className="flex-row items-center justify-center">
+													<Ionicons
+														name="trash-outline"
+														size={16}
+														color="#ef4444"
+													/>
+													<Text className="text-red-500 font-noto-regular ml-1">
+														削除
 													</Text>
 												</View>
 											</TouchableOpacity>
-											{avatarUrl && (
-												<TouchableOpacity onPress={handleDeleteAvatar}>
-													<View className="flex-row items-center justify-center">
-														<Ionicons
-															name="trash-outline"
-															size={16}
-															color="#ef4444"
-														/>
-														<Text className="text-red-500 font-noto-regular ml-1">
-															削除
-														</Text>
-													</View>
-												</TouchableOpacity>
-											)}
-										</View>
+										)}
 									</View>
-									<Text
-										className="text-xs font-noto-regular mt-3 mb-2"
-										style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-									>
-										または画像URLを直接入力:
-									</Text>
-									<TextInput
-										className="border-2 rounded-md p-3 text-sm font-noto-regular"
-										style={{
-											borderColor: isDark ? "#4b5563" : "#d1d5db",
-											backgroundColor: isDark ? "#374151" : "#ffffff",
-											color: isDark ? "#f3f4f6" : "#000000",
-										}}
-										placeholder="画像URLを入力（任意）"
-										placeholderTextColor={isDark ? "#9ca3af" : "#9ca3af"}
-										value={avatarUrl}
-										onChangeText={setAvatarUrl}
-									/>
 								</View>
+							</View>
 
 								{/* ニックネーム設定 */}
 								<View className="mb-4">
