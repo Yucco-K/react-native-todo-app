@@ -41,7 +41,18 @@ export async function predictCategory(title: string, content: string): Promise<T
 
 		console.log(`🤖 AIカテゴリ推測を開始: "${title}"`);
 
-		const result = await predictCategoryFn({ title, content });
+		// タイムアウト処理（7秒）
+		const timeoutPromise = new Promise<{ data: { category: TodoCategory } }>((_, reject) => {
+			setTimeout(() => {
+				reject(new Error("AI推測がタイムアウトしました（7秒）"));
+			}, 7000);
+		});
+
+		// Cloud Functionの呼び出しとタイムアウトを競争させる
+		const result = await Promise.race([
+			predictCategoryFn({ title, content }),
+			timeoutPromise
+		]);
 
 		const category = result.data.category;
 		console.log(`✅ AIカテゴリ推測成功: "${title}" → ${category}`);
@@ -51,6 +62,12 @@ export async function predictCategory(title: string, content: string): Promise<T
 		// エラーハンドリング
 		const errorCode = (error as { code?: string; message?: string }).code;
 		const errorMessage = (error as { message?: string }).message;
+
+		// タイムアウトエラーの場合は"other"を返す
+		if (errorMessage?.includes("タイムアウト")) {
+			console.warn("⏱️ AI推測がタイムアウトしました（7秒） → カテゴリを「その他」に設定");
+			return "other";
+		}
 
 		if (errorCode === "functions/unauthenticated") {
 			console.error("❌ 認証エラー: ログインが必要です");
