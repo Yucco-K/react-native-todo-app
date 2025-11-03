@@ -126,17 +126,17 @@ export default function TabLayout() {
 
 	return (
 		<>
-			<Stack
-				screenOptions={{
-					headerShown: true,
-					headerStyle: {
-						backgroundColor: "#3b82f6",
-					},
-					headerTintColor: "#fff",
-					headerTitleStyle: {
-						fontWeight: "bold",
-						fontSize: 20,
-					},
+		<Stack
+			screenOptions={{
+				headerShown: true,
+				headerStyle: {
+					backgroundColor: "#3b82f6",
+				},
+				headerTintColor: "#fff",
+				headerTitleStyle: {
+					fontWeight: "bold",
+					fontSize: 20,
+				},
 					headerLeft: () => (
 						<TouchableOpacity
 							onPress={() => setDrawerVisible(true)}
@@ -145,23 +145,29 @@ export default function TabLayout() {
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
-				headerTitle: () => (
-					<View
-						style={{ flex: 1, paddingHorizontal: 10, paddingBottom: 8, alignItems: "center" }}
-					>
-						<Text
+					headerTitle: () => (
+						<View
 							style={{
-								color: "#fff",
-								fontSize: 18,
-								fontWeight: "bold",
-								textAlign: "center",
+								flex: 1,
+								paddingHorizontal: 10,
+								paddingVertical: 8,
+								alignItems: "center",
+								minHeight: 70,
 							}}
-							numberOfLines={3}
 						>
-							{getHeaderTitle()}
-						</Text>
-					</View>
-				),
+							<Text
+								style={{
+									color: "#fff",
+									fontSize: 18,
+									fontWeight: "bold",
+									textAlign: "center",
+								}}
+								numberOfLines={3}
+							>
+								{getHeaderTitle()}
+							</Text>
+						</View>
+					),
 					headerRight: () =>
 						selectedOrganization ? (
 							<View

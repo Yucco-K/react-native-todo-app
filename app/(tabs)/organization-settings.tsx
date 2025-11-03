@@ -597,6 +597,7 @@ export default function OrganizationSettingsScreen() {
 											setNewName(text);
 											setEditNameError(null);
 										}}
+										editable={true}
 										autoFocus
 										multiline
 										textAlignVertical="top"
@@ -613,7 +614,9 @@ export default function OrganizationSettingsScreen() {
 									{editNameError && (
 										<View
 											className="mt-2 p-3 rounded-md"
-											style={{ backgroundColor: isDark ? "#7f1d1d" : "#fee2e2" }}
+											style={{
+												backgroundColor: isDark ? "#7f1d1d" : "#fee2e2",
+											}}
 										>
 											<Text
 												className="text-sm font-noto-regular"
