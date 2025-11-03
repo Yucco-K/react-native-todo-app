@@ -118,7 +118,30 @@ npm start
 
 Expo Goアプリでスキャンして、Google認証ボタンをタップしてテスト
 
-### 5.2 本番ビルドでのテスト
+### 5.2 Development Build（Dev Client）でのテスト（推奨）
+Expo AuthSession Proxy を使わず、カスタムURLスキームで安定動作させる方法です。
+
+1) 依存関係（導入済み）
+```bash
+npm install expo-dev-client
+```
+
+2) iOS で起動
+```bash
+npx expo run:ios
+```
+初回は自動でネイティブプロジェクトを生成し、Xcodeでビルド・インストールされます。
+
+3) Android で起動（任意）
+```bash
+npx expo run:android
+```
+
+4) リダイレクトURI
+- アプリ内で `makeRedirectUri({ scheme: "reactnativetodoapp", useProxy: false })` を使用
+- Google Cloud Console では iOS/Android クライアントIDを使用（Webクライアントの `https://auth.expo.io/...` は不要）
+
+### 5.3 本番ビルドでのテスト
 
 ```bash
 # iOSの場合
