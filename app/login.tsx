@@ -8,6 +8,7 @@ import {
 	Text,
 	TextInput,
 	TouchableHighlight,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,8 +34,9 @@ export default function LoginScreen() {
 	const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
+	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-	const { signIn } = useAuth();
+	const { signIn, signInWithGoogle } = useAuth();
 	const router = useRouter();
 
 	const checkLockoutStatus = useCallback(async () => {
@@ -245,6 +247,25 @@ export default function LoginScreen() {
 		}
 	};
 
+	const handleGoogleSignIn = async () => {
+		setIsGoogleLoading(true);
+		try {
+			await signInWithGoogle();
+			await resetFailedAttempts();
+			router.replace("/");
+		} catch (error) {
+			console.error("Google認証エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "Google認証失敗",
+				text2: "Google認証に失敗しました。もう一度お試しください。",
+				visibilityTime: 4000,
+			});
+		} finally {
+			setIsGoogleLoading(false);
+		}
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<KeyboardAvoidingView
@@ -312,6 +333,45 @@ export default function LoginScreen() {
 							<Text className="text-white text-center font-noto-bold text-xl">ログイン</Text>
 						)}
 					</TouchableHighlight>
+
+					{/* 区切り線 */}
+					<View className="flex-row items-center mb-4">
+						<View className="flex-1 h-px bg-gray-300" />
+						<Text className="mx-4 text-gray-500 font-noto-regular">または</Text>
+						<View className="flex-1 h-px bg-gray-300" />
+					</View>
+
+					{/* Googleサインインボタン */}
+					<TouchableOpacity
+						onPress={handleGoogleSignIn}
+						disabled={isGoogleLoading || isLockedOut}
+						activeOpacity={0.7}
+						className={`rounded-md p-4 mb-6 border-2 ${
+							isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"
+						}`}
+					>
+						{isGoogleLoading ? (
+							<ActivityIndicator color="#4285F4" />
+						) : (
+							<View className="flex-row items-center justify-center">
+								<View
+									className="mr-3 rounded-full items-center justify-center"
+									style={{
+										width: 24,
+										height: 24,
+										backgroundColor: "#4285F4",
+									}}
+								>
+									<Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+										G
+									</Text>
+								</View>
+								<Text className="text-gray-700 font-noto-bold text-base">
+									Googleでログイン
+								</Text>
+							</View>
+						)}
+					</TouchableOpacity>
 
 					<View className="flex-row justify-center">
 						<Text className="text-gray-600 font-noto-regular">アカウントをお持ちでない方は </Text>

@@ -1,6 +1,8 @@
 import {
 	createUserWithEmailAndPassword,
+	GoogleAuthProvider,
 	onAuthStateChanged,
+	signInWithCredential,
 	signInWithEmailAndPassword,
 	signOut,
 	type User,
@@ -17,6 +19,7 @@ type AuthContextType = {
 	nickname: string | null;
 	signUp: (email: string, password: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
+	signInWithGoogle: () => Promise<void>;
 	logout: () => Promise<void>;
 	updateNickname: (nickname: string) => Promise<void>;
 };
@@ -118,6 +121,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		}
 	};
 
+	const signInWithGoogle = async () => {
+		try {
+			// Web版のGoogle認証（Expo WebBrowserを使用）
+			const { makeRedirectUri } = await import("expo-auth-session");
+			const redirectUri = makeRedirectUri({
+				scheme: "react-native-todo-app",
+			});
+
+			console.log("🔐 Google認証を開始:", redirectUri);
+
+			// Google OAuth 2.0の認証URLを構築
+			const clientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "";
+			const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+				client_id: clientId,
+				redirect_uri: redirectUri,
+				response_type: "id_token",
+				scope: "openid email profile",
+				nonce: Math.random().toString(36).substring(7),
+			})}`;
+
+			// WebBrowserでGoogle認証画面を開く
+			const { WebBrowser } = await import("expo-web-browser");
+			const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+
+			if (result.type === "success" && result.url) {
+				// URLからid_tokenを抽出
+				const url = new URL(result.url);
+				const idToken = url.searchParams.get("id_token") || url.hash.match(/id_token=([^&]+)/)?.[1];
+
+				if (!idToken) {
+					throw new Error("Google認証に失敗しました");
+				}
+
+				// Firebase認証
+				const credential = GoogleAuthProvider.credential(idToken);
+				const userCredential = await signInWithCredential(auth, credential);
+				const userId = userCredential.user.uid;
+				const userEmail = userCredential.user.email;
+
+				// Firestoreにユーザー情報を保存
+				if (userEmail) {
+					const userDocRef = doc(db, "users", userId);
+					const userDocSnap = await getDoc(userDocRef);
+
+					if (!userDocSnap.exists()) {
+						await setDoc(userDocRef, {
+							email: userEmail,
+							createdAt: new Date(),
+						});
+						console.log("✅ Google認証: ユーザー情報を新規作成:", {
+							userId,
+							email: userEmail,
+						});
+					}
+				}
+			} else {
+				throw new Error("Google認証がキャンセルされました");
+			}
+		} catch (error) {
+			console.error("❌ Google認証エラー:", error);
+			throw error;
+		}
+	};
+
 	const logout = async () => {
 		// ログアウト時にpushTokenをクリアしない
 		// 理由: savePushToken()で重複トークンは自動的に削除されるため、
@@ -141,6 +208,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				nickname,
 				signUp,
 				signIn,
+				signInWithGoogle,
 				logout,
 				updateNickname,
 			}}

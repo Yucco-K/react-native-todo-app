@@ -7,6 +7,7 @@ import {
 	Text,
 	TextInput,
 	TouchableHighlight,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,8 +37,9 @@ export default function SignupScreen() {
 		password?: string;
 		confirmPassword?: string;
 	}>({});
+	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-	const { signUp } = useAuth();
+	const { signUp, signInWithGoogle } = useAuth();
 	const router = useRouter();
 
 	const handleSignup = async () => {
@@ -129,6 +131,24 @@ export default function SignupScreen() {
 		}
 	};
 
+	const handleGoogleSignIn = async () => {
+		setIsGoogleLoading(true);
+		try {
+			await signInWithGoogle();
+			router.replace("/");
+		} catch (error) {
+			console.error("Google認証エラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "Google認証失敗",
+				text2: "Google認証に失敗しました。もう一度お試しください。",
+				visibilityTime: 4000,
+			});
+		} finally {
+			setIsGoogleLoading(false);
+		}
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<KeyboardAvoidingView
@@ -201,6 +221,43 @@ export default function SignupScreen() {
 							<Text className="text-white text-center font-noto-bold text-xl">登録</Text>
 						)}
 					</TouchableHighlight>
+
+					{/* 区切り線 */}
+					<View className="flex-row items-center mb-4">
+						<View className="flex-1 h-px bg-gray-300" />
+						<Text className="mx-4 text-gray-500 font-noto-regular">または</Text>
+						<View className="flex-1 h-px bg-gray-300" />
+					</View>
+
+					{/* Googleサインインボタン */}
+					<TouchableOpacity
+						onPress={handleGoogleSignIn}
+						disabled={isGoogleLoading}
+						activeOpacity={0.7}
+						className="bg-white border-2 border-gray-300 rounded-md p-4 mb-6"
+					>
+						{isGoogleLoading ? (
+							<ActivityIndicator color="#4285F4" />
+						) : (
+							<View className="flex-row items-center justify-center">
+								<View
+									className="mr-3 rounded-full items-center justify-center"
+									style={{
+										width: 24,
+										height: 24,
+										backgroundColor: "#4285F4",
+									}}
+								>
+									<Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+										G
+									</Text>
+								</View>
+								<Text className="text-gray-700 font-noto-bold text-base">
+									Googleで登録
+								</Text>
+							</View>
+						)}
+					</TouchableOpacity>
 
 					<View className="flex-row justify-center">
 						<Text className="text-gray-600 font-noto-regular">既にアカウントをお持ちの方は </Text>

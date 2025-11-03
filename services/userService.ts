@@ -200,7 +200,9 @@ export async function getUserAvatarUrlById(
 	userId: string
 ): Promise<string | null> {
 	try {
-		console.log(`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`);
+		console.log(
+			`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`
+		);
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
 
