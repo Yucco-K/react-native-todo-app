@@ -47,3 +47,7 @@ yarn-error.*
 # Testing
 coverage/
 *.lcov
+
+# Firebase configuration files (contain sensitive keys)
+GoogleService-Info.plist
+google-services.json
