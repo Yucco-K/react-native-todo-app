@@ -1,21 +1,19 @@
-import { useAuth } from "@/contexts/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
-	Image,
 	KeyboardAvoidingView,
 	Platform,
 	Text,
 	TextInput,
 	TouchableHighlight,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { useAuth } from "@/contexts/AuthContext";
 
 // バリデーションスキーマ
 const loginSchema = z.object({
@@ -37,9 +35,8 @@ export default function LoginScreen() {
 	);
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
-	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-	const { signIn, signInWithGoogle } = useAuth();
+	const { signIn } = useAuth();
 	const router = useRouter();
 
 	const checkLockoutStatus = useCallback(async () => {
@@ -270,33 +267,17 @@ export default function LoginScreen() {
 		}
 	};
 
-	const handleGoogleSignIn = async () => {
-		setIsGoogleLoading(true);
-		try {
-			await signInWithGoogle();
-			await resetFailedAttempts();
-			router.replace("/");
-		} catch (error) {
-			console.error("Google認証エラー:", error);
-			Toast.show({
-				type: "error",
-				text1: "Google認証失敗",
-				text2: "Google認証に失敗しました。もう一度お試しください。",
-				visibilityTime: 4000,
-			});
-		} finally {
-			setIsGoogleLoading(false);
-		}
-	};
-
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
 			>
-				<View className="flex-1 justify-center px-8">
-					<Text className="text-4xl font-noto-bold text-center mb-8">
+				<View className="flex-1 justify-center p-8">
+					<Text
+						className="text-4xl font-noto-bold text-center mb-10"
+						style={{ color: isDark ? "white" : "black" }}
+					>
 						Todo App
 					</Text>
 					<Text className="text-2xl font-noto-bold mb-6">ログイン</Text>
@@ -362,70 +343,9 @@ export default function LoginScreen() {
 								ログイン
 							</Text>
 						)}
-					</TouchableHighlight>
+				</TouchableHighlight>
 
-					{/* 区切り線 */}
-					<View className="flex-row items-center mb-4">
-						<View className="flex-1 h-px bg-gray-300" />
-						<Text className="mx-4 text-gray-500 font-noto-regular">または</Text>
-						<View className="flex-1 h-px bg-gray-300" />
-					</View>
-
-					{/* Googleサインインボタン（Google公式ガイドラインに準拠） */}
-					<TouchableOpacity
-						onPress={handleGoogleSignIn}
-						disabled={isGoogleLoading || isLockedOut}
-						activeOpacity={0.7}
-						style={{
-							backgroundColor: "#ffffff",
-							borderColor: "#dadce0",
-							borderWidth: 1,
-							borderRadius: 4,
-							height: 48,
-							justifyContent: "center",
-							alignItems: "center",
-							marginBottom: 24,
-							opacity: isGoogleLoading || isLockedOut ? 0.7 : 1,
-						}}
-					>
-						{isGoogleLoading ? (
-							<ActivityIndicator color="#4285F4" />
-						) : (
-							<View
-								style={{
-									width: "100%",
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
-								{/* 左端のGロゴ（公式アセット） */}
-								<Image
-									source={{
-										uri: "https://developers.google.com/identity/images/g-logo.png",
-									}}
-									style={{
-										width: 18,
-										height: 18,
-										position: "absolute",
-										left: 16,
-									}}
-									resizeMode="contain"
-								/>
-								<Text
-									style={{
-										color: "#3c4043",
-										fontSize: 16,
-										fontWeight: "600",
-									}}
-									className="font-noto-bold"
-								>
-									Googleでログイン
-								</Text>
-							</View>
-						)}
-					</TouchableOpacity>
-
-					<View className="flex-row justify-center">
+				<View className="flex-row justify-center">
 						<Text className="text-gray-600 font-noto-regular">
 							アカウントをお持ちでない方は{" "}
 						</Text>

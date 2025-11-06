@@ -1,6 +1,3 @@
-import { Stack, useRouter, useSegments } from "expo-router";
-import "../global.css";
-
 import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
@@ -9,21 +6,15 @@ import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
+	useFonts,
 } from "@expo-google-fonts/noto-sans-jp";
-import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
-import { SplashScreen } from "expo-router";
+import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useRef } from "react";
-import { LogBox } from "react-native";
 import Toast from "react-native-toast-message";
+import "../global.css";
 
-// 開発中に表示される予期されたエラーメッセージを非表示にする
-LogBox.ignoreLogs([
-	"指定されたメールアドレスのユーザーが見つかりません",
-	"Error inviting by email",
-	"Internal React error: Expected static flag was missing",
-]);
-
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 // Toast の設定は再レンダーで参照が変わらないようモジュールスコープに定義
@@ -86,22 +77,34 @@ function RootLayoutNav() {
 		}
 
 		const inAuthScreen = segments[0] === "login" || segments[0] === "signup";
-		console.log("🔄 Router: 現在の状態", {
-			isLoggedIn: !!user,
-			currentScreen: segments[0] || "index",
-			inAuthScreen,
-		});
+		console.log("========================================");
+		console.log("🔄 Router: 現在の状態");
+		console.log("📋 isLoggedIn:", !!user);
+		console.log("📋 user:", user);
+		console.log("📋 user.email:", user?.email);
+		console.log("📋 currentScreen:", segments[0] || "index");
+		console.log("📋 inAuthScreen:", inAuthScreen);
+		console.log("========================================");
 
 		// ログイン/サインアップ画面では認証チェックによる自動リダイレクトを行わない
 		if (inAuthScreen) {
+			console.log("========================================");
 			console.log("⏭️ Router: 認証画面では自動リダイレクトをスキップ");
+			console.log("========================================");
 			return;
 		}
 
 		if (!user) {
 			// ユーザーが未ログインの場合、ログイン画面へ
+			console.log("========================================");
 			console.log("➡️ Router: ログインページにリダイレクト");
+			console.log("========================================");
 			router.replace("/login");
+		} else {
+			// ユーザーがログイン済みの場合
+			console.log("========================================");
+			console.log("✅ Router: ユーザーはログイン済み - リダイレクトなし");
+			console.log("========================================");
 		}
 	}, [user, loading, segments, router]);
 
