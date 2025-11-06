@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Alert,
 	Keyboard,
 	Modal,
 	ScrollView,
@@ -63,12 +64,19 @@ export default function NicknameModal({
 		setIsLoading(true);
 		try {
 			await onSave(trimmedNickname, avatarUrl.trim() || null);
-			onClose();
+			setIsLoading(false);
+			Alert.alert("成功", "プロフィールが保存されました", [
+				{ text: "OK", onPress: onClose },
+			]);
 		} catch (error) {
 			console.error(error);
-			setError("プロフィールの保存に失敗しました");
-		} finally {
 			setIsLoading(false);
+			Alert.alert(
+				"エラー",
+				`プロフィールの保存に失敗しました: ${String(error)}`,
+				[{ text: "OK" }]
+			);
+			setError("プロフィールの保存に失敗しました");
 		}
 	};
 

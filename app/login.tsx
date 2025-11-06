@@ -270,19 +270,24 @@ export default function LoginScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView
+			className="flex-1"
+			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
+		>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
 			>
 				<View className="flex-1 justify-center p-8">
-					<Text
-						className="text-4xl font-noto-bold text-center mb-10"
-						style={{ color: isDark ? "white" : "black" }}
-					>
+					<Text className="text-4xl font-noto-bold text-center mb-10">
 						Todo App
 					</Text>
-					<Text className="text-2xl font-noto-bold mb-6">ログイン</Text>
+					<Text
+						className="text-2xl font-noto-bold mb-6"
+						style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+					>
+						ログイン
+					</Text>
 
 					<View className="mb-4">
 						<TextInput

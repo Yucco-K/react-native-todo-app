@@ -28,7 +28,7 @@ import {
 } from "@/services/userService";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	AppState,
 	type AppStateStatus,
@@ -61,7 +61,7 @@ export default function MyListScreen() {
 	const [notificationEnabled, setNotificationEnabledState] = useState(true);
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 	const [memberAvatars, setMemberAvatars] = useState<
-		Array<{ userId: string; avatarUrl: string | null }>
+		Array<{ userId: string; avatarUrl: string | null; timestamp: number }>
 	>([]);
 
 	console.log("📱 MyListScreen: レンダリング", {
@@ -87,41 +87,56 @@ export default function MyListScreen() {
 		loadAvatar();
 	}, []);
 
+	// グループメンバーのアバターを読み込む関数
+	const loadMemberAvatars = useCallback(async () => {
+		if (!selectedOrganization) {
+			setMemberAvatars([]);
+			return;
+		}
+
+		try {
+			console.log(
+				"👥 グループメンバーのアバターを読み込み中...",
+				selectedOrganization.id
+			);
+			const members = await getOrganizationMembers(selectedOrganization.id);
+			console.log("👥 取得したメンバー:", members);
+
+			const timestamp = Date.now(); // 現在のタイムスタンプを取得
+			const avatars = await Promise.all(
+				members.map(async (member) => {
+					const baseAvatarUrl = await getUserAvatarUrlById(member.userId);
+					console.log(
+						`👤 メンバー ${member.userId} のアバター:`,
+						baseAvatarUrl
+					);
+
+					// avatarUrlにタイムスタンプを付与してキャッシュを回避
+					let avatarUrl = baseAvatarUrl;
+					if (avatarUrl) {
+						const separator = avatarUrl.includes("?") ? "&" : "?";
+						avatarUrl = `${avatarUrl}${separator}t=${timestamp}`;
+					}
+
+					return {
+						userId: member.userId,
+						avatarUrl,
+						timestamp, // タイムスタンプを追加
+					};
+				})
+			);
+			console.log("👥 最終的なアバター配列:", avatars);
+			setMemberAvatars(avatars);
+		} catch (error) {
+			console.error("メンバーアバター読み込みエラー:", error);
+			setMemberAvatars([]);
+		}
+	}, [selectedOrganization]);
+
 	// グループメンバーのアバターを読み込み
 	useEffect(() => {
-		const loadMemberAvatars = async () => {
-			if (!selectedOrganization) {
-				setMemberAvatars([]);
-				return;
-			}
-
-			try {
-				console.log(
-					"👥 グループメンバーのアバターを読み込み中...",
-					selectedOrganization.id
-				);
-				const members = await getOrganizationMembers(selectedOrganization.id);
-				console.log("👥 取得したメンバー:", members);
-
-				const avatars = await Promise.all(
-					members.map(async (member) => {
-						const avatarUrl = await getUserAvatarUrlById(member.userId);
-						console.log(`👤 メンバー ${member.userId} のアバター:`, avatarUrl);
-						return {
-							userId: member.userId,
-							avatarUrl,
-						};
-					})
-				);
-				console.log("👥 最終的なアバター配列:", avatars);
-				setMemberAvatars(avatars);
-			} catch (error) {
-				console.error("メンバーアバター読み込みエラー:", error);
-				setMemberAvatars([]);
-			}
-		};
 		loadMemberAvatars();
-	}, [selectedOrganization]);
+	}, [loadMemberAvatars]);
 
 	// アプリがフォアグラウンドに戻った時にリストを更新（remindNotifiedの更新を反映）
 	useEffect(() => {
@@ -309,7 +324,11 @@ export default function MyListScreen() {
 											zIndex: memberAvatars.length - index,
 										}}
 									>
-										<Avatar avatarUrl={member.avatarUrl} size={32} />
+										<Avatar
+											key={`${member.userId}-${member.timestamp}`}
+											avatarUrl={member.avatarUrl}
+											size={32}
+										/>
 									</View>
 								))}
 								{memberAvatars.length > 5 && (
@@ -347,6 +366,7 @@ export default function MyListScreen() {
 						{nickname ? (
 							<View className="flex-row items-center">
 								<Avatar
+									key={avatarUrl || "default"}
 									avatarUrl={avatarUrl}
 									size={40}
 									style={{ marginRight: 12 }}
@@ -376,6 +396,7 @@ export default function MyListScreen() {
 						) : (
 							<View className="flex-row items-center">
 								<Avatar
+									key={avatarUrl || "default"}
 									avatarUrl={avatarUrl}
 									size={40}
 									style={{ marginRight: 12 }}
@@ -526,11 +547,23 @@ export default function MyListScreen() {
 				visible={isNicknameModalVisible}
 				currentNickname={nickname || ""}
 				currentAvatarUrl={avatarUrl}
-				onClose={() => setIsNicknameModalVisible(false)}
+				onClose={async () => {
+					setIsNicknameModalVisible(false);
+					// モーダルを閉じた後、Firestoreから最新のアバターを再取得
+					const url = await getUserAvatarUrl();
+					setAvatarUrl(url);
+					// グループメンバーのアバターも再取得
+					await loadMemberAvatars();
+				}}
 				onSave={async (newNickname, newAvatarUrl) => {
 					await updateNickname(newNickname);
 					await saveUserAvatarUrl(newAvatarUrl || "");
-					setAvatarUrl(newAvatarUrl);
+					// 画面を即座に更新（空文字列の場合はnullに変換）
+					setAvatarUrl(
+						newAvatarUrl && newAvatarUrl.trim() ? newAvatarUrl : null
+					);
+					// グループメンバーのアバターも即座に更新
+					await loadMemberAvatars();
 				}}
 			/>
 

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 
 type AvatarProps = {
@@ -10,6 +10,23 @@ type AvatarProps = {
 
 export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
 	const [imageError, setImageError] = useState(false);
+
+	useEffect(() => {
+		if (avatarUrl) {
+			setImageError(false); // URLが変わったらエラー状態をリセット
+		}
+	}, [avatarUrl]);
+
+	// キャッシュバスティング: URIにタイムスタンプを追加（既に含まれている場合はそのまま返す）
+	const getCacheBustedUri = (uri: string) => {
+		if (!uri) return uri;
+		// 既にタイムスタンプが含まれている場合はそのまま返す
+		if (uri.includes("?t=") || uri.includes("&t=")) {
+			return uri;
+		}
+		const separator = uri.includes("?") ? "&" : "?";
+		return `${uri}${separator}t=${Date.now()}`;
+	};
 
 	return (
 		<View
@@ -28,7 +45,7 @@ export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
 		>
 			{avatarUrl && !imageError ? (
 				<Image
-					source={{ uri: avatarUrl }}
+					source={{ uri: getCacheBustedUri(avatarUrl) }}
 					style={{
 						width: size,
 						height: size,
