@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { Image, View } from "react-native";
 
 type AvatarProps = {
@@ -8,6 +9,8 @@ type AvatarProps = {
 };
 
 export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
+	const [imageError, setImageError] = useState(false);
+
 	return (
 		<View
 			style={[
@@ -23,7 +26,7 @@ export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
 				style,
 			]}
 		>
-			{avatarUrl ? (
+			{avatarUrl && !imageError ? (
 				<Image
 					source={{ uri: avatarUrl }}
 					style={{
@@ -32,6 +35,10 @@ export function Avatar({ avatarUrl, size = 40, style }: AvatarProps) {
 						borderRadius: size / 2,
 					}}
 					resizeMode="cover"
+					onError={() => {
+						console.log("❌ アバター画像の読み込みに失敗:", avatarUrl);
+						setImageError(true);
+					}}
 				/>
 			) : (
 				<Ionicons name="person" size={size * 0.6} color="#9ca3af" />

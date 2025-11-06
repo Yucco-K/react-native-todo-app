@@ -1,6 +1,5 @@
 import type { TodoCategory } from "@/types/Category";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "../config/firebase";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 /**
  * ✅ セキュリティ対応完了：Firebase Cloud Functions経由でAI機能を使用
@@ -40,7 +39,7 @@ export async function predictCategory(
 		const predictCategoryFn = httpsCallable<
 			{ title: string; content: string },
 			{ category: TodoCategory }
-		>(functions, "predictCategory");
+		>(getFunctions(), "predictCategory");
 
 		console.log(`🤖 AIカテゴリ推測を開始: "${title}"`);
 

@@ -13,36 +13,37 @@ export default {
 			resizeMode: "contain",
 			backgroundColor: "#ffffff",
 		},
-	ios: {
-		supportsTablet: true,
-		bundleIdentifier: "com.yuccok.reactnativetodoapp",
-		infoPlist: {
-			ITSAppUsesNonExemptEncryption: false,
+		ios: {
+			supportsTablet: true,
+			bundleIdentifier: "com.yuccok.react-native-todo-app",
+			googleServicesFile: "./GoogleService-Info.plist",
+			infoPlist: {
+				ITSAppUsesNonExemptEncryption: false,
+			},
 		},
-	},
-	android: {
-		adaptiveIcon: {
-			foregroundImage: "./assets/images/adaptive-icon.png",
-			backgroundColor: "#ffffff",
+		android: {
+			adaptiveIcon: {
+				foregroundImage: "./assets/images/adaptive-icon.png",
+				backgroundColor: "#ffffff",
+			},
+			package: "com.yuccok.reactnativetodoapp",
 		},
-		package: "com.yuccok.reactnativetodoapp",
-	},
 		web: {
 			bundler: "metro",
 			output: "static",
 			favicon: "./assets/images/favicon.png",
 		},
-	plugins: [
-		"expo-router",
-		"expo-font",
-		[
-			"expo-notifications",
-			{
-				icon: "./assets/images/icon.png",
-				color: "#ffffff",
-			},
+		plugins: [
+			"expo-router",
+			"expo-font",
+			[
+				"expo-notifications",
+				{
+					icon: "./assets/images/icon.png",
+					color: "#ffffff",
+				},
+			],
 		],
-	],
 		experiments: {
 			typedRoutes: true,
 		},

@@ -1,3 +1,5 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -13,7 +15,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
-import { useAuth } from "@/contexts/AuthContext";
 
 // バリデーションスキーマ
 const loginSchema = z.object({
@@ -37,6 +38,7 @@ export default function LoginScreen() {
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
 
 	const { signIn } = useAuth();
+	const { isDark } = useTheme();
 	const router = useRouter();
 
 	const checkLockoutStatus = useCallback(async () => {
@@ -44,6 +46,13 @@ export default function LoginScreen() {
 			const lockoutTimeStr = await AsyncStorage.getItem(
 				STORAGE_KEY_LOCKOUT_TIME
 			);
+			const attemptsStr = await AsyncStorage.getItem(
+				STORAGE_KEY_FAILED_ATTEMPTS
+			);
+			console.log(
+				`🔍 ロックアウト状態チェック: lockoutTime=${lockoutTimeStr}, attempts=${attemptsStr}`
+			);
+
 			if (lockoutTimeStr) {
 				const lockoutTime = Number.parseInt(lockoutTimeStr, 10);
 				const now = Date.now();
@@ -52,12 +61,16 @@ export default function LoginScreen() {
 				if (timeRemaining > 0) {
 					setIsLockedOut(true);
 					setRemainingTime(Math.ceil(timeRemaining / 1000));
+					console.log(
+						`🚫 ロックアウト中: 残り${Math.ceil(timeRemaining / 1000)}秒`
+					);
 				} else {
 					// ロックアウト期間が過ぎた場合、カウントをリセット
 					await AsyncStorage.multiRemove([
 						STORAGE_KEY_FAILED_ATTEMPTS,
 						STORAGE_KEY_LOCKOUT_TIME,
 					]);
+					console.log("✅ ロックアウト期間終了 - リセット完了");
 				}
 			}
 		} catch (error) {
@@ -96,6 +109,10 @@ export default function LoginScreen() {
 			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
 			const newAttempts = attempts + 1;
 
+			console.log(
+				`🔒 ログイン失敗回数: ${attempts} → ${newAttempts} / ${MAX_ATTEMPTS}`
+			);
+
 			if (newAttempts >= MAX_ATTEMPTS) {
 				// 7回目の失敗でロックアウト
 				const lockoutTime = Date.now() + LOCKOUT_DURATION_MS;
@@ -106,6 +123,10 @@ export default function LoginScreen() {
 				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, "0");
 				setIsLockedOut(true);
 				setRemainingTime(Math.ceil(LOCKOUT_DURATION_MS / 1000));
+
+				console.log(
+					`🚫 ロックアウト発動: ${LOCKOUT_DURATION_MS / 1000 / 60}分間`
+				);
 
 				Toast.show({
 					type: "error",
@@ -119,6 +140,7 @@ export default function LoginScreen() {
 					newAttempts.toString()
 				);
 				const remainingAttempts = MAX_ATTEMPTS - newAttempts;
+				console.log(`⚠️ 残り試行回数: ${remainingAttempts}回`);
 				if (remainingAttempts <= 3) {
 					Toast.show({
 						type: "error",
@@ -343,9 +365,9 @@ export default function LoginScreen() {
 								ログイン
 							</Text>
 						)}
-				</TouchableHighlight>
+					</TouchableHighlight>
 
-				<View className="flex-row justify-center">
+					<View className="flex-row justify-center">
 						<Text className="text-gray-600 font-noto-regular">
 							アカウントをお持ちでない方は{" "}
 						</Text>
