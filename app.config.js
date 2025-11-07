@@ -54,18 +54,18 @@ module.exports = {
 			output: "static",
 			favicon: "./assets/images/favicon.png",
 		},
-	plugins: [
-		"expo-router",
-		"expo-font",
-		[
-			"expo-notifications",
-			{
-				icon: "./assets/images/icon.png",
-				color: "#ffffff",
-			},
+		plugins: [
+			"expo-router",
+			"expo-font",
+			[
+				"expo-notifications",
+				{
+					icon: "./assets/images/icon.png",
+					color: "#ffffff",
+				},
+			],
+			"@react-native-google-signin/google-signin",
 		],
-		"@react-native-google-signin/google-signin",
-	],
 		experiments: {
 			typedRoutes: true,
 		},

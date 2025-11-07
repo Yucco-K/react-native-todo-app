@@ -1,6 +1,7 @@
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import {
-	GoogleAuthProvider,
 	createUserWithEmailAndPassword,
+	GoogleAuthProvider,
 	onAuthStateChanged,
 	signInWithCredential,
 	signInWithEmailAndPassword,
@@ -15,7 +16,6 @@ import {
 	savePushToken,
 } from "../services/notificationService";
 import { getUserNickname, saveUserNickname } from "../services/userService";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 type AuthContextType = {
 	user: User | null;
@@ -153,16 +153,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			// Google Sign-Inを実行
 			await GoogleSignin.hasPlayServices();
 			const userInfo = await GoogleSignin.signIn();
-			
+
 			// IDトークンを取得
-			const idToken = userInfo.idToken;
+			const idToken = userInfo.data?.idToken;
 			if (!idToken) {
 				throw new Error("Google Sign-In failed: No ID token");
 			}
 
 			// Firebaseの認証情報を作成
 			const googleCredential = GoogleAuthProvider.credential(idToken);
-			
+
 			// Firebaseにサインイン
 			const userCredential = await signInWithCredential(auth, googleCredential);
 			const userId = userCredential.user.uid;

@@ -1,3 +1,4 @@
+import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -393,7 +394,7 @@ export default function LoginScreen() {
 					underlayColor="#f3f4f6"
 				>
 					<View className="flex-row items-center justify-center">
-						<Ionicons name="logo-google" size={24} color="#DB4437" />
+						<GoogleIcon size={24} />
 						<Text
 							className="ml-2 text-center font-noto-bold text-lg"
 							style={{ color: isDark ? "#374151" : "#374151" }}

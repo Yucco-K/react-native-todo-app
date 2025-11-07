@@ -20,7 +20,7 @@
 
 1. アプリケーションの種類: **ウェブ アプリケーション**
 2. 名前: `Todo App (Web Client for Firebase)`
-3. 承認済みの JavaScript 生成元: 
+3. 承認済みの JavaScript 生成元:
    - `http://localhost`
    - `https://your-domain.com` (本番環境のドメイン)
 4. 承認済みのリダイレクト URI:
@@ -139,4 +139,3 @@ npx expo run:ios
 - [Google Sign-In for iOS](https://developers.google.com/identity/sign-in/ios/start-integrating)
 - [Firebase Authentication with Google](https://firebase.google.com/docs/auth/ios/google-signin)
 - [@react-native-google-signin/google-signin](https://github.com/react-native-google-signin/google-signin)
-
