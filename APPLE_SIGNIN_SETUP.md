@@ -160,4 +160,3 @@ App Store に提出する際は、以下を確認してください：
 - [Firebase Authentication with Apple](https://firebase.google.com/docs/auth/ios/apple)
 - [expo-apple-authentication](https://docs.expo.dev/versions/latest/sdk/apple-authentication/)
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple)
-

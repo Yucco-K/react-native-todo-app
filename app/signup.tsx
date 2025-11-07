@@ -257,39 +257,39 @@ export default function SignupScreen() {
 						<View className="flex-1 h-px bg-gray-300" />
 					</View>
 
-				{/* Google Sign-Inボタン */}
-				<TouchableHighlight
-					onPress={handleGoogleSignIn}
-					disabled={isLoading}
-					activeOpacity={0.7}
-					className="bg-white rounded-md p-4 mb-3 border-2 border-gray-300"
-					underlayColor="#f3f4f6"
-				>
-					<View className="flex-row items-center justify-center">
-						<GoogleIcon size={24} />
-						<Text className="ml-2 text-center text-gray-700 font-noto-bold text-lg">
-							Googleでサインアップ
-						</Text>
-					</View>
-				</TouchableHighlight>
-
-				{/* Apple Sign-Inボタン (iOSのみ) */}
-				{Platform.OS === "ios" && (
+					{/* Google Sign-Inボタン */}
 					<TouchableHighlight
-						onPress={handleAppleSignIn}
+						onPress={handleGoogleSignIn}
 						disabled={isLoading}
 						activeOpacity={0.7}
-						className="bg-black rounded-md p-4 mb-6 border-2 border-black"
-						underlayColor="#1f1f1f"
+						className="bg-white rounded-md p-4 mb-3 border-2 border-gray-300"
+						underlayColor="#f3f4f6"
 					>
 						<View className="flex-row items-center justify-center">
-							<Ionicons name="logo-apple" size={24} color="white" />
-							<Text className="ml-2 text-center text-white font-noto-bold text-lg">
-								Appleでサインアップ
+							<GoogleIcon size={24} />
+							<Text className="ml-2 text-center text-gray-700 font-noto-bold text-lg">
+								Googleでサインアップ
 							</Text>
 						</View>
 					</TouchableHighlight>
-				)}
+
+					{/* Apple Sign-Inボタン (iOSのみ) */}
+					{Platform.OS === "ios" && (
+						<TouchableHighlight
+							onPress={handleAppleSignIn}
+							disabled={isLoading}
+							activeOpacity={0.7}
+							className="bg-black rounded-md p-4 mb-6 border-2 border-black"
+							underlayColor="#1f1f1f"
+						>
+							<View className="flex-row items-center justify-center">
+								<Ionicons name="logo-apple" size={24} color="white" />
+								<Text className="ml-2 text-center text-white font-noto-bold text-lg">
+									Appleでサインアップ
+								</Text>
+							</View>
+						</TouchableHighlight>
+					)}
 
 					<View className="flex-row justify-center mt-4">
 						<Text className="text-gray-600 font-noto-regular">

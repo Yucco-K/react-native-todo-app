@@ -1,9 +1,9 @@
-import * as AppleAuthentication from "expo-apple-authentication";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import * as AppleAuthentication from "expo-apple-authentication";
 import {
-	OAuthProvider,
 	createUserWithEmailAndPassword,
 	GoogleAuthProvider,
+	OAuthProvider,
 	onAuthStateChanged,
 	signInWithCredential,
 	signInWithEmailAndPassword,
