@@ -4,6 +4,7 @@ import { InvitationListModal } from "@/components/InvitationListModal";
 import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
 import ReminderNotificationModal from "@/components/ReminderNotificationModal";
 import { useOrganization } from "@/contexts/OrganizationContext";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import { getMyInvitations } from "@/services/organizationService";
 import {
 	getDueReminders,
@@ -32,6 +33,7 @@ export default function TabLayout() {
 	const [remindersVisible, setRemindersVisible] = useState(false);
 	const [dueReminders, setDueReminders] = useState<Todo[]>([]);
 	const { selectedOrganization } = useOrganization();
+	const { triggerRefresh } = useTodoRefresh();
 	const appState = useRef(
 		Platform.OS !== "web" ? AppState.currentState : "active"
 	);
@@ -82,12 +84,30 @@ export default function TabLayout() {
 				setDueReminders(reminders);
 				setRemindersVisible(true);
 
-				// クライアント側ではプッシュ送信せず、表示のみ（重複通知を避ける）
+				// 表示したタイミングで即座に通知済みに更新
+				const results = await Promise.allSettled(
+					reminders.map((reminder) => markReminderAsNotified(reminder.id))
+				);
+				let hasUpdate = false;
+				results.forEach((result, index) => {
+					if (result.status === "rejected") {
+						console.error("リマインド通知済み更新エラー:", {
+							todoId: reminders[index].id,
+							error: result.reason,
+						});
+					} else {
+						hasUpdate = true;
+					}
+				});
+
+				if (hasUpdate) {
+					triggerRefresh();
+				}
 			}
 		} catch (error) {
 			console.error("リマインドチェックエラー:", error);
 		}
-	}, []);
+	}, [triggerRefresh]);
 
 	// アプリ起動時に未読招待をチェック（初回のみ）
 	useEffect(() => {
@@ -175,7 +195,7 @@ export default function TabLayout() {
 								{getHeaderTitle()}
 							</Text>
 						</View>
-				),
+					),
 				}}
 			>
 				<Stack.Screen name="mylist" />
@@ -221,15 +241,9 @@ export default function TabLayout() {
 			<ReminderNotificationModal
 				visible={remindersVisible}
 				reminders={dueReminders}
-				onClose={async () => {
-					try {
-						for (const r of dueReminders) {
-							await markReminderAsNotified(r.id);
-						}
-					} finally {
-						setRemindersVisible(false);
-						setDueReminders([]);
-					}
+				onClose={() => {
+					setRemindersVisible(false);
+					setDueReminders([]);
 				}}
 			/>
 		</>

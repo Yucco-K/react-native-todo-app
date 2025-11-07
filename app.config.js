@@ -1,4 +1,25 @@
-export default {
+const fs = require("fs");
+const path = require("path");
+
+const googleServicesFileRelativePath = "./GoogleService-Info.plist";
+const googleServicesEnvPath = process.env.GOOGLE_SERVICE_INFO;
+
+if (googleServicesEnvPath) {
+	const destinationPath = path.resolve(
+		__dirname,
+		googleServicesFileRelativePath
+	);
+	try {
+		fs.copyFileSync(googleServicesEnvPath, destinationPath);
+	} catch (error) {
+		console.warn(
+			"Failed to copy GoogleService-Info.plist from environment variable:",
+			error
+		);
+	}
+}
+
+module.exports = {
 	expo: {
 		name: "react-native-todo-app",
 		slug: "react-native-todo-app",
@@ -15,8 +36,8 @@ export default {
 		},
 		ios: {
 			supportsTablet: true,
-			bundleIdentifier: "com.yuccok.react-native-todo-app",
-			googleServicesFile: "./GoogleService-Info.plist",
+			bundleIdentifier: "com.yuccok.reactnativetodoapp",
+			googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 			},

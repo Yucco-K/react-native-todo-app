@@ -182,7 +182,10 @@ export default function NicknameModal({
 												</View>
 											</TouchableOpacity>
 											{avatarUrl && (
-												<TouchableOpacity onPress={handleDeleteAvatar}>
+												<TouchableOpacity
+													onPress={handleDeleteAvatar}
+													className="mt-2"
+												>
 													<View className="flex-row items-center justify-center">
 														<Ionicons
 															name="trash-outline"

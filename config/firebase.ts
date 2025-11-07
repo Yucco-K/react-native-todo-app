@@ -7,6 +7,7 @@ import {
 	initializeAuth,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -36,5 +37,6 @@ const auth = (() => {
 
 const db = getFirestore(app);
 const storage = getStorage(app);
+const functions = getFunctions(app, "asia-northeast1");
 
-export { app, auth, db, storage };
+export { app, auth, db, functions, storage };
