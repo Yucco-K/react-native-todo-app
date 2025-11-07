@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -36,7 +37,7 @@ export default function SignupScreen() {
 		password?: string;
 		confirmPassword?: string;
 	}>({});
-	const { signUp } = useAuth();
+	const { signUp, signInWithGoogle } = useAuth();
 	const router = useRouter();
 
 	const handleSignup = async () => {
@@ -133,6 +134,24 @@ export default function SignupScreen() {
 		}
 	};
 
+	const handleGoogleSignIn = async () => {
+		setIsLoading(true);
+		try {
+			await signInWithGoogle();
+			router.replace("/");
+		} catch (error) {
+			console.log("Google サインアップエラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "Google サインアップ失敗",
+				text2: "Google サインアップに失敗しました",
+				visibilityTime: 4000,
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<KeyboardAvoidingView
@@ -196,32 +215,55 @@ export default function SignupScreen() {
 						)}
 					</View>
 
-					<TouchableHighlight
-						onPress={handleSignup}
-						disabled={isLoading}
-						activeOpacity={0.7}
-						className="bg-blue-500 rounded-md p-4 mb-4"
-						underlayColor="#3b82f6"
-					>
-						{isLoading ? (
-							<ActivityIndicator color="white" />
-						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">
-								登録
-							</Text>
-						)}
-					</TouchableHighlight>
-
-					<View className="flex-row justify-center mt-4">
-						<Text className="text-gray-600 font-noto-regular">
-							既にアカウントをお持ちの方は{" "}
+				<TouchableHighlight
+					onPress={handleSignup}
+					disabled={isLoading}
+					activeOpacity={0.7}
+					className="bg-blue-500 rounded-md p-4 mb-4"
+					underlayColor="#3b82f6"
+				>
+					{isLoading ? (
+						<ActivityIndicator color="white" />
+					) : (
+						<Text className="text-white text-center font-noto-bold text-xl">
+							登録
 						</Text>
-						<Link href="/login" asChild>
-							<TouchableHighlight>
-								<Text className="text-blue-500 font-noto-bold">ログイン</Text>
-							</TouchableHighlight>
-						</Link>
+					)}
+				</TouchableHighlight>
+
+				{/* 区切り線 */}
+				<View className="flex-row items-center my-4">
+					<View className="flex-1 h-px bg-gray-300" />
+					<Text className="mx-4 text-gray-600 font-noto-regular">または</Text>
+					<View className="flex-1 h-px bg-gray-300" />
+				</View>
+
+				{/* Google Sign-Inボタン */}
+				<TouchableHighlight
+					onPress={handleGoogleSignIn}
+					disabled={isLoading}
+					activeOpacity={0.7}
+					className="bg-white rounded-md p-4 mb-6 border-2 border-gray-300"
+					underlayColor="#f3f4f6"
+				>
+					<View className="flex-row items-center justify-center">
+						<Ionicons name="logo-google" size={24} color="#DB4437" />
+						<Text className="ml-2 text-center text-gray-700 font-noto-bold text-lg">
+							Googleでサインアップ
+						</Text>
 					</View>
+				</TouchableHighlight>
+
+				<View className="flex-row justify-center mt-4">
+					<Text className="text-gray-600 font-noto-regular">
+						既にアカウントをお持ちの方は{" "}
+					</Text>
+					<Link href="/login" asChild>
+						<TouchableHighlight>
+							<Text className="text-blue-500 font-noto-bold">ログイン</Text>
+						</TouchableHighlight>
+					</Link>
+				</View>
 				</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

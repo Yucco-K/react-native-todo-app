@@ -1,6 +1,8 @@
 import {
+	GoogleAuthProvider,
 	createUserWithEmailAndPassword,
 	onAuthStateChanged,
+	signInWithCredential,
 	signInWithEmailAndPassword,
 	signOut,
 	type User,
@@ -13,6 +15,7 @@ import {
 	savePushToken,
 } from "../services/notificationService";
 import { getUserNickname, saveUserNickname } from "../services/userService";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 type AuthContextType = {
 	user: User | null;
@@ -20,6 +23,7 @@ type AuthContextType = {
 	nickname: string | null;
 	signUp: (email: string, password: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
+	signInWithGoogle: () => Promise<void>;
 	logout: () => Promise<void>;
 	updateNickname: (nickname: string) => Promise<void>;
 };
@@ -30,6 +34,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [nickname, setNickname] = useState<string | null>(null);
+
+	useEffect(() => {
+		// Google Sign-Inの設定
+		GoogleSignin.configure({
+			webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+			iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+		});
+		console.log("✅ Google Sign-In configured");
+	}, []);
 
 	useEffect(() => {
 		console.log("🔐 AuthContext: 認証状態の監視を開始");
@@ -135,6 +148,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		await signOut(auth);
 	};
 
+	const signInWithGoogle = async () => {
+		try {
+			// Google Sign-Inを実行
+			await GoogleSignin.hasPlayServices();
+			const userInfo = await GoogleSignin.signIn();
+			
+			// IDトークンを取得
+			const idToken = userInfo.idToken;
+			if (!idToken) {
+				throw new Error("Google Sign-In failed: No ID token");
+			}
+
+			// Firebaseの認証情報を作成
+			const googleCredential = GoogleAuthProvider.credential(idToken);
+			
+			// Firebaseにサインイン
+			const userCredential = await signInWithCredential(auth, googleCredential);
+			const userId = userCredential.user.uid;
+			const userEmail = userCredential.user.email;
+
+			// Firestoreにユーザー情報を保存
+			if (userEmail) {
+				const userDocRef = doc(db, "users", userId);
+				const userDocSnap = await getDoc(userDocRef);
+
+				if (!userDocSnap.exists()) {
+					await setDoc(userDocRef, {
+						email: userEmail,
+						createdAt: new Date(),
+					});
+					console.log("✅ Google認証: ユーザー情報を新規作成:", {
+						userId,
+						email: userEmail,
+					});
+				}
+			}
+
+			console.log("✅ Google Sign-In successful");
+		} catch (error) {
+			console.error("❌ Google Sign-In error:", error);
+			throw error;
+		}
+	};
+
 	const updateNickname = async (newNickname: string) => {
 		await saveUserNickname(newNickname);
 		setNickname(newNickname);
@@ -148,6 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				nickname,
 				signUp,
 				signIn,
+				signInWithGoogle,
 				logout,
 				updateNickname,
 			}}
