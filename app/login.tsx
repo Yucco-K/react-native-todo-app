@@ -39,7 +39,7 @@ export default function LoginScreen() {
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
 
-	const { signIn, signInWithGoogle } = useAuth();
+	const { signIn, signInWithGoogle, signInWithApple } = useAuth();
 	const { isDark } = useTheme();
 	const router = useRouter();
 
@@ -290,6 +290,25 @@ export default function LoginScreen() {
 		}
 	};
 
+	const handleAppleSignIn = async () => {
+		setIsLoading(true);
+		try {
+			await signInWithApple();
+			await resetFailedAttempts();
+			router.replace("/");
+		} catch (error) {
+			console.log("Apple ログインエラー:", error);
+			Toast.show({
+				type: "error",
+				text1: "Apple ログイン失敗",
+				text2: "Apple ログインに失敗しました",
+				visibilityTime: 4000,
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<SafeAreaView
 			className="flex-1"
@@ -357,63 +376,81 @@ export default function LoginScreen() {
 						</View>
 					)}
 
-				<TouchableHighlight
-					onPress={handleLogin}
-					disabled={isLoading || isLockedOut}
-					activeOpacity={0.7}
-					className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
-					underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
-				>
-					{isLoading ? (
-						<ActivityIndicator color="white" />
-					) : (
-						<Text className="text-white text-center font-noto-bold text-xl">
-							ログイン
-						</Text>
-					)}
-				</TouchableHighlight>
-
-				{/* 区切り線 */}
-				<View className="flex-row items-center my-4">
-					<View className="flex-1 h-px bg-gray-300" />
-					<Text
-						className="mx-4 font-noto-regular"
-						style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+					<TouchableHighlight
+						onPress={handleLogin}
+						disabled={isLoading || isLockedOut}
+						activeOpacity={0.7}
+						className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
+						underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
 					>
-						または
-					</Text>
-					<View className="flex-1 h-px bg-gray-300" />
-				</View>
+						{isLoading ? (
+							<ActivityIndicator color="white" />
+						) : (
+							<Text className="text-white text-center font-noto-bold text-xl">
+								ログイン
+							</Text>
+						)}
+					</TouchableHighlight>
 
-				{/* Google Sign-Inボタン */}
-				<TouchableHighlight
-					onPress={handleGoogleSignIn}
-					disabled={isLoading || isLockedOut}
-					activeOpacity={0.7}
-					className={`rounded-md p-4 mb-6 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"}`}
-					underlayColor="#f3f4f6"
-				>
-					<View className="flex-row items-center justify-center">
-						<GoogleIcon size={24} />
+					{/* 区切り線 */}
+					<View className="flex-row items-center my-4">
+						<View className="flex-1 h-px bg-gray-300" />
 						<Text
-							className="ml-2 text-center font-noto-bold text-lg"
-							style={{ color: isDark ? "#374151" : "#374151" }}
+							className="mx-4 font-noto-regular"
+							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
 						>
-							Googleでログイン
+							または
 						</Text>
+						<View className="flex-1 h-px bg-gray-300" />
 					</View>
-				</TouchableHighlight>
 
-				<View className="flex-row justify-center">
-					<Text className="text-gray-600 font-noto-regular">
-						アカウントをお持ちでない方は{" "}
-					</Text>
-					<Link href="/signup" asChild>
-						<TouchableHighlight>
-							<Text className="text-blue-500 font-noto-bold">新規登録</Text>
+					{/* Google Sign-Inボタン */}
+					<TouchableHighlight
+						onPress={handleGoogleSignIn}
+						disabled={isLoading || isLockedOut}
+						activeOpacity={0.7}
+						className={`rounded-md p-4 mb-3 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"}`}
+						underlayColor="#f3f4f6"
+					>
+						<View className="flex-row items-center justify-center">
+							<GoogleIcon size={24} />
+							<Text
+								className="ml-2 text-center font-noto-bold text-lg"
+								style={{ color: isDark ? "#374151" : "#374151" }}
+							>
+								Googleでログイン
+							</Text>
+						</View>
+					</TouchableHighlight>
+
+					{/* Apple Sign-Inボタン (iOSのみ) */}
+					{Platform.OS === "ios" && (
+						<TouchableHighlight
+							onPress={handleAppleSignIn}
+							disabled={isLoading || isLockedOut}
+							activeOpacity={0.7}
+							className={`rounded-md p-4 mb-6 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-black border-black"}`}
+							underlayColor="#1f1f1f"
+						>
+							<View className="flex-row items-center justify-center">
+								<Ionicons name="logo-apple" size={24} color="white" />
+								<Text className="ml-2 text-center text-white font-noto-bold text-lg">
+									Appleでログイン
+								</Text>
+							</View>
 						</TouchableHighlight>
-					</Link>
-				</View>
+					)}
+
+					<View className="flex-row justify-center">
+						<Text className="text-gray-600 font-noto-regular">
+							アカウントをお持ちでない方は{" "}
+						</Text>
+						<Link href="/signup" asChild>
+							<TouchableHighlight>
+								<Text className="text-blue-500 font-noto-bold">新規登録</Text>
+							</TouchableHighlight>
+						</Link>
+					</View>
 				</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
