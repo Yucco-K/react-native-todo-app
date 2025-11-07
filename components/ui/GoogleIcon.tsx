@@ -27,4 +27,3 @@ export function GoogleIcon({ size = 24 }: { size?: number }) {
 		</View>
 	);
 }
-

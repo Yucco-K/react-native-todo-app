@@ -1,5 +1,7 @@
+import * as AppleAuthentication from "expo-apple-authentication";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import {
+	OAuthProvider,
 	createUserWithEmailAndPassword,
 	GoogleAuthProvider,
 	onAuthStateChanged,
@@ -10,6 +12,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
+import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
 import {
 	registerForPushNotificationsAsync,
@@ -24,6 +27,7 @@ type AuthContextType = {
 	signUp: (email: string, password: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
 	signInWithGoogle: () => Promise<void>;
+	signInWithApple: () => Promise<void>;
 	logout: () => Promise<void>;
 	updateNickname: (nickname: string) => Promise<void>;
 };
@@ -192,6 +196,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		}
 	};
 
+	const signInWithApple = async () => {
+		try {
+			// Apple Sign-Inが利用可能かチェック
+			if (Platform.OS !== "ios") {
+				throw new Error("Apple Sign-In is only available on iOS");
+			}
+
+			const credential = await AppleAuthentication.signInAsync({
+				requestedScopes: [
+					AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+					AppleAuthentication.AppleAuthenticationScope.EMAIL,
+				],
+			});
+
+			// IDトークンを取得
+			const { identityToken } = credential;
+			if (!identityToken) {
+				throw new Error("Apple Sign-In failed: No identity token");
+			}
+
+			// Firebaseの認証情報を作成
+			const provider = new OAuthProvider("apple.com");
+			const appleCredential = provider.credential({
+				idToken: identityToken,
+			});
+
+			// Firebaseにサインイン
+			const userCredential = await signInWithCredential(auth, appleCredential);
+			const userId = userCredential.user.uid;
+			const userEmail = userCredential.user.email;
+
+			// Firestoreにユーザー情報を保存
+			if (userEmail) {
+				const userDocRef = doc(db, "users", userId);
+				const userDocSnap = await getDoc(userDocRef);
+
+				if (!userDocSnap.exists()) {
+					await setDoc(userDocRef, {
+						email: userEmail,
+						createdAt: new Date(),
+					});
+					console.log("✅ Apple認証: ユーザー情報を新規作成:", {
+						userId,
+						email: userEmail,
+					});
+				}
+			}
+
+			console.log("✅ Apple Sign-In successful");
+		} catch (error) {
+			if (error && typeof error === "object" && "code" in error) {
+				if (error.code === "ERR_REQUEST_CANCELED") {
+					// ユーザーがキャンセルした場合は静かに処理
+					console.log("Apple Sign-In canceled by user");
+					return;
+				}
+			}
+			console.error("❌ Apple Sign-In error:", error);
+			throw error;
+		}
+	};
+
 	const updateNickname = async (newNickname: string) => {
 		await saveUserNickname(newNickname);
 		setNickname(newNickname);
@@ -206,6 +272,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				signUp,
 				signIn,
 				signInWithGoogle,
+				signInWithApple,
 				logout,
 				updateNickname,
 			}}
