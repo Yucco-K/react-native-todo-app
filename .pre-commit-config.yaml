@@ -31,6 +31,5 @@ repos:
         name: Biome Check
         entry: npx @biomejs/biome check --apply
         language: system
-        types: [javascript, jsx, typescript, tsx]
+        types_or: [javascript, jsx, ts, tsx]
         pass_filenames: true
-
