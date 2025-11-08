@@ -24,7 +24,7 @@ module.exports = {
 		name: "react-native-todo-app",
 		slug: "react-native-todo-app",
 		owner: "yucco-k",
-		version: "1.0.8",
+		version: "1.0.9",
 		orientation: "portrait",
 		icon: "./assets/images/icon.png",
 		scheme: "reactnativetodoapp",
@@ -37,7 +37,7 @@ module.exports = {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: "com.yuccok.reactnativetodoapp",
-			buildNumber: "2",
+			buildNumber: "3",
 			googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
