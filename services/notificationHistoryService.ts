@@ -84,7 +84,7 @@ export async function getNotificationHistory(
 			const data = docSnap.data();
 			const notificationData = data.data || {};
 
-			// Todo操作に関する通知の場合、自分が行った操作による通知は除外
+			// Todo操作とグループ操作に関する通知の場合、自分が行った操作による通知は除外
 			// ただし、リマインド（reminder）は自分が設定したものでも表示する
 			if (
 				notificationData.type &&
@@ -93,6 +93,10 @@ export async function getNotificationHistory(
 					"todo_updated",
 					"todo_deleted",
 					"todo_completed",
+					"member_joined",
+					"member_left",
+					"organization_renamed",
+					"organization_deleted",
 				].includes(notificationData.type as string) &&
 				notificationData.actionUserId
 			) {

@@ -14,6 +14,7 @@ import {
 import { auth, db } from "../config/firebase";
 import type { Invitation } from "../types/Invitation";
 import type { Organization } from "../types/Organization";
+import { getUserNicknameById } from "./userService";
 
 const ORGANIZATIONS_COLLECTION = "organizations";
 const INVITATIONS_COLLECTION = "invitations";
@@ -28,6 +29,56 @@ function generateInviteCode(): string {
 		code += chars.charAt(Math.floor(Math.random() * chars.length));
 	}
 	return code;
+}
+
+/**
+ * 操作者の表示名を取得（ニックネーム優先）
+ */
+async function getActorDisplayName(userId: string): Promise<string> {
+	try {
+		const nickname = await getUserNicknameById(userId);
+		if (nickname) {
+			return `${nickname}さん`;
+		}
+
+		const userDoc = await getDoc(doc(db, "users", userId));
+		if (userDoc.exists()) {
+			const userData = userDoc.data();
+			return userData.email || "不明なユーザー";
+		}
+
+		return "不明なユーザー";
+	} catch (error) {
+		console.error("Error getting actor display name:", error);
+		return "不明なユーザー";
+	}
+}
+
+/**
+ * グループメンバー全員にプッシュ通知と通知履歴を送信（操作者を除く）
+ */
+async function notifyOrganizationMembers(
+	organizationId: string,
+	title: string,
+	body: string,
+	notificationType: string,
+	excludeUserId?: string
+): Promise<void> {
+	try {
+		const { sendPushNotification } = await import("./notificationService");
+
+		await sendPushNotification(title, body, {
+			type: notificationType,
+			organizationId,
+			actionUserId: excludeUserId,
+		});
+
+		console.log(
+			`✅ グループ通知送信完了: ${title} (操作者: ${excludeUserId || "なし"})`
+		);
+	} catch (error) {
+		console.error("Error notifying organization members:", error);
+	}
 }
 
 /**
@@ -99,10 +150,22 @@ export async function updateOrganizationName(
 		throw new Error("組織名を変更する権限がありません");
 	}
 
+	const oldName = orgData.name;
+
 	await updateDoc(orgRef, {
 		name: trimmedName,
 		updatedAt: new Date(),
 	});
+
+	// 他のメンバーに通知（オーナーを除く）
+	const displayName = await getActorDisplayName(userId);
+	await notifyOrganizationMembers(
+		organizationId,
+		"グループ名が変更されました",
+		`${displayName} がグループ名を「${oldName}」から「${trimmedName}」に変更しました`,
+		"organization_renamed",
+		userId
+	);
 }
 
 /**
@@ -203,6 +266,16 @@ export async function joinByInviteCode(code: string): Promise<Organization> {
 	await updateDoc(doc(db, ORGANIZATIONS_COLLECTION, orgDoc.id), {
 		members: arrayUnion(userId),
 	});
+
+	// 他のメンバーに通知
+	const displayName = await getActorDisplayName(userId);
+	await notifyOrganizationMembers(
+		orgDoc.id,
+		"新しいメンバーが参加しました",
+		`${displayName} が「${orgData.name}」に参加しました`,
+		"member_joined",
+		userId
+	);
 
 	return {
 		id: orgDoc.id,
@@ -368,6 +441,16 @@ export async function acceptInvitation(invitationId: string): Promise<void> {
 	await updateDoc(doc(db, INVITATIONS_COLLECTION, invitationId), {
 		status: "accepted",
 	});
+
+	// 他のメンバーに通知
+	const displayName = await getActorDisplayName(userId);
+	await notifyOrganizationMembers(
+		invitationData.organizationId,
+		"新しいメンバーが参加しました",
+		`${displayName} が「${invitationData.organizationName}」に参加しました`,
+		"member_joined",
+		userId
+	);
 }
 
 /**
@@ -412,6 +495,16 @@ export async function removeMember(
 	await updateDoc(doc(db, ORGANIZATIONS_COLLECTION, orgId), {
 		members: arrayRemove(memberUserId),
 	});
+
+	// 他のメンバーに通知（削除されたメンバーと操作者を除く）
+	const removedMemberName = await getActorDisplayName(memberUserId);
+	await notifyOrganizationMembers(
+		orgId,
+		"メンバーが退出しました",
+		`${removedMemberName} が「${orgData.name}」から退出しました`,
+		"member_left",
+		userId
+	);
 }
 
 /**
@@ -441,6 +534,16 @@ export async function leaveOrganization(orgId: string): Promise<void> {
 	await updateDoc(doc(db, ORGANIZATIONS_COLLECTION, orgId), {
 		members: arrayRemove(userId),
 	});
+
+	// 他のメンバーに通知（退出者を除く）
+	const displayName = await getActorDisplayName(userId);
+	await notifyOrganizationMembers(
+		orgId,
+		"メンバーが退出しました",
+		`${displayName} が「${orgData.name}」から退出しました`,
+		"member_left",
+		userId
+	);
 }
 
 /**
@@ -463,6 +566,16 @@ export async function deleteOrganization(orgId: string): Promise<void> {
 	if (orgData.ownerId !== userId) {
 		throw new Error("組織を削除する権限がありません");
 	}
+
+	// 他のメンバーに通知（オーナーを除く）
+	const displayName = await getActorDisplayName(userId);
+	await notifyOrganizationMembers(
+		orgId,
+		"グループが削除されました",
+		`${displayName} がグループ「${orgData.name}」を削除しました`,
+		"organization_deleted",
+		userId
+	);
 
 	// 組織を削除
 	await deleteDoc(doc(db, ORGANIZATIONS_COLLECTION, orgId));

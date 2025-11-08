@@ -289,6 +289,7 @@ async function getAllPushTokensWithUserId(
  * プッシュ通知を送信
  * 操作者（actionUserId）が設定されている場合、その操作を行ったユーザーには通知しない
  * ただし、リマインド通知（type: "reminder"）の場合は操作者にも通知する
+ * グループ通知の場合は、グループメンバーのみに送信する
  */
 export async function sendPushNotification(
 	title: string,
@@ -297,21 +298,57 @@ export async function sendPushNotification(
 	includeCurrentUser: boolean = false
 ): Promise<void> {
 	try {
-		// 全ユーザーのトークンを取得（actionUserIdでフィルタリングするため）
-		const tokensWithUserId = await getAllPushTokensWithUserId(false);
+		// 操作者のuserIdを取得
+		const actionUserId = data?.actionUserId as string | undefined;
+		const notificationType = data?.type as string | undefined;
+		const organizationId = data?.organizationId as string | undefined;
+
+		// グループ通知の場合、グループメンバーのみを対象とする
+		let tokensWithUserId: Array<{ userId: string; pushToken: string }> = [];
+
+		if (
+			organizationId &&
+			[
+				"member_joined",
+				"member_left",
+				"organization_renamed",
+				"organization_deleted",
+			].includes(notificationType || "")
+		) {
+			// グループメンバーのトークンのみを取得
+			const orgDoc = await getDoc(doc(db, "organizations", organizationId));
+			if (orgDoc.exists()) {
+				const orgData = orgDoc.data();
+				const members = orgData.members as string[];
+
+				// 全ユーザーのトークンを取得
+				const allTokens = await getAllPushTokensWithUserId(false);
+
+				// グループメンバーのみにフィルタリング
+				tokensWithUserId = allTokens.filter((item) =>
+					members.includes(item.userId)
+				);
+
+				console.log("👥 グループ通知: メンバーのみに送信", {
+					organizationId,
+					totalMembers: members.length,
+					tokensFound: tokensWithUserId.length,
+				});
+			}
+		} else {
+			// 通常の通知: 全ユーザーのトークンを取得
+			tokensWithUserId = await getAllPushTokensWithUserId(false);
+		}
 
 		if (tokensWithUserId.length === 0) {
 			console.log("送信先のプッシュトークンがありません");
 			return;
 		}
 
-		// 操作者のuserIdを取得
-		const actionUserId = data?.actionUserId as string | undefined;
-		const notificationType = data?.type as string | undefined;
-
 		console.log("🔍 プッシュ通知フィルタリング:", {
 			actionUserId,
 			notificationType,
+			organizationId,
 			totalTokens: tokensWithUserId.length,
 			includeCurrentUser,
 		});
@@ -396,13 +433,56 @@ export async function sendPushNotification(
 			"./notificationHistoryService"
 		);
 
-		// 操作者以外の全ユーザー（通知設定ONのみ）を取得
-		const allTargetUserIds =
-			await getAllNotificationTargetUserIds(actionUserId);
+		let allTargetUserIds: string[] = [];
 
-		console.log(
-			`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
-		);
+		// グループ通知の場合、グループメンバーのみを対象とする
+		if (
+			organizationId &&
+			[
+				"member_joined",
+				"member_left",
+				"organization_renamed",
+				"organization_deleted",
+			].includes(notificationType || "")
+		) {
+			const orgDoc = await getDoc(doc(db, "organizations", organizationId));
+			if (orgDoc.exists()) {
+				const orgData = orgDoc.data();
+				const members = orgData.members as string[];
+
+				// 操作者を除外し、通知設定ONのメンバーのみを対象とする
+				const usersRef = collection(db, "users");
+				const usersSnapshot = await getDocs(usersRef);
+
+				allTargetUserIds = members.filter((memberId) => {
+					// 操作者を除外
+					if (actionUserId && memberId === actionUserId) {
+						return false;
+					}
+
+					// 通知設定を確認
+					const userDoc = usersSnapshot.docs.find((doc) => doc.id === memberId);
+					if (userDoc) {
+						const userData = userDoc.data();
+						const notificationEnabled = userData.notificationEnabled !== false;
+						return notificationEnabled;
+					}
+
+					return false;
+				});
+
+				console.log(
+					`💾 グループ通知履歴を一括保存: ${allTargetUserIds.length}名のメンバー（操作者除外）`
+				);
+			}
+		} else {
+			// 通常の通知: 操作者以外の全ユーザー（通知設定ONのみ）を取得
+			allTargetUserIds = await getAllNotificationTargetUserIds(actionUserId);
+
+			console.log(
+				`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
+			);
+		}
 
 	for (const userId of allTargetUserIds) {
 		try {
