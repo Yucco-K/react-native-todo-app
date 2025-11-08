@@ -32,9 +32,9 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
 
 ### バックエンド
 
-- **Firebase Authentication**: ユーザー認証（Email/Password）
+- **Firebase Authentication**: ユーザー認証（Email/Password、Google、Apple Sign-In）
 - **Cloud Firestore**: NoSQLデータベース
-- **Firebase Cloud Functions**: サーバーレス関数（AI推測、レート制限）
+- **Firebase Cloud Functions**: サーバーレス関数（AI推測、レート制限、リマインド通知）
 - **OpenAI API**: AI カテゴリ推測（GPT-3.5-turbo、Cloud Functions経由）
 - **Expo Notifications**: プッシュ通知
 
@@ -47,6 +47,14 @@ React Native + Expo で構築したTodoアプリケーション。個人用のMy
   - `TodoRefreshContext`: Todo更新管理
   - `ThemeContext`: ダークモード管理
 - **AsyncStorage**: ユーザー設定・セキュリティ情報の永続化（テーマ設定、ログイン失敗回数、ロックアウト時刻など）
+
+### 配信・デプロイ
+
+- **TestFlight**: iOSベータ版配信
+- **App Store Connect**: iOS本番配信管理
+- **EAS Build**: ネイティブアプリビルド
+- **EAS Update**: OTA（Over-The-Air）アップデート
+- **GitHub Actions**: CI/CD自動化（テスト、ビルド、デプロイ）
 
 ---
 

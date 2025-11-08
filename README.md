@@ -64,13 +64,17 @@ React Native + Expo で構築したTodoアプリ。Firebase認証とFirestoreで
 
 ## 技術スタック
 
-- React Native + Expo Router
-- Firebase (Authentication, Firestore, Cloud Functions)
-- OpenAI API (GPT-3.5-turbo) - Firebase Cloud Functions経由で安全に実装
-- React Context API (テーマ管理、組織管理、Todo更新管理)
-- AsyncStorage (ユーザー設定・ログイン制限の永続化)
-- NativeWind, Zod, expo-notifications
-- @react-native-community/datetimepicker (リマインド日時選択)
+- **フロントエンド**: React Native + Expo Router
+- **バックエンド**: Firebase (Authentication, Firestore, Cloud Functions)
+- **AI機能**: OpenAI API (GPT-3.5-turbo) - Firebase Cloud Functions経由で安全に実装
+- **状態管理**: React Context API (テーマ管理、組織管理、Todo更新管理)
+- **ローカルストレージ**: AsyncStorage (ユーザー設定・ログイン制限の永続化)
+- **スタイリング**: NativeWind (Tailwind CSS for React Native)
+- **バリデーション**: Zod
+- **通知**: expo-notifications
+- **日時選択**: @react-native-community/datetimepicker
+- **配信**: TestFlight (iOS), App Store Connect
+- **CI/CD**: GitHub Actions, EAS Build, EAS Update
 
 ## デモ動画
 
@@ -201,13 +205,14 @@ eas workflow:run production-build.yml
 
 > 💻 開発サーバーと同じWiFiネットワークに接続している必要があります
 
-### 方法2: 公開版（どこからでもアクセス可能）
+### 方法2: TestFlight（iOS）
 
-**Expo Goアプリ**をインストール（[iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)）して、以下のQRコードをスキャン：
+TestFlightを使用してベータ版アプリをテストできます。
 
-<img src="./assets/qr-code.png" width="200" />
+1. [TestFlight](https://apps.apple.com/app/testflight/id899247664)をインストール
+2. 招待リンクまたは招待コードを使用してアプリにアクセス
 
-> **メリット**: WiFi制限なし、どこからでもアクセス可能
+> **メリット**: ネイティブアプリとして動作、Expo Goが不要、本番環境に近いテスト
 
 ## スタンドアロンビルド
 
