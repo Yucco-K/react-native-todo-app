@@ -1,0 +1,42 @@
+# Gitleaks configuration
+title = "Gitleaks config for react-native-todo-app"
+
+[extend]
+# useDefault will extend the base configuration with the default gitleaks config:
+# https://github.com/gitleaks/gitleaks/blob/master/config/gitleaks.toml
+useDefault = true
+
+[allowlist]
+description = "Allowlist for known false positives"
+
+# 許可するパス（例: テストファイル、ドキュメント）
+paths = [
+  '''\.md$''',
+  '''\.txt$''',
+  '''package-lock\.json$''',
+  '''coverage/''',
+  '''dist/''',
+  '''node_modules/''',
+]
+
+# 許可する正規表現（例: Firebase の公開設定）
+regexes = [
+  # Firebase の公開 API キー（これ自体は公開されても問題ない）
+  '''AIza[0-9A-Za-z-_]{35}''',
+  # Expo の公開プロジェクトID
+  '''@[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+''',
+]
+
+# 特定のコミットを除外（例: 既知の過去のコミット）
+commits = [
+  # 必要に応じて、既知の問題コミットのSHAを追加
+]
+
+# 特定の文字列を除外
+stopwords = [
+  "example",
+  "test",
+  "dummy",
+  "sample",
+]
+

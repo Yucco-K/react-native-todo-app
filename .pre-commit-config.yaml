@@ -1,0 +1,36 @@
+# Pre-commit hooks configuration
+# Install: pip install pre-commit
+# Setup: pre-commit install
+
+repos:
+  # gitleaks: 機密情報の検出
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+
+  # 基本的なファイルチェック
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.snap$'
+      - id: end-of-file-fixer
+        exclude: '\.snap$'
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+  # TypeScript/JavaScript のフォーマット（Biome使用）
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: Biome Check
+        entry: npx @biomejs/biome check --apply
+        language: system
+        types: [javascript, jsx, typescript, tsx]
+        pass_filenames: true
+
