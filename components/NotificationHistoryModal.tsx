@@ -3,6 +3,7 @@ import type { NotificationHistory } from "@/services/notificationHistoryService"
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Modal,
 	Pressable,
@@ -60,13 +61,25 @@ export default function NotificationHistoryModal({
 					{item.createdAt.toLocaleString()}
 				</Text>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={() => onDelete(item.id)} className="p-2">
-				<Ionicons
-					name="close-circle"
-					size={24}
-					color={isDark ? "#ef4444" : "#dc2626"}
-				/>
-			</TouchableOpacity>
+		<TouchableOpacity
+			onPress={() => {
+				Alert.alert("通知削除", "この通知を削除しますか？", [
+					{ text: "キャンセル", style: "cancel" },
+					{
+						text: "削除",
+						style: "destructive",
+						onPress: () => onDelete(item.id),
+					},
+				]);
+			}}
+			className="p-2"
+		>
+			<Ionicons
+				name="close-circle"
+				size={24}
+				color={isDark ? "#ef4444" : "#dc2626"}
+			/>
+		</TouchableOpacity>
 		</View>
 	);
 

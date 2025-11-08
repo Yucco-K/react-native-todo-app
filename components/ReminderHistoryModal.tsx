@@ -2,6 +2,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import {
+	Alert,
 	Modal,
 	Pressable,
 	ScrollView,
@@ -107,17 +108,30 @@ export default function ReminderHistoryModal({
 												: "#f59e0b",
 										}}
 									>
-										{/* 削除ボタン */}
-										<TouchableOpacity
-											onPress={() => onDelete(todo.id)}
-											className="mr-3 mt-1"
-										>
-											<Ionicons
-												name="close-circle"
-												size={20}
-												color={isDark ? "#ef4444" : "#dc2626"}
-											/>
-										</TouchableOpacity>
+									{/* 削除ボタン */}
+									<TouchableOpacity
+										onPress={() => {
+											Alert.alert(
+												"リマインド削除",
+												`「${todo.title}」のリマインドを削除しますか？`,
+												[
+													{ text: "キャンセル", style: "cancel" },
+													{
+														text: "削除",
+														style: "destructive",
+														onPress: () => onDelete(todo.id),
+													},
+												]
+											);
+										}}
+										className="mr-3 mt-1"
+									>
+										<Ionicons
+											name="close-circle"
+											size={20}
+											color={isDark ? "#ef4444" : "#dc2626"}
+										/>
+									</TouchableOpacity>
 
 										{/* Todo情報 */}
 										<View className="flex-1">

@@ -4,6 +4,7 @@ import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
+	Alert,
 	type GestureResponderEvent,
 	Modal,
 	Pressable,
@@ -287,21 +288,32 @@ export default function TodoItem({
 								</Pressable>
 							)}
 
-							{/* 削除ボタン - 作成者のみ */}
-							{isOwner && (
-								<Pressable
-									className="flex-row items-center px-4 py-3"
-									onPress={() => {
-										onDelete?.(id);
-										setMenuVisible(false);
-									}}
-								>
-									<Ionicons name="trash-outline" size={22} color="#ef4444" />
-									<Text className="ml-3 font-noto-regular text-red-500 text-base">
-										削除
-									</Text>
-								</Pressable>
-							)}
+						{/* 削除ボタン - 作成者のみ */}
+						{isOwner && (
+							<Pressable
+								className="flex-row items-center px-4 py-3"
+								onPress={() => {
+									setMenuVisible(false);
+									Alert.alert(
+										"TODO削除",
+										`「${title}」を削除しますか？`,
+										[
+											{ text: "キャンセル", style: "cancel" },
+											{
+												text: "削除",
+												style: "destructive",
+												onPress: () => onDelete?.(id),
+											},
+										]
+									);
+								}}
+							>
+								<Ionicons name="trash-outline" size={22} color="#ef4444" />
+								<Text className="ml-3 font-noto-regular text-red-500 text-base">
+									削除
+								</Text>
+							</Pressable>
+						)}
 
 							{/* 作成者でない場合のメッセージ */}
 							{!isOwner && (
