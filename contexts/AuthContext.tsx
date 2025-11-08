@@ -203,29 +203,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				throw new Error("Apple Sign-In is only available on iOS");
 			}
 
+			// Apple Sign-Inが利用可能か確認
+			const isAvailable = await AppleAuthentication.isAvailableAsync();
+			if (!isAvailable) {
+				throw new Error("Apple Sign-In is not available on this device");
+			}
+
+			console.log("🍎 Apple Sign-In開始...");
 			const credential = await AppleAuthentication.signInAsync({
 				requestedScopes: [
 					AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
 					AppleAuthentication.AppleAuthenticationScope.EMAIL,
 				],
 			});
+			console.log("🍎 Apple認証情報を取得しました");
 
 			// IDトークンを取得
 			const { identityToken } = credential;
 			if (!identityToken) {
 				throw new Error("Apple Sign-In failed: No identity token");
 			}
+			console.log("🍎 IDトークンを取得しました");
 
 			// Firebaseの認証情報を作成
 			const provider = new OAuthProvider("apple.com");
 			const appleCredential = provider.credential({
 				idToken: identityToken,
 			});
+			console.log("🍎 Firebase認証情報を作成しました");
 
 			// Firebaseにサインイン
+			console.log("🍎 Firebaseにサインイン中...");
 			const userCredential = await signInWithCredential(auth, appleCredential);
 			const userId = userCredential.user.uid;
 			const userEmail = userCredential.user.email;
+			console.log("🍎 Firebaseサインイン成功:", { userId, userEmail });
 
 			// Firestoreにユーザー情報を保存
 			if (userEmail) {

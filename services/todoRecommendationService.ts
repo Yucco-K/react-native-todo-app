@@ -349,6 +349,7 @@ export async function generateTodoRecommendations(
 	try {
 		const {
 			frequentCategories,
+			frequentTitles,
 			recentTodos,
 			todoPatterns,
 			currentHour,
@@ -504,6 +505,92 @@ export async function generateTodoRecommendations(
 			...recommendations.map((r) => r.title.toLowerCase().trim()),
 		]);
 
+		const findCategoryForTitle = (
+			normalizedTitle: string
+		): { title: string; category: TodoCategory } => {
+			const pattern = todoPatterns.get(normalizedTitle);
+			if (pattern) {
+				return { title: pattern.title, category: pattern.category };
+			}
+
+			const recent = recentTodos.find(
+				(todo) => todo.title.toLowerCase().trim() === normalizedTitle
+			);
+			if (recent) {
+				return { title: recent.title, category: recent.category };
+			}
+
+			// normalizedTitleは小文字なので、先頭を大文字に戻す程度の整形
+			const formattedTitle =
+				normalizedTitle.charAt(0).toUpperCase() + normalizedTitle.slice(1);
+			return { title: formattedTitle, category: "other" };
+		};
+
+		// 0.5. ユーザーがよく作成するタイトルを優先的に提示
+		const sortedFrequentTitles = Object.entries(frequentTitles)
+			.filter(([normalizedTitle]) => normalizedTitle.length > 0)
+			.sort(([, countA], [, countB]) => countB - countA);
+
+		if (recommendations.length < 3) {
+			const frequentTitleRecommendations: TodoRecommendation[] = [];
+
+			for (const [normalizedTitle, count] of sortedFrequentTitles) {
+				if (recommendations.length + frequentTitleRecommendations.length >= 3)
+					break;
+				if (recommendedTitles.has(normalizedTitle)) continue;
+
+				const { title, category } = findCategoryForTitle(normalizedTitle);
+
+				frequentTitleRecommendations.push({
+					title,
+					category,
+					message:
+						count > 1
+							? `最近よく追加している「${title}」をもう一度登録しますか？`
+							: `お馴染みの「${title}」を追加しましょう！`,
+				});
+				recommendedTitles.add(normalizedTitle);
+			}
+
+			if (frequentTitleRecommendations.length > 0) {
+				recommendations.unshift(...frequentTitleRecommendations);
+			}
+		}
+
+		const frequentTitleEntries = sortedFrequentTitles;
+		const computeSimilarityScore = (candidateTitle: string) => {
+			const normalizedCandidate = candidateTitle.toLowerCase().trim();
+
+			let score = 0;
+			for (const [normalizedTitle, frequency] of frequentTitleEntries) {
+				if (!normalizedTitle) continue;
+				if (normalizedCandidate === normalizedTitle) {
+					score += frequency * 10;
+					continue;
+				}
+
+				if (
+					normalizedCandidate.includes(normalizedTitle) ||
+					normalizedTitle.includes(normalizedCandidate)
+				) {
+					score += frequency * 5;
+					continue;
+				}
+
+				const candidateWords = normalizedCandidate.split(/\s+/);
+				const titleWords = normalizedTitle.split(/\s+/);
+				const sharedWords = candidateWords.filter((word) =>
+					titleWords.includes(word)
+				);
+
+				if (sharedWords.length > 0) {
+					score += sharedWords.length * frequency * 2;
+				}
+			}
+
+			return score;
+		};
+
 		// 1. 最頻出カテゴリからの提案（周期的タスクで埋まっていない場合）
 		if (recommendations.length < 3) {
 			const sortedCategories = Object.entries(frequentCategories).sort(
@@ -518,11 +605,18 @@ export async function generateTodoRecommendations(
 				const templates = CATEGORY_TEMPLATES[cat] || [];
 
 				// そのカテゴリから複数提案可能にする
-				const shuffledTemplates = [...templates].sort(
-					() => Math.random() - 0.5
-				);
+				const sortedTemplates = [...templates].sort((a, b) => {
+					const aScore = computeSimilarityScore(a);
+					const bScore = computeSimilarityScore(b);
 
-				for (const title of shuffledTemplates) {
+					if (aScore === bScore) {
+						return a.localeCompare(b, "ja");
+					}
+
+					return bScore - aScore;
+				});
+
+				for (const title of sortedTemplates) {
 					if (recommendations.length >= 3) break;
 
 					// 既に提案済みかチェック

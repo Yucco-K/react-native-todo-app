@@ -1,15 +1,19 @@
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
 	Text,
 	TextInput,
 	TouchableHighlight,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -38,8 +42,19 @@ export default function SignupScreen() {
 		password?: string;
 		confirmPassword?: string;
 	}>({});
-	const { signUp, signInWithGoogle, signInWithApple } = useAuth();
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+	const { signUp, signInWithGoogle, signInWithApple, user } = useAuth();
+	const { isDark } = useTheme();
 	const router = useRouter();
+
+	// Apple/Google Sign-In成功後、userが更新されたらローディングを解除
+	useEffect(() => {
+		if (user) {
+			console.log("✅ 認証状態が更新されました - ローディング解除");
+			setIsLoading(false);
+		}
+	}, [user]);
 
 	const handleSignup = async () => {
 		// バリデーション
@@ -139,7 +154,9 @@ export default function SignupScreen() {
 		setIsLoading(true);
 		try {
 			await signInWithGoogle();
-			router.replace("/");
+			console.log("✅ Google Sign-In成功 - 認証状態の更新を待機中...");
+			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
+			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
 			console.log("Google サインアップエラー:", error);
 			Toast.show({
@@ -148,7 +165,6 @@ export default function SignupScreen() {
 				text2: "Google サインアップに失敗しました",
 				visibilityTime: 4000,
 			});
-		} finally {
 			setIsLoading(false);
 		}
 	};
@@ -157,7 +173,9 @@ export default function SignupScreen() {
 		setIsLoading(true);
 		try {
 			await signInWithApple();
-			router.replace("/");
+			console.log("✅ Apple Sign-In成功 - 認証状態の更新を待機中...");
+			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
+			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
 			console.log("Apple サインアップエラー:", error);
 			Toast.show({
@@ -166,33 +184,50 @@ export default function SignupScreen() {
 				text2: "Apple サインアップに失敗しました",
 				visibilityTime: 4000,
 			});
-		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView
+			className="flex-1"
+			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
+		>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
 			>
-				<View className="flex-1 justify-center px-8">
-					<Text className="text-4xl font-noto-bold text-center mb-8">
-						Todo App
-					</Text>
-					<Text className="text-2xl font-noto-bold mb-6">新規登録</Text>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View className="flex-1 justify-center px-8">
+						<Text
+							className="text-4xl font-noto-bold text-center mb-8"
+							style={{ color: isDark ? "#d1d5db" : "#000000" }}
+						>
+							Todo App
+						</Text>
+						<Text
+							className="text-2xl font-noto-bold mb-6"
+							style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+						>
+							新規登録
+						</Text>
 
-					<View className="mb-4">
-						<TextInput
-							className="border-2 border-gray-300 rounded-md p-3 font-noto-regular"
-							placeholder="メールアドレス"
-							value={email}
-							onChangeText={setEmail}
-							keyboardType="email-address"
-							autoCapitalize="none"
-							autoComplete="email"
-						/>
+						<View className="mb-4">
+							<TextInput
+								className="border-2 rounded-md p-3 font-noto-regular"
+								style={{
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+									color: isDark ? "#d1d5db" : "#000000",
+								}}
+								placeholder="メールアドレス"
+								placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+								value={email}
+								onChangeText={setEmail}
+								keyboardType="email-address"
+								autoCapitalize="none"
+								autoComplete="email"
+							/>
 						{errors.email && (
 							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.email}
@@ -201,15 +236,38 @@ export default function SignupScreen() {
 					</View>
 
 					<View className="mb-4">
-						<TextInput
-							className="border-2 border-gray-300 rounded-md p-3 font-noto-regular"
-							placeholder="パスワード（6文字以上）"
-							value={password}
-							onChangeText={setPassword}
-							secureTextEntry
-							autoCapitalize="none"
-							autoComplete="password"
+				<View
+					className="flex-row items-center border-2 rounded-md px-3"
+					style={{
+						borderColor: isDark ? "#4b5563" : "#d1d5db",
+						backgroundColor: isDark ? "#374151" : "#ffffff",
+					}}
+				>
+					<TextInput
+						className="flex-1 font-noto-regular py-3"
+						style={{
+							color: isDark ? "#d1d5db" : "#000000",
+						}}
+						placeholder="パスワード（6文字以上）"
+						placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+						value={password}
+						onChangeText={setPassword}
+						secureTextEntry={!isPasswordVisible}
+						autoCapitalize="none"
+						autoComplete="password"
+					/>
+					<TouchableOpacity
+						onPress={() => setIsPasswordVisible((prev) => !prev)}
+						activeOpacity={0.7}
+						style={{ paddingLeft: 8 }}
+					>
+						<Ionicons
+							name={isPasswordVisible ? "eye-off" : "eye"}
+							size={22}
+							color={isDark ? "#d1d5db" : "#6b7280"}
 						/>
+					</TouchableOpacity>
+				</View>
 						{errors.password && (
 							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.password}
@@ -218,15 +276,40 @@ export default function SignupScreen() {
 					</View>
 
 					<View className="mb-6">
-						<TextInput
-							className="border-2 border-gray-300 rounded-md p-3 font-noto-regular"
-							placeholder="パスワード（確認）"
-							value={confirmPassword}
-							onChangeText={setConfirmPassword}
-							secureTextEntry
-							autoCapitalize="none"
-							autoComplete="password"
+				<View
+					className="flex-row items-center border-2 rounded-md px-3"
+					style={{
+						borderColor: isDark ? "#4b5563" : "#d1d5db",
+						backgroundColor: isDark ? "#374151" : "#ffffff",
+					}}
+				>
+					<TextInput
+						className="flex-1 font-noto-regular py-3"
+						style={{
+							color: isDark ? "#d1d5db" : "#000000",
+						}}
+						placeholder="パスワード（確認）"
+						placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+						value={confirmPassword}
+						onChangeText={setConfirmPassword}
+						secureTextEntry={!isConfirmPasswordVisible}
+						autoCapitalize="none"
+						autoComplete="password"
+					/>
+					<TouchableOpacity
+						onPress={() =>
+							setIsConfirmPasswordVisible((prev) => !prev)
+						}
+						activeOpacity={0.7}
+						style={{ paddingLeft: 8 }}
+					>
+						<Ionicons
+							name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+							size={22}
+							color={isDark ? "#d1d5db" : "#6b7280"}
 						/>
+					</TouchableOpacity>
+				</View>
 						{errors.confirmPassword && (
 							<Text className="text-red-500 text-base mt-1 font-noto-regular">
 								{errors.confirmPassword}
@@ -292,7 +375,10 @@ export default function SignupScreen() {
 					)}
 
 					<View className="flex-row justify-center mt-4">
-						<Text className="text-gray-600 font-noto-regular">
+						<Text
+							className="font-noto-regular"
+							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+						>
 							既にアカウントをお持ちの方は{" "}
 						</Text>
 						<Link href="/login" asChild>
@@ -302,6 +388,7 @@ export default function SignupScreen() {
 						</Link>
 					</View>
 				</View>
+				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

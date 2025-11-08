@@ -2,7 +2,10 @@ import { PraiseToast } from "@/components/PraiseToast";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { TodoRefreshProvider } from "@/contexts/TodoRefreshContext";
+import {
+	TodoRefreshProvider,
+	useTodoRefresh,
+} from "@/contexts/TodoRefreshContext";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
@@ -26,6 +29,7 @@ function RootLayoutNav() {
 	const { user, loading } = useAuth();
 	const segments = useSegments();
 	const router = useRouter();
+	const { triggerRefresh } = useTodoRefresh();
 	const notificationListener = useRef<ReturnType<
 		typeof Notifications.addNotificationReceivedListener
 	> | null>(null);
@@ -49,6 +53,11 @@ function RootLayoutNav() {
 					"data.type": data?.type,
 				});
 
+				if (data?.type === "reminder") {
+					console.log("🔄 通知受信: リマインドのためTodoリストを更新");
+					triggerRefresh();
+				}
+
 				// 通知履歴はサーバー側（sendPushNotification）で保存されるため、
 				// ここでは保存しない（重複を防ぐため）
 			});
@@ -57,6 +66,12 @@ function RootLayoutNav() {
 		responseListener.current =
 			Notifications.addNotificationResponseReceivedListener((response) => {
 				console.log("👆 通知をタップしました:", response);
+				const notificationData =
+					response.notification.request.content.data ?? {};
+				if (notificationData?.type === "reminder") {
+					console.log("🔄 通知タップ: リマインドのためTodoリストを更新");
+					triggerRefresh();
+				}
 				// 必要に応じて画面遷移などを実装
 			});
 
@@ -68,7 +83,7 @@ function RootLayoutNav() {
 				responseListener.current.remove();
 			}
 		};
-	}, [user]);
+	}, [user, triggerRefresh]);
 
 	useEffect(() => {
 		if (loading) {
@@ -86,25 +101,29 @@ function RootLayoutNav() {
 		console.log("📋 inAuthScreen:", inAuthScreen);
 		console.log("========================================");
 
-		// ログイン/サインアップ画面では認証チェックによる自動リダイレクトを行わない
-		if (inAuthScreen) {
-			console.log("========================================");
-			console.log("⏭️ Router: 認証画面では自動リダイレクトをスキップ");
-			console.log("========================================");
-			return;
-		}
-
 		if (!user) {
-			// ユーザーが未ログインの場合、ログイン画面へ
-			console.log("========================================");
-			console.log("➡️ Router: ログインページにリダイレクト");
-			console.log("========================================");
-			router.replace("/login");
+			// ユーザーが未ログインで、認証画面にいない場合、ログイン画面へ
+			if (!inAuthScreen) {
+				console.log("========================================");
+				console.log("➡️ Router: ログインページにリダイレクト");
+				console.log("========================================");
+				router.replace("/login");
+			}
 		} else {
-			// ユーザーがログイン済みの場合
-			console.log("========================================");
-			console.log("✅ Router: ユーザーはログイン済み - リダイレクトなし");
-			console.log("========================================");
+			// ユーザーがログイン済みで、認証画面にいる場合、ホーム画面へ
+			if (inAuthScreen) {
+				console.log("========================================");
+				console.log("➡️ Router: ログイン成功 - ホームページにリダイレクト");
+				console.log("========================================");
+				// 少し遅延を入れて確実にリダイレクト
+				setTimeout(() => {
+					router.replace("/");
+				}, 100);
+			} else {
+				console.log("========================================");
+				console.log("✅ Router: ユーザーはログイン済み - リダイレクトなし");
+				console.log("========================================");
+			}
 		}
 	}, [user, loading, segments, router]);
 

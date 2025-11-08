@@ -25,20 +25,25 @@
 				"GOOGLE_SERVICE_INFO": "@file:GOOGLE_SERVICE_INFO"
 			}
 		},
-		"production": {
-			"channel": "production",
-			"ios": {
-				"simulator": false
-			},
-			"android": {
-				"buildType": "app-bundle"
-			},
-			"env": {
-				"GOOGLE_SERVICE_INFO": "@file:GOOGLE_SERVICE_INFO"
-			}
+	"production": {
+		"channel": "production",
+		"ios": {
+			"simulator": false
+		},
+		"android": {
+			"buildType": "app-bundle"
+		},
+		"env": {
+			"GOOGLE_SERVICE_INFO": "@file:GOOGLE_SERVICE_INFO"
 		}
+	}
 	},
 	"submit": {
-		"production": {}
+		"production": {
+			"ios": {
+				"ascAppId": "6755060534",
+				"appleId": "yukig0527@icloud.com"
+			}
+		}
 	}
 }
