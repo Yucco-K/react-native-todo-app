@@ -62,6 +62,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 			// ユーザーがログインしたらプッシュ通知を登録
 			if (user) {
+				// メール認証状態をFirestoreに同期
+				try {
+					const userDocRef = doc(db, "users", user.uid);
+					const userDocSnap = await getDoc(userDocRef);
+					
+					if (userDocSnap.exists()) {
+						const userData = userDocSnap.data();
+						// Firebase AuthのemailVerifiedがtrueで、FirestoreのemailVerifiedがfalseの場合
+						if (user.emailVerified && userData?.emailVerified === false) {
+							// Firestoreを更新
+							await setDoc(
+								userDocRef,
+								{ emailVerified: true },
+								{ merge: true }
+							);
+							console.log("✅ メール認証完了をFirestoreに反映しました");
+						}
+					}
+				} catch (error) {
+					console.error("❌ メール認証状態の同期に失敗:", error);
+				}
+				
 				try {
 					const token = await registerForPushNotificationsAsync();
 					if (token) {
@@ -124,35 +146,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
 		
-		// メール認証チェック（メール/パスワード認証の場合のみ）
+		// メール認証チェック（新規登録直後のユーザーのみ）
 		const isEmailPasswordUser = userCredential.user.providerData.some(
 			(provider) => provider.providerId === "password"
 		);
 		
 		if (isEmailPasswordUser && !userCredential.user.emailVerified) {
-			// 既存ユーザーかどうかをチェック（2025-01-10以前に作成されたアカウント）
+			// Firestoreでメール未認証フラグをチェック
 			const userDocRef = doc(db, "users", userId);
 			const userDocSnap = await getDoc(userDocRef);
 			
 			if (userDocSnap.exists()) {
 				const userData = userDocSnap.data();
-				const createdAt = userData?.createdAt?.toDate();
-				const cutoffDate = new Date("2025-01-10T00:00:00Z");
-				
-				// 既存ユーザー（カットオフ日より前に作成）の場合はログインを許可
-				const isExistingUser = createdAt && createdAt < cutoffDate;
-				
-				if (!isExistingUser) {
-					// 新規ユーザーの場合のみログインを拒否
+				// emailVerified が明示的に false の場合のみ（新規登録直後）
+				if (userData?.emailVerified === false) {
+					// 新規登録直後のユーザーはログインを拒否
 					await signOut(auth);
 					throw new Error("EMAIL_NOT_VERIFIED");
-				} else {
-					console.log("⚠️ 既存ユーザー（メール未認証）のログインを許可:", email);
 				}
-			} else {
-				// ユーザードキュメントが存在しない場合は新規ユーザーとみなす
-				await signOut(auth);
-				throw new Error("EMAIL_NOT_VERIFIED");
+				// emailVerified フィールドがない、またはtrueの場合はログインを許可
 			}
 		}
 
