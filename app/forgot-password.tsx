@@ -47,21 +47,8 @@ export default function ForgotPasswordScreen() {
 		setIsLoading(true);
 
 		try {
-			// パスワードリセットメールを送信（カスタム設定付き）
-			const actionCodeSettings = {
-				url: "https://reactnativetodoapp.page.link/reset", // ディープリンク
-				handleCodeInApp: true,
-				iOS: {
-					bundleId: "com.yuccok.reactnativetodoapp",
-				},
-				android: {
-					packageName: "com.yuccok.reactnativetodoapp",
-					installApp: true,
-					minimumVersion: "12",
-				},
-			};
-
-			await sendPasswordResetEmail(auth, email, actionCodeSettings);
+			// パスワードリセットメールを送信
+			await sendPasswordResetEmail(auth, email);
 			console.log("✅ パスワードリセットメールを送信しました:", email);
 
 			Toast.show({

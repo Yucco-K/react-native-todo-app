@@ -107,21 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 		const userId = userCredential.user.uid;
 
-		// メール認証を送信（カスタム設定付き）
-		const actionCodeSettings = {
-			url: "https://reactnativetodoapp.page.link/verify", // ディープリンク
-			handleCodeInApp: true,
-			iOS: {
-				bundleId: "com.yuccok.reactnativetodoapp",
-			},
-			android: {
-				packageName: "com.yuccok.reactnativetodoapp",
-				installApp: true,
-				minimumVersion: "12",
-			},
-		};
-
-		await sendEmailVerification(userCredential.user, actionCodeSettings);
+		// メール認証を送信
+		await sendEmailVerification(userCredential.user);
 		console.log("✅ 認証メールを送信しました:", email);
 
 		// Firestoreのusersコレクションにユーザー情報を保存
