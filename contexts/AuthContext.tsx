@@ -5,6 +5,7 @@ import {
 	GoogleAuthProvider,
 	OAuthProvider,
 	onAuthStateChanged,
+	sendEmailVerification,
 	signInWithCredential,
 	signInWithEmailAndPassword,
 	signOut,
@@ -95,10 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		);
 		const userId = userCredential.user.uid;
 
+		// メール認証を送信
+		await sendEmailVerification(userCredential.user);
+		console.log("✅ 認証メールを送信しました:", email);
+
 		// Firestoreのusersコレクションにユーザー情報を保存
 		await setDoc(doc(db, "users", userId), {
 			email: email,
 			createdAt: new Date(),
+			emailVerified: false,
 		});
 
 		console.log("✅ ユーザー情報をFirestoreに保存:", { userId, email });
@@ -110,6 +116,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			email,
 			password
 		);
+
+		// メール認証チェック（メール/パスワード認証の場合のみ）
+		const isEmailPasswordUser = userCredential.user.providerData.some(
+			(provider) => provider.providerId === "password"
+		);
+
+		if (isEmailPasswordUser && !userCredential.user.emailVerified) {
+			// 未認証の場合はログアウトしてエラーを投げる
+			await signOut(auth);
+			throw new Error("EMAIL_NOT_VERIFIED");
+		}
+
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
 

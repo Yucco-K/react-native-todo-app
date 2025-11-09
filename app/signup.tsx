@@ -95,12 +95,18 @@ export default function SignupScreen() {
 
 		try {
 			await signUp(email, password);
-			// Toast.show({
-			// 	type: "success",
-			// 	text1: "登録成功",
-			// 	text2: "アカウントを作成しました",
-			// });
-			router.replace("/");
+
+			// メール認証の案内を表示
+			Alert.alert(
+				"認証メールを送信しました",
+				`${email} に認証メールを送信しました。\n\nメール内のリンクをクリックしてアカウントを有効化してください。\n\n認証後、ログイン画面からログインできます。`,
+				[
+					{
+						text: "OK",
+						onPress: () => router.replace("/login"),
+					},
+				]
+			);
 		} catch (error) {
 			console.log("サインアップエラー:", error);
 			let errorTitle = "登録失敗";

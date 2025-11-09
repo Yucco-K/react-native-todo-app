@@ -209,6 +209,17 @@ export default function LoginScreen() {
 			let isAuthError = false;
 
 			if (error && typeof error === "object") {
+				// カスタムエラー（メール未認証）
+				if ("message" in error && error.message === "EMAIL_NOT_VERIFIED") {
+					Alert.alert(
+						"メール認証が必要です",
+						"アカウントを使用するには、メールアドレスの認証が必要です。\n\n登録時に送信された認証メールのリンクをクリックしてください。\n\nメールが届いていない場合は、迷惑メールフォルダをご確認ください。",
+						[{ text: "OK" }]
+					);
+					setIsLoading(false);
+					return;
+				}
+
 				// エラーコードによる詳細なメッセージ
 				if ("code" in error) {
 					switch (error.code) {
