@@ -104,25 +104,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const signUp = async (email: string, password: string) => {
-		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-		const userId = userCredential.user.uid;
+		try {
+			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+			const userId = userCredential.user.uid;
 
-		// メール認証を送信
-		await sendEmailVerification(userCredential.user);
-		console.log("✅ 認証メールを送信しました:", email);
+			console.log("✅ ユーザー作成成功:", { userId, email });
 
-		// Firestoreのusersコレクションにユーザー情報を保存
-		await setDoc(doc(db, "users", userId), {
-			email: email,
-			createdAt: new Date(),
-			emailVerified: false,
-		});
+			// Firestoreのusersコレクションにユーザー情報を保存
+			await setDoc(doc(db, "users", userId), {
+				email: email,
+				createdAt: new Date(),
+				emailVerified: false,
+			});
+			console.log("✅ ユーザー情報をFirestoreに保存しました");
 
-		console.log("✅ ユーザー情報をFirestoreに保存:", { userId, email });
+			// メール認証を送信
+			await sendEmailVerification(userCredential.user);
+			console.log("✅ 認証メールを送信しました:", email);
 
-		// メール認証が完了するまでログアウト
-		await signOut(auth);
-		console.log("✅ メール認証待ちのためログアウトしました");
+			// メール認証が完了するまでログアウト
+			await signOut(auth);
+			console.log("✅ メール認証待ちのためログアウトしました");
+		} catch (error) {
+			console.error("❌ サインアップエラー:", error);
+			throw error;
+		}
 	};
 
 	const signIn = async (email: string, password: string) => {

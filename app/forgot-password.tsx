@@ -47,25 +47,30 @@ export default function ForgotPasswordScreen() {
 		setIsLoading(true);
 
 		try {
+			console.log("📧 パスワードリセットメールを送信中...", email);
+			
 			// パスワードリセットメールを送信
 			await sendPasswordResetEmail(auth, email);
+			
 			console.log("✅ パスワードリセットメールを送信しました:", email);
 
 			Toast.show({
 				type: "success",
 				text1: "送信完了",
-				text2: "パスワードリセットメールを送信しました",
+				text2: `${email} にパスワードリセットメールを送信しました`,
 				visibilityTime: 6000,
 			});
+			
 			// 2秒後にログイン画面に戻る
 			setTimeout(() => {
 				router.back();
 			}, 2000);
 		} catch (error) {
-			console.error("パスワードリセットエラー:", error);
+			console.error("❌ パスワードリセットエラー:", error);
 			let errorMessage = "パスワードリセットメールの送信に失敗しました";
 
 			if (error && typeof error === "object" && "code" in error) {
+				console.error("エラーコード:", error.code);
 				switch (error.code) {
 					case "auth/user-not-found":
 						errorMessage = "このメールアドレスは登録されていません";
@@ -77,7 +82,7 @@ export default function ForgotPasswordScreen() {
 						errorMessage = "リクエストが多すぎます。しばらく待ってから再試行してください";
 						break;
 					default:
-						errorMessage = "エラーが発生しました。もう一度お試しください";
+						errorMessage = `エラーが発生しました: ${error.code || "不明なエラー"}`;
 				}
 			}
 
