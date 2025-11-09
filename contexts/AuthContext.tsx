@@ -114,15 +114,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			await setDoc(doc(db, "users", userId), {
 				email: email,
 				createdAt: new Date(),
-				emailVerified: true, // 一時的にtrueに変更（メール認証をスキップ）
+				emailVerified: false,
 			});
 			console.log("✅ ユーザー情報をFirestoreに保存しました");
 
-			// メール認証を一時的にスキップ
-			console.log("⚠️ メール認証をスキップしました（テスト用）");
-			
-			// ログアウトせずに、そのままログイン状態を維持
-			// await signOut(auth); // コメントアウト
+			// メール認証を送信
+			await sendEmailVerification(userCredential.user);
+			console.log("✅ 認証メールを送信しました:", email);
+
+			// メール認証が完了するまでログアウト
+			await signOut(auth);
+			console.log("✅ メール認証待ちのためログアウトしました");
 		} catch (error) {
 			console.error("❌ サインアップエラー:", error);
 			throw error;

@@ -93,17 +93,14 @@ export default function SignupScreen() {
 		try {
 			await signUp(email, password);
 
-			// アカウント作成成功（メール認証スキップ版）
+			// メール認証の案内を表示
 			Alert.alert(
-				"アカウント作成成功",
-				`${email} でアカウントを作成しました。\n\nそのままログインできます。`,
+				"認証メールを送信しました",
+				`${email} に認証メールを送信しました。\n\nメール内のリンクをクリックしてアカウントを有効化してください。\n\n認証後、ログイン画面からログインできます。`,
 				[
 					{
 						text: "OK",
-						onPress: () => {
-							// ログイン画面に戻らず、そのままホーム画面に遷移
-							// AuthContextのonAuthStateChangedが自動的にリダイレクトする
-						},
+						onPress: () => router.replace("/login"),
 					},
 				],
 			);
