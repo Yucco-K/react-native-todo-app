@@ -1,7 +1,6 @@
-import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "expo-router";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import {
 	Keyboard,
@@ -13,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "../config/firebase";
 
 export default function ForgotPasswordScreen() {
@@ -47,7 +47,23 @@ export default function ForgotPasswordScreen() {
 		setIsLoading(true);
 
 		try {
-			await sendPasswordResetEmail(auth, email);
+			// パスワードリセットメールを送信（カスタム設定付き）
+			const actionCodeSettings = {
+				url: "https://reactnativetodoapp.page.link/reset", // ディープリンク
+				handleCodeInApp: true,
+				iOS: {
+					bundleId: "com.yuccok.reactnativetodoapp",
+				},
+				android: {
+					packageName: "com.yuccok.reactnativetodoapp",
+					installApp: true,
+					minimumVersion: "12",
+				},
+			};
+
+			await sendPasswordResetEmail(auth, email, actionCodeSettings);
+			console.log("✅ パスワードリセットメールを送信しました:", email);
+
 			Toast.show({
 				type: "success",
 				text1: "送信完了",
@@ -91,21 +107,11 @@ export default function ForgotPasswordScreen() {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<SafeAreaView
-				className="flex-1"
-				style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-			>
+			<SafeAreaView className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 				<View className="flex-1 px-6 justify-center">
 					{/* 戻るボタン */}
-					<TouchableOpacity
-						onPress={() => router.back()}
-						className="absolute top-4 left-6 z-10"
-					>
-						<Ionicons
-							name="arrow-back"
-							size={28}
-							color={isDark ? "#d1d5db" : "#374151"}
-						/>
+					<TouchableOpacity onPress={() => router.back()} className="absolute top-4 left-6 z-10">
+						<Ionicons name="arrow-back" size={28} color={isDark ? "#d1d5db" : "#374151"} />
 					</TouchableOpacity>
 
 					{/* タイトル */}
@@ -185,4 +191,3 @@ export default function ForgotPasswordScreen() {
 		</TouchableWithoutFeedback>
 	);
 }
-

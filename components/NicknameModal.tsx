@@ -65,17 +65,11 @@ export default function NicknameModal({
 		try {
 			await onSave(trimmedNickname, avatarUrl.trim() || null);
 			setIsLoading(false);
-			Alert.alert("成功", "プロフィールが保存されました", [
-				{ text: "OK", onPress: onClose },
-			]);
+			Alert.alert("成功", "プロフィールが保存されました", [{ text: "OK", onPress: onClose }]);
 		} catch (error) {
 			console.error(error);
 			setIsLoading(false);
-			Alert.alert(
-				"エラー",
-				`プロフィールの保存に失敗しました: ${String(error)}`,
-				[{ text: "OK" }]
-			);
+			Alert.alert("エラー", `プロフィールの保存に失敗しました: ${String(error)}`, [{ text: "OK" }]);
 			setError("プロフィールの保存に失敗しました");
 		}
 	};
@@ -88,8 +82,7 @@ export default function NicknameModal({
 		setError(null);
 		try {
 			// パーミッションをリクエスト
-			const { status } =
-				await ImagePicker.requestMediaLibraryPermissionsAsync();
+			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 			if (status !== "granted") {
 				setError("画像ライブラリへのアクセス権限が必要です");
 				return;
@@ -113,12 +106,7 @@ export default function NicknameModal({
 	};
 
 	return (
-		<Modal
-			visible={visible}
-			transparent
-			animationType="slide"
-			onRequestClose={onClose}
-		>
+		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
 			<TouchableWithoutFeedback onPress={onClose}>
 				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -163,10 +151,7 @@ export default function NicknameModal({
 									<View className="flex-row items-center">
 										<Avatar avatarUrl={avatarUrl || null} size={80} />
 										<View className="ml-4 flex-1">
-											<TouchableOpacity
-												onPress={handlePickImage}
-												className="mb-2"
-											>
+											<TouchableOpacity onPress={handlePickImage} className="mb-2">
 												<View
 													className="px-4 py-2 rounded-md"
 													style={{
@@ -182,19 +167,10 @@ export default function NicknameModal({
 												</View>
 											</TouchableOpacity>
 											{avatarUrl && (
-												<TouchableOpacity
-													onPress={handleDeleteAvatar}
-													className="mt-2"
-												>
+												<TouchableOpacity onPress={handleDeleteAvatar} className="mt-2">
 													<View className="flex-row items-center justify-center">
-														<Ionicons
-															name="trash-outline"
-															size={16}
-															color="#ef4444"
-														/>
-														<Text className="text-red-500 font-noto-regular ml-1">
-															削除
-														</Text>
+														<Ionicons name="trash-outline" size={16} color="#ef4444" />
+														<Text className="text-red-500 font-noto-regular ml-1">削除</Text>
 													</View>
 												</TouchableOpacity>
 											)}
@@ -261,9 +237,7 @@ export default function NicknameModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">
-											保存
-										</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">保存</Text>
 									)}
 								</TouchableHighlight>
 							</View>

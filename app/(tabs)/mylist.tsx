@@ -1,32 +1,3 @@
-import AddTodoModal from "@/components/AddTodoModal";
-import NicknameModal from "@/components/NicknameModal";
-import NotificationHistoryModal from "@/components/NotificationHistoryModal";
-import ReminderHistoryModal from "@/components/ReminderHistoryModal";
-import TodoTable from "@/components/TodoTable";
-import { Avatar } from "@/components/ui/Avatar";
-import { useAuth } from "@/contexts/AuthContext";
-import { useOrganization } from "@/contexts/OrganizationContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
-import {
-	deleteNotificationHistory,
-	getNotificationHistory,
-	type NotificationHistory,
-} from "@/services/notificationHistoryService";
-import {
-	registerForPushNotificationsAsync,
-	savePushToken,
-} from "@/services/notificationService";
-import { getOrganizationMembers } from "@/services/organizationService";
-import { getReminderHistory, removeTodoReminder } from "@/services/todoService";
-import {
-	getNotificationEnabled,
-	getUserAvatarUrl,
-	getUserAvatarUrlById,
-	saveUserAvatarUrl,
-	setNotificationEnabled,
-} from "@/services/userService";
-import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -42,6 +13,32 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import AddTodoModal from "@/components/AddTodoModal";
+import NicknameModal from "@/components/NicknameModal";
+import NotificationHistoryModal from "@/components/NotificationHistoryModal";
+import ReminderHistoryModal from "@/components/ReminderHistoryModal";
+import TodoTable from "@/components/TodoTable";
+import { Avatar } from "@/components/ui/Avatar";
+import { useAuth } from "@/contexts/AuthContext";
+import { useOrganization } from "@/contexts/OrganizationContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
+import {
+	deleteNotificationHistory,
+	getNotificationHistory,
+	type NotificationHistory,
+} from "@/services/notificationHistoryService";
+import { registerForPushNotificationsAsync, savePushToken } from "@/services/notificationService";
+import { getOrganizationMembers } from "@/services/organizationService";
+import { getReminderHistory, removeTodoReminder } from "@/services/todoService";
+import {
+	getNotificationEnabled,
+	getUserAvatarUrl,
+	getUserAvatarUrlById,
+	saveUserAvatarUrl,
+	setNotificationEnabled,
+} from "@/services/userService";
+import type { Todo } from "@/types/Todo";
 
 export default function MyListScreen() {
 	const { user, nickname, logout, updateNickname } = useAuth();
@@ -50,14 +47,10 @@ export default function MyListScreen() {
 	const { isDark, toggleTheme } = useTheme();
 	const [isNicknameModalVisible, setIsNicknameModalVisible] = useState(false);
 	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-	const [isReminderHistoryVisible, setIsReminderHistoryVisible] =
-		useState(false);
-	const [isNotificationHistoryVisible, setIsNotificationHistoryVisible] =
-		useState(false);
+	const [isReminderHistoryVisible, setIsReminderHistoryVisible] = useState(false);
+	const [isNotificationHistoryVisible, setIsNotificationHistoryVisible] = useState(false);
 	const [reminderHistory, setReminderHistory] = useState<Todo[]>([]);
-	const [notificationHistory, setNotificationHistory] = useState<
-		NotificationHistory[]
-	>([]);
+	const [notificationHistory, setNotificationHistory] = useState<NotificationHistory[]>([]);
 	const [notificationEnabled, setNotificationEnabledState] = useState(true);
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 	const [memberAvatars, setMemberAvatars] = useState<
@@ -95,10 +88,7 @@ export default function MyListScreen() {
 		}
 
 		try {
-			console.log(
-				"👥 グループメンバーのアバターを読み込み中...",
-				selectedOrganization.id
-			);
+			console.log("👥 グループメンバーのアバターを読み込み中...", selectedOrganization.id);
 			const members = await getOrganizationMembers(selectedOrganization.id);
 			console.log("👥 取得したメンバー:", members);
 
@@ -106,10 +96,7 @@ export default function MyListScreen() {
 			const avatars = await Promise.all(
 				members.map(async (member) => {
 					const baseAvatarUrl = await getUserAvatarUrlById(member.userId);
-					console.log(
-						`👤 メンバー ${member.userId} のアバター:`,
-						baseAvatarUrl
-					);
+					console.log(`👤 メンバー ${member.userId} のアバター:`, baseAvatarUrl);
 
 					// avatarUrlにタイムスタンプを付与してキャッシュを回避
 					let avatarUrl = baseAvatarUrl;
@@ -123,7 +110,7 @@ export default function MyListScreen() {
 						avatarUrl,
 						timestamp, // タイムスタンプを追加
 					};
-				})
+				}),
 			);
 			console.log("👥 最終的なアバター配列:", avatars);
 			setMemberAvatars(avatars);
@@ -140,17 +127,12 @@ export default function MyListScreen() {
 
 	// アプリがフォアグラウンドに戻った時にリストを更新（remindNotifiedの更新を反映）
 	useEffect(() => {
-		const subscription = AppState.addEventListener(
-			"change",
-			(nextAppState: AppStateStatus) => {
-				if (nextAppState === "active") {
-					console.log(
-						"📱 アプリがフォアグラウンドに戻りました → Todoリストを更新"
-					);
-					triggerRefresh();
-				}
+		const subscription = AppState.addEventListener("change", (nextAppState: AppStateStatus) => {
+			if (nextAppState === "active") {
+				console.log("📱 アプリがフォアグラウンドに戻りました → Todoリストを更新");
+				triggerRefresh();
 			}
-		);
+		});
 
 		return () => {
 			subscription.remove();
@@ -293,29 +275,20 @@ export default function MyListScreen() {
 			Toast.show({
 				type: "error",
 				text1: "エラー",
-				text2:
-					error instanceof Error
-						? error.message
-						: "通知設定の変更に失敗しました",
+				text2: error instanceof Error ? error.message : "通知設定の変更に失敗しました",
 			});
 		}
 	};
 
 	return (
-		<SafeAreaView
-			className="flex-1"
-			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-		>
+		<SafeAreaView className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View className="flex-1 px-4" style={{ marginTop: -8 }}>
 					{/* ユーザー名表示エリア */}
 					<View className="mb-2">
 						{/* グループの場合はメンバーアバター表示 */}
 						{selectedOrganization && memberAvatars.length > 0 && (
-							<View
-								className="flex-row justify-end mb-2"
-								style={{ marginRight: -4 }}
-							>
+							<View className="flex-row justify-end mb-2" style={{ marginRight: -4 }}>
 								{memberAvatars.slice(0, 5).map((member, index) => (
 									<View
 										key={member.userId}
@@ -458,17 +431,11 @@ export default function MyListScreen() {
 								onPress={handleOpenNotificationHistory}
 								className="rounded-full w-10 h-10 items-center justify-center"
 								style={{
-									backgroundColor: isDark
-										? "rgba(59, 130, 246, 0.2)"
-										: "rgba(96, 165, 250, 0.2)",
+									backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "rgba(96, 165, 250, 0.2)",
 								}}
 								activeOpacity={0.7}
 							>
-								<Ionicons
-									name="notifications"
-									size={20}
-									color={isDark ? "#60a5fa" : "#3b82f6"}
-								/>
+								<Ionicons name="notifications" size={20} color={isDark ? "#60a5fa" : "#3b82f6"} />
 							</TouchableOpacity>
 
 							{/* リマインド履歴ボタン */}
@@ -476,17 +443,11 @@ export default function MyListScreen() {
 								onPress={handleOpenReminderHistory}
 								className="rounded-full w-10 h-10 items-center justify-center"
 								style={{
-									backgroundColor: isDark
-										? "rgba(245, 158, 11, 0.2)"
-										: "rgba(251, 191, 36, 0.2)",
+									backgroundColor: isDark ? "rgba(245, 158, 11, 0.2)" : "rgba(251, 191, 36, 0.2)",
 								}}
 								activeOpacity={0.7}
 							>
-								<Ionicons
-									name="time"
-									size={20}
-									color={isDark ? "#fbbf24" : "#f59e0b"}
-								/>
+								<Ionicons name="time" size={20} color={isDark ? "#fbbf24" : "#f59e0b"} />
 							</TouchableOpacity>
 
 							{/* ダークモード切り替えボタン */}
@@ -494,9 +455,7 @@ export default function MyListScreen() {
 								onPress={toggleTheme}
 								className="rounded-full w-10 h-10 items-center justify-center"
 								style={{
-									backgroundColor: isDark
-										? "rgba(59, 130, 246, 0.2)"
-										: "rgba(156, 163, 175, 0.2)",
+									backgroundColor: isDark ? "rgba(59, 130, 246, 0.2)" : "rgba(156, 163, 175, 0.2)",
 								}}
 								activeOpacity={0.7}
 							>
@@ -559,9 +518,7 @@ export default function MyListScreen() {
 					await updateNickname(newNickname);
 					await saveUserAvatarUrl(newAvatarUrl || "");
 					// 画面を即座に更新（空文字列の場合はnullに変換）
-					setAvatarUrl(
-						newAvatarUrl && newAvatarUrl.trim() ? newAvatarUrl : null
-					);
+					setAvatarUrl(newAvatarUrl && newAvatarUrl.trim() ? newAvatarUrl : null);
 					// グループメンバーのアバターも即座に更新
 					await loadMemberAvatars();
 				}}

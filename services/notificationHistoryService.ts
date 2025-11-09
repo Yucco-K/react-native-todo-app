@@ -1,4 +1,3 @@
-import { auth, db } from "@/config/firebase";
 import {
 	addDoc,
 	collection,
@@ -9,6 +8,7 @@ import {
 	query,
 	where,
 } from "firebase/firestore";
+import { auth, db } from "@/config/firebase";
 
 export interface NotificationHistory {
 	id: string;
@@ -26,7 +26,7 @@ export async function saveNotificationHistory(
 	userId: string,
 	title: string,
 	body: string,
-	data?: Record<string, unknown>
+	data?: Record<string, unknown>,
 ): Promise<void> {
 	try {
 		console.log("💾 通知履歴を保存中:", {
@@ -54,9 +54,7 @@ export async function saveNotificationHistory(
  * ユーザーの通知履歴を取得
  * （自分が行った操作による通知は除外、リマインド通知は全て表示）
  */
-export async function getNotificationHistory(
-	userId: string
-): Promise<NotificationHistory[]> {
+export async function getNotificationHistory(userId: string): Promise<NotificationHistory[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
 		console.log("📥 通知履歴を取得中:", {
@@ -71,7 +69,7 @@ export async function getNotificationHistory(
 		const q = query(
 			collection(db, "notificationHistory"),
 			where("userId", "==", userId),
-			orderBy("createdAt", "desc")
+			orderBy("createdAt", "desc"),
 		);
 
 		const snapshot = await getDocs(q);
@@ -127,7 +125,7 @@ export async function getNotificationHistory(
 		}
 
 		console.log(
-			`✅ 通知履歴を取得しました: Firestore=${snapshot.docs.length}件 → フィルタリング後=${history.length}件（除外=${filteredCount}件）`
+			`✅ 通知履歴を取得しました: Firestore=${snapshot.docs.length}件 → フィルタリング後=${history.length}件（除外=${filteredCount}件）`,
 		);
 		return history;
 	} catch (error) {
@@ -139,9 +137,7 @@ export async function getNotificationHistory(
 /**
  * 通知履歴を削除
  */
-export async function deleteNotificationHistory(
-	notificationId: string
-): Promise<void> {
+export async function deleteNotificationHistory(notificationId: string): Promise<void> {
 	try {
 		await deleteDoc(doc(db, "notificationHistory", notificationId));
 		console.log("✅ 通知履歴を削除しました");

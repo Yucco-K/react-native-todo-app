@@ -1,14 +1,6 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import {
-	collection,
-	doc,
-	getDoc,
-	getDocs,
-	query,
-	setDoc,
-	where,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
 
@@ -31,9 +23,7 @@ if (Platform.OS === "ios") {
 /**
  * プッシュ通知のパーミッションを取得してトークンを登録
  */
-export async function registerForPushNotificationsAsync(): Promise<
-	string | undefined
-> {
+export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
 	let token: string | undefined;
 
 	if (Platform.OS === "android") {
@@ -46,8 +36,7 @@ export async function registerForPushNotificationsAsync(): Promise<
 	}
 
 	if (Device.isDevice) {
-		const { status: existingStatus } =
-			await Notifications.getPermissionsAsync();
+		const { status: existingStatus } = await Notifications.getPermissionsAsync();
 		let finalStatus = existingStatus;
 		if (existingStatus !== "granted") {
 			const { status } = await Notifications.requestPermissionsAsync();
@@ -73,12 +62,12 @@ export async function registerForPushNotificationsAsync(): Promise<
 
 /**
  * ユーザーのプッシュトークンをFirestoreに保存
- * 
+ *
  * 【開発環境での注意】
  * 同じデバイスで複数ユーザーをテストする場合、重複トークン削除を無効化してください。
  * 環境変数 EXPO_PUBLIC_ALLOW_DUPLICATE_TOKENS=true を設定すると、
  * 複数ユーザーが同じトークンを持つことを許可します。
- * 
+ *
  * 【本番環境】
  * 各ユーザーが異なるデバイスを使用するため、重複トークン削除が正常に機能します。
  */
@@ -102,9 +91,7 @@ export async function savePushToken(token: string): Promise<void> {
 			const deletePromises: Promise<void>[] = [];
 			querySnapshot.forEach((docSnap) => {
 				if (docSnap.id !== userId) {
-					console.log(
-						`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`
-					);
+					console.log(`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`);
 					deletePromises.push(
 						setDoc(
 							doc(db, "users", docSnap.id),
@@ -112,8 +99,8 @@ export async function savePushToken(token: string): Promise<void> {
 								pushToken: null,
 								updatedAt: new Date(),
 							},
-							{ merge: true }
-						)
+							{ merge: true },
+						),
 					);
 				}
 			});
@@ -121,9 +108,7 @@ export async function savePushToken(token: string): Promise<void> {
 			// 重複トークンを削除
 			if (deletePromises.length > 0) {
 				await Promise.all(deletePromises);
-				console.log(
-					`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`
-				);
+				console.log(`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`);
 			}
 		} else {
 			console.log("🔧 開発モード: 重複トークンを許可します");
@@ -136,7 +121,7 @@ export async function savePushToken(token: string): Promise<void> {
 				pushToken: token,
 				updatedAt: new Date(),
 			},
-			{ merge: true }
+			{ merge: true },
 		);
 		console.log("✅ プッシュトークンを保存しました");
 	} catch (error) {
@@ -150,9 +135,7 @@ export async function savePushToken(token: string): Promise<void> {
  * - 通知設定がOFFのユーザーは除外
  * - 指定されたuserIdを除外可能
  */
-async function getAllNotificationTargetUserIds(
-	excludeUserId?: string
-): Promise<string[]> {
+async function getAllNotificationTargetUserIds(excludeUserId?: string): Promise<string[]> {
 	try {
 		const usersRef = collection(db, "users");
 		const q = query(usersRef);
@@ -200,7 +183,7 @@ async function getAllNotificationTargetUserIds(
  * 全ユーザーのプッシュトークンとuserIdのペアを取得（通知OFFのユーザーは除外）
  */
 async function getAllPushTokensWithUserId(
-	excludeCurrentUser: boolean = true
+	excludeCurrentUser: boolean = true,
 ): Promise<Array<{ userId: string; pushToken: string }>> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
@@ -253,7 +236,7 @@ async function getAllPushTokensWithUserId(
 		});
 
 		const duplicates = Array.from(tokenCounts.entries()).filter(
-			([_, userIds]) => userIds.length > 1
+			([_, userIds]) => userIds.length > 1,
 		);
 
 		console.log("📱 プッシュトークン取得:", {
@@ -295,7 +278,7 @@ export async function sendPushNotification(
 	title: string,
 	body: string,
 	data?: Record<string, unknown>,
-	includeCurrentUser: boolean = false
+	includeCurrentUser: boolean = false,
 ): Promise<void> {
 	try {
 		// 操作者のuserIdを取得
@@ -308,12 +291,9 @@ export async function sendPushNotification(
 
 		if (
 			organizationId &&
-			[
-				"member_joined",
-				"member_left",
-				"organization_renamed",
-				"organization_deleted",
-			].includes(notificationType || "")
+			["member_joined", "member_left", "organization_renamed", "organization_deleted"].includes(
+				notificationType || "",
+			)
 		) {
 			// グループメンバーのトークンのみを取得
 			const orgDoc = await getDoc(doc(db, "organizations", organizationId));
@@ -325,9 +305,7 @@ export async function sendPushNotification(
 				const allTokens = await getAllPushTokensWithUserId(false);
 
 				// グループメンバーのみにフィルタリング
-				tokensWithUserId = allTokens.filter((item) =>
-					members.includes(item.userId)
-				);
+				tokensWithUserId = allTokens.filter((item) => members.includes(item.userId));
 
 				console.log("👥 グループ通知: メンバーのみに送信", {
 					organizationId,
@@ -372,78 +350,69 @@ export async function sendPushNotification(
 			}
 			// 操作者が設定されている場合、その操作者には通知しない
 			if (actionUserId && item.userId === actionUserId) {
-				console.log(
-					`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`
-				);
+				console.log(`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`);
 				return false;
 			}
 			console.log(`✅ 通知送信対象: ${item.userId}`);
 			return true;
 		});
 
-	// プッシュ通知の送信（トークンがある場合のみ）
-	if (filteredTokens.length > 0) {
-		// 同じプッシュトークンに重複して送信しないよう、ユニーク化
-		const uniqueTokens = Array.from(
-			new Map(filteredTokens.map((item) => [item.pushToken, item])).values()
-		);
-
-		if (uniqueTokens.length < filteredTokens.length) {
-			console.log(
-				`⚠️ 重複トークンを除去: ${filteredTokens.length}件 → ${uniqueTokens.length}件`
+		// プッシュ通知の送信（トークンがある場合のみ）
+		if (filteredTokens.length > 0) {
+			// 同じプッシュトークンに重複して送信しないよう、ユニーク化
+			const uniqueTokens = Array.from(
+				new Map(filteredTokens.map((item) => [item.pushToken, item])).values(),
 			);
-		}
 
-		const messages = uniqueTokens.map((item) => ({
-			to: item.pushToken,
-			sound: "default",
-			title,
-			body,
-			data,
-		}));
-
-		console.log(
-			`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
-		);
-
-		// Expo Push APIに送信
-		for (const message of messages) {
-			try {
-				const response = await fetch("https://exp.host/--/api/v2/push/send", {
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(message),
-				});
-
-				const result = await response.json();
-				console.log("Push notification sent:", result);
-			} catch (error) {
-				console.error("Error sending push notification:", error);
+			if (uniqueTokens.length < filteredTokens.length) {
+				console.log(`⚠️ 重複トークンを除去: ${filteredTokens.length}件 → ${uniqueTokens.length}件`);
 			}
-		}
-	} else {
-		console.log("⚠️ プッシュ通知の送信先がありません（通知履歴は保存します）");
-	}
 
-	// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
-		const { saveNotificationHistory } = await import(
-			"./notificationHistoryService"
-		);
+			const messages = uniqueTokens.map((item) => ({
+				to: item.pushToken,
+				sound: "default",
+				title,
+				body,
+				data,
+			}));
+
+			console.log(
+				`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`,
+			);
+
+			// Expo Push APIに送信
+			for (const message of messages) {
+				try {
+					const response = await fetch("https://exp.host/--/api/v2/push/send", {
+						method: "POST",
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(message),
+					});
+
+					const result = await response.json();
+					console.log("Push notification sent:", result);
+				} catch (error) {
+					console.error("Error sending push notification:", error);
+				}
+			}
+		} else {
+			console.log("⚠️ プッシュ通知の送信先がありません（通知履歴は保存します）");
+		}
+
+		// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
+		const { saveNotificationHistory } = await import("./notificationHistoryService");
 
 		let allTargetUserIds: string[] = [];
 
 		// グループ通知の場合、グループメンバーのみを対象とする
 		if (
 			organizationId &&
-			[
-				"member_joined",
-				"member_left",
-				"organization_renamed",
-				"organization_deleted",
-			].includes(notificationType || "")
+			["member_joined", "member_left", "organization_renamed", "organization_deleted"].includes(
+				notificationType || "",
+			)
 		) {
 			const orgDoc = await getDoc(doc(db, "organizations", organizationId));
 			if (orgDoc.exists()) {
@@ -472,25 +441,23 @@ export async function sendPushNotification(
 				});
 
 				console.log(
-					`💾 グループ通知履歴を一括保存: ${allTargetUserIds.length}名のメンバー（操作者除外）`
+					`💾 グループ通知履歴を一括保存: ${allTargetUserIds.length}名のメンバー（操作者除外）`,
 				);
 			}
 		} else {
 			// 通常の通知: 操作者以外の全ユーザー（通知設定ONのみ）を取得
 			allTargetUserIds = await getAllNotificationTargetUserIds(actionUserId);
 
-			console.log(
-				`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
-			);
+			console.log(`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`);
 		}
 
-	for (const userId of allTargetUserIds) {
-		try {
-			await saveNotificationHistory(userId, title, body, data);
-		} catch (error) {
-			console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
+		for (const userId of allTargetUserIds) {
+			try {
+				await saveNotificationHistory(userId, title, body, data);
+			} catch (error) {
+				console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
+			}
 		}
-	}
 	} catch (error) {
 		console.error("Error in sendPushNotification:", error);
 	}
@@ -548,7 +515,7 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 	await sendPushNotification(
 		"新しい共有Todo",
 		`${displayName} が「${title}」を追加しました`,
-		{ type: "todo_added", actionUserId: userId }
+		{ type: "todo_added", actionUserId: userId },
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -576,7 +543,7 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有Todoが更新されました",
 		`${displayName} が「${title}」を編集しました`,
-		{ type: "todo_updated", actionUserId: userId }
+		{ type: "todo_updated", actionUserId: userId },
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -604,7 +571,7 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有Todoが削除されました",
 		`${displayName} が「${title}」を削除しました`,
-		{ type: "todo_deleted", actionUserId: userId }
+		{ type: "todo_deleted", actionUserId: userId },
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -644,7 +611,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 	await sendPushNotification(
 		"共有TODO完了",
 		`${displayName} が共有TODO「${title}」を完了しました。完了時刻：${completedTime}`,
-		{ type: "todo_completed", actionUserId: userId }
+		{ type: "todo_completed", actionUserId: userId },
 		// includeCurrentUser: false (デフォルト) - 本人には通知しない
 	);
 }
@@ -655,7 +622,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 export async function notifyInvitation(
 	invitedUserId: string,
 	orgName: string,
-	inviterName: string
+	inviterName: string,
 ): Promise<void> {
 	// 自分自身には通知を送らない
 	const currentUserId = auth.currentUser?.uid;
@@ -704,9 +671,7 @@ export async function notifyInvitation(
 
 		if (!response.ok) {
 			const errorBody = await response.text();
-			throw new Error(
-				`Push notification failed: ${response.status} (body: ${errorBody})`
-			);
+			throw new Error(`Push notification failed: ${response.status} (body: ${errorBody})`);
 		}
 
 		console.log("Invitation notification sent");
@@ -743,7 +708,7 @@ export async function notifyReminder(todo: {
 					todoId: todo.id,
 					todoTitle: todo.title,
 				},
-				true // 本人を含む全員に通知
+				true, // 本人を含む全員に通知
 			);
 		} else {
 			// 個人Todoの場合は本人のみに通知
@@ -785,9 +750,7 @@ export async function notifyReminder(todo: {
 
 			if (!response.ok) {
 				const errorBody = await response.text();
-				throw new Error(
-					`Push notification failed: ${response.status} (body: ${errorBody})`
-				);
+				throw new Error(`Push notification failed: ${response.status} (body: ${errorBody})`);
 			}
 		}
 

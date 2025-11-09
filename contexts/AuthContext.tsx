@@ -15,10 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { auth, db } from "../config/firebase";
-import {
-	registerForPushNotificationsAsync,
-	savePushToken,
-} from "../services/notificationService";
+import { registerForPushNotificationsAsync, savePushToken } from "../services/notificationService";
 import { getUserNickname, saveUserNickname } from "../services/userService";
 
 type AuthContextType = {
@@ -66,24 +63,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				try {
 					const userDocRef = doc(db, "users", user.uid);
 					const userDocSnap = await getDoc(userDocRef);
-					
+
 					if (userDocSnap.exists()) {
 						const userData = userDocSnap.data();
 						// Firebase AuthのemailVerifiedがtrueで、FirestoreのemailVerifiedがfalseの場合
 						if (user.emailVerified && userData?.emailVerified === false) {
 							// Firestoreを更新
-							await setDoc(
-								userDocRef,
-								{ emailVerified: true },
-								{ merge: true }
-							);
+							await setDoc(userDocRef, { emailVerified: true }, { merge: true });
 							console.log("✅ メール認証完了をFirestoreに反映しました");
 						}
 					}
 				} catch (error) {
 					console.error("❌ メール認証状態の同期に失敗:", error);
 				}
-				
+
 				try {
 					const token = await registerForPushNotificationsAsync();
 					if (token) {
@@ -111,15 +104,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const signUp = async (email: string, password: string) => {
-		const userCredential = await createUserWithEmailAndPassword(
-			auth,
-			email,
-			password
-		);
+		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 		const userId = userCredential.user.uid;
 
-		// メール認証を送信
-		await sendEmailVerification(userCredential.user);
+		// メール認証を送信（カスタム設定付き）
+		const actionCodeSettings = {
+			url: "https://reactnativetodoapp.page.link/verify", // ディープリンク
+			handleCodeInApp: true,
+			iOS: {
+				bundleId: "com.yuccok.reactnativetodoapp",
+			},
+			android: {
+				packageName: "com.yuccok.reactnativetodoapp",
+				installApp: true,
+				minimumVersion: "12",
+			},
+		};
+
+		await sendEmailVerification(userCredential.user, actionCodeSettings);
 		console.log("✅ 認証メールを送信しました:", email);
 
 		// Firestoreのusersコレクションにユーザー情報を保存
@@ -130,32 +132,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		});
 
 		console.log("✅ ユーザー情報をFirestoreに保存:", { userId, email });
-		
+
 		// メール認証が完了するまでログアウト
 		await signOut(auth);
 		console.log("✅ メール認証待ちのためログアウトしました");
 	};
 
 	const signIn = async (email: string, password: string) => {
-		const userCredential = await signInWithEmailAndPassword(
-			auth,
-			email,
-			password
-		);
-		
+		const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
 		const userId = userCredential.user.uid;
 		const userEmail = userCredential.user.email;
-		
+
 		// メール認証チェック（新規登録直後のユーザーのみ）
 		const isEmailPasswordUser = userCredential.user.providerData.some(
-			(provider) => provider.providerId === "password"
+			(provider) => provider.providerId === "password",
 		);
-		
+
 		if (isEmailPasswordUser && !userCredential.user.emailVerified) {
 			// Firestoreでメール未認証フラグをチェック
 			const userDocRef = doc(db, "users", userId);
 			const userDocSnap = await getDoc(userDocRef);
-			
+
 			if (userDocSnap.exists()) {
 				const userData = userDocSnap.data();
 				// emailVerified が明示的に false の場合のみ（新規登録直後）
@@ -191,7 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						{
 							email: userEmail,
 						},
-						{ merge: true }
+						{ merge: true },
 					);
 					console.log("✅ ユーザー情報を更新（email追加）:", {
 						userId,

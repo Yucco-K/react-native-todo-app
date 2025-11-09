@@ -19,10 +19,7 @@ type CreateOrganizationModalProps = {
 	onClose: () => void;
 };
 
-export function CreateOrganizationModal({
-	visible,
-	onClose,
-}: CreateOrganizationModalProps) {
+export function CreateOrganizationModal({ visible, onClose }: CreateOrganizationModalProps) {
 	const { isDark } = useTheme();
 	const [name, setName] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -72,12 +69,7 @@ export function CreateOrganizationModal({
 	};
 
 	return (
-		<Modal
-			visible={visible}
-			transparent
-			animationType="slide"
-			onRequestClose={handleClose}
-		>
+		<Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
 			<TouchableWithoutFeedback onPress={handleClose}>
 				<View className="flex-1 justify-center items-center bg-black/75">
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -148,9 +140,7 @@ export function CreateOrganizationModal({
 									{isLoading ? (
 										<ActivityIndicator color="white" />
 									) : (
-										<Text className="text-white font-noto-bold text-lg text-center">
-											作成
-										</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">作成</Text>
 									)}
 								</TouchableHighlight>
 							</View>

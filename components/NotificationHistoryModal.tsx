@@ -1,5 +1,3 @@
-import { useTheme } from "@/contexts/ThemeContext";
-import type { NotificationHistory } from "@/services/notificationHistoryService";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
@@ -12,6 +10,8 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { useTheme } from "@/contexts/ThemeContext";
+import type { NotificationHistory } from "@/services/notificationHistoryService";
 
 type NotificationHistoryModalProps = {
 	visible: boolean;
@@ -27,8 +27,9 @@ export default function NotificationHistoryModal({
 	onDelete,
 }: NotificationHistoryModalProps) {
 	const { isDark } = useTheme();
-	const [selectedNotification, setSelectedNotification] =
-		useState<NotificationHistory | null>(null);
+	const [selectedNotification, setSelectedNotification] = useState<NotificationHistory | null>(
+		null,
+	);
 
 	const handleNotificationPress = (notification: NotificationHistory) => {
 		setSelectedNotification(notification);
@@ -43,10 +44,7 @@ export default function NotificationHistoryModal({
 			className="flex-row items-center justify-between py-3 px-4 border-b"
 			style={{ borderColor: isDark ? "#374151" : "#e5e7eb" }}
 		>
-			<TouchableOpacity
-				className="flex-1 mr-3"
-				onPress={() => handleNotificationPress(item)}
-			>
+			<TouchableOpacity className="flex-1 mr-3" onPress={() => handleNotificationPress(item)}>
 				<Text
 					className="font-noto-bold text-base mb-1"
 					style={{ color: isDark ? "#e5e7eb" : "#1f2937" }}
@@ -61,25 +59,21 @@ export default function NotificationHistoryModal({
 					{item.createdAt.toLocaleString()}
 				</Text>
 			</TouchableOpacity>
-		<TouchableOpacity
-			onPress={() => {
-				Alert.alert("通知削除", "この通知を削除しますか？", [
-					{ text: "キャンセル", style: "cancel" },
-					{
-						text: "削除",
-						style: "destructive",
-						onPress: () => onDelete(item.id),
-					},
-				]);
-			}}
-			className="p-2"
-		>
-			<Ionicons
-				name="close-circle"
-				size={24}
-				color={isDark ? "#ef4444" : "#dc2626"}
-			/>
-		</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() => {
+					Alert.alert("通知削除", "この通知を削除しますか？", [
+						{ text: "キャンセル", style: "cancel" },
+						{
+							text: "削除",
+							style: "destructive",
+							onPress: () => onDelete(item.id),
+						},
+					]);
+				}}
+				className="p-2"
+			>
+				<Ionicons name="close-circle" size={24} color={isDark ? "#ef4444" : "#dc2626"} />
+			</TouchableOpacity>
 		</View>
 	);
 
@@ -110,11 +104,7 @@ export default function NotificationHistoryModal({
 									通知履歴
 								</Text>
 								<TouchableOpacity onPress={onClose}>
-									<Ionicons
-										name="close"
-										size={28}
-										color={isDark ? "#9ca3af" : "#6b7280"}
-									/>
+									<Ionicons name="close" size={28} color={isDark ? "#9ca3af" : "#6b7280"} />
 								</TouchableOpacity>
 							</View>
 
@@ -165,18 +155,11 @@ export default function NotificationHistoryModal({
 								通知詳細
 							</Text>
 							<TouchableOpacity onPress={handleCloseDetail}>
-								<Ionicons
-									name="close"
-									size={24}
-									color={isDark ? "#9ca3af" : "#6b7280"}
-								/>
+								<Ionicons name="close" size={24} color={isDark ? "#9ca3af" : "#6b7280"} />
 							</TouchableOpacity>
 						</View>
 
-						<ScrollView
-							style={{ maxHeight: 400 }}
-							showsVerticalScrollIndicator={true}
-						>
+						<ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={true}>
 							<View className="mb-4">
 								<Text
 									className="font-noto-bold text-sm mb-1"
@@ -228,9 +211,7 @@ export default function NotificationHistoryModal({
 							style={{ backgroundColor: isDark ? "#3b82f6" : "#2563eb" }}
 							onPress={handleCloseDetail}
 						>
-							<Text className="font-noto-bold text-white text-base">
-								閉じる
-							</Text>
+							<Text className="font-noto-bold text-white text-base">閉じる</Text>
 						</TouchableOpacity>
 					</Pressable>
 				</Pressable>

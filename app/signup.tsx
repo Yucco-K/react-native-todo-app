@@ -1,6 +1,3 @@
-import { GoogleIcon } from "@/components/ui/GoogleIcon";
-import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -20,6 +17,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { GoogleIcon } from "@/components/ui/GoogleIcon";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // バリデーションスキーマ
 const signupSchema = z
@@ -73,11 +73,7 @@ export default function SignupScreen() {
 			} = {};
 			result.error.errors.forEach((err) => {
 				const field = err.path[0];
-				if (
-					field === "email" ||
-					field === "password" ||
-					field === "confirmPassword"
-				) {
+				if (field === "email" || field === "password" || field === "confirmPassword") {
 					fieldErrors[field] = err.message;
 				}
 			});
@@ -106,7 +102,7 @@ export default function SignupScreen() {
 						text: "OK",
 						onPress: () => router.replace("/login"),
 					},
-				]
+				],
 			);
 		} catch (error) {
 			console.log("サインアップエラー:", error);
@@ -132,8 +128,7 @@ export default function SignupScreen() {
 								"メール/パスワード認証が有効化されていません。Firebase Consoleで有効にしてください。";
 							break;
 						case "auth/network-request-failed":
-							errorMessage =
-								"ネットワークエラー: インターネット接続を確認してください";
+							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `登録エラー: ${error.code}`;
@@ -185,9 +180,14 @@ export default function SignupScreen() {
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
 			console.log("Apple サインアップエラー:", error);
-			
+
 			// ユーザーがキャンセルした場合は何も表示しない
-			if (error && typeof error === "object" && "message" in error && error.message === "USER_CANCELED") {
+			if (
+				error &&
+				typeof error === "object" &&
+				"message" in error &&
+				error.message === "USER_CANCELED"
+			) {
 				console.log("ユーザーがApple Sign-Inをキャンセルしました");
 			} else {
 				Toast.show({
@@ -202,10 +202,7 @@ export default function SignupScreen() {
 	};
 
 	return (
-		<SafeAreaView
-			className="flex-1"
-			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-		>
+		<SafeAreaView className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
@@ -241,166 +238,159 @@ export default function SignupScreen() {
 								autoCapitalize="none"
 								autoComplete="email"
 							/>
-						{errors.email && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.email}
-							</Text>
-						)}
-					</View>
-
-					<View className="mb-4">
-				<View
-					className="flex-row items-center border-2 rounded-md px-3"
-					style={{
-						borderColor: isDark ? "#4b5563" : "#d1d5db",
-						backgroundColor: isDark ? "#374151" : "#ffffff",
-					}}
-				>
-					<TextInput
-						className="flex-1 font-noto-regular py-3"
-						style={{
-							color: isDark ? "#d1d5db" : "#000000",
-						}}
-						placeholder="パスワード（6文字以上）"
-						placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
-						value={password}
-						onChangeText={setPassword}
-						secureTextEntry={!isPasswordVisible}
-						autoCapitalize="none"
-						autoComplete="password"
-					/>
-					<TouchableOpacity
-						onPress={() => setIsPasswordVisible((prev) => !prev)}
-						activeOpacity={0.7}
-						style={{ paddingLeft: 8 }}
-					>
-						<Ionicons
-							name={isPasswordVisible ? "eye-off" : "eye"}
-							size={22}
-							color={isDark ? "#d1d5db" : "#6b7280"}
-						/>
-					</TouchableOpacity>
-				</View>
-						{errors.password && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.password}
-							</Text>
-						)}
-					</View>
-
-					<View className="mb-6">
-				<View
-					className="flex-row items-center border-2 rounded-md px-3"
-					style={{
-						borderColor: isDark ? "#4b5563" : "#d1d5db",
-						backgroundColor: isDark ? "#374151" : "#ffffff",
-					}}
-				>
-					<TextInput
-						className="flex-1 font-noto-regular py-3"
-						style={{
-							color: isDark ? "#d1d5db" : "#000000",
-						}}
-						placeholder="パスワード（確認）"
-						placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
-						value={confirmPassword}
-						onChangeText={setConfirmPassword}
-						secureTextEntry={!isConfirmPasswordVisible}
-						autoCapitalize="none"
-						autoComplete="password"
-					/>
-					<TouchableOpacity
-						onPress={() =>
-							setIsConfirmPasswordVisible((prev) => !prev)
-						}
-						activeOpacity={0.7}
-						style={{ paddingLeft: 8 }}
-					>
-						<Ionicons
-							name={isConfirmPasswordVisible ? "eye-off" : "eye"}
-							size={22}
-							color={isDark ? "#d1d5db" : "#6b7280"}
-						/>
-					</TouchableOpacity>
-				</View>
-						{errors.confirmPassword && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.confirmPassword}
-							</Text>
-						)}
-					</View>
-
-					<TouchableHighlight
-						onPress={handleSignup}
-						disabled={isLoading}
-						activeOpacity={0.7}
-						className="bg-blue-500 rounded-md p-4 mb-4"
-						underlayColor="#3b82f6"
-					>
-						{isLoading ? (
-							<ActivityIndicator color="white" />
-						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">
-								登録
-							</Text>
-						)}
-					</TouchableHighlight>
-
-					{/* 区切り線 */}
-					<View className="flex-row items-center my-4">
-						<View className="flex-1 h-px bg-gray-300" />
-						<Text className="mx-4 text-gray-600 font-noto-regular">または</Text>
-						<View className="flex-1 h-px bg-gray-300" />
-					</View>
-
-					{/* Google Sign-Inボタン */}
-					<TouchableHighlight
-						onPress={handleGoogleSignIn}
-						disabled={isLoading}
-						activeOpacity={0.7}
-						className="bg-white rounded-md p-4 mb-3 border-2 border-gray-300"
-						underlayColor="#f3f4f6"
-					>
-						<View className="flex-row items-center justify-center">
-							<GoogleIcon size={24} />
-							<Text className="ml-2 text-center text-gray-700 font-noto-bold text-lg">
-								Googleでサインアップ
-							</Text>
+							{errors.email && (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{errors.email}
+								</Text>
+							)}
 						</View>
-					</TouchableHighlight>
 
-					{/* Apple Sign-Inボタン (iOSのみ) */}
-					{Platform.OS === "ios" && (
+						<View className="mb-4">
+							<View
+								className="flex-row items-center border-2 rounded-md px-3"
+								style={{
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+								}}
+							>
+								<TextInput
+									className="flex-1 font-noto-regular py-3"
+									style={{
+										color: isDark ? "#d1d5db" : "#000000",
+									}}
+									placeholder="パスワード（6文字以上）"
+									placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+									value={password}
+									onChangeText={setPassword}
+									secureTextEntry={!isPasswordVisible}
+									autoCapitalize="none"
+									autoComplete="password"
+								/>
+								<TouchableOpacity
+									onPress={() => setIsPasswordVisible((prev) => !prev)}
+									activeOpacity={0.7}
+									style={{ paddingLeft: 8 }}
+								>
+									<Ionicons
+										name={isPasswordVisible ? "eye-off" : "eye"}
+										size={22}
+										color={isDark ? "#d1d5db" : "#6b7280"}
+									/>
+								</TouchableOpacity>
+							</View>
+							{errors.password && (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{errors.password}
+								</Text>
+							)}
+						</View>
+
+						<View className="mb-6">
+							<View
+								className="flex-row items-center border-2 rounded-md px-3"
+								style={{
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+								}}
+							>
+								<TextInput
+									className="flex-1 font-noto-regular py-3"
+									style={{
+										color: isDark ? "#d1d5db" : "#000000",
+									}}
+									placeholder="パスワード（確認）"
+									placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+									value={confirmPassword}
+									onChangeText={setConfirmPassword}
+									secureTextEntry={!isConfirmPasswordVisible}
+									autoCapitalize="none"
+									autoComplete="password"
+								/>
+								<TouchableOpacity
+									onPress={() => setIsConfirmPasswordVisible((prev) => !prev)}
+									activeOpacity={0.7}
+									style={{ paddingLeft: 8 }}
+								>
+									<Ionicons
+										name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+										size={22}
+										color={isDark ? "#d1d5db" : "#6b7280"}
+									/>
+								</TouchableOpacity>
+							</View>
+							{errors.confirmPassword && (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{errors.confirmPassword}
+								</Text>
+							)}
+						</View>
+
 						<TouchableHighlight
-							onPress={handleAppleSignIn}
+							onPress={handleSignup}
 							disabled={isLoading}
 							activeOpacity={0.7}
-							className="bg-black rounded-md p-4 mb-6 border-2 border-black"
-							underlayColor="#1f1f1f"
+							className="bg-blue-500 rounded-md p-4 mb-4"
+							underlayColor="#3b82f6"
+						>
+							{isLoading ? (
+								<ActivityIndicator color="white" />
+							) : (
+								<Text className="text-white text-center font-noto-bold text-xl">登録</Text>
+							)}
+						</TouchableHighlight>
+
+						{/* 区切り線 */}
+						<View className="flex-row items-center my-4">
+							<View className="flex-1 h-px bg-gray-300" />
+							<Text className="mx-4 text-gray-600 font-noto-regular">または</Text>
+							<View className="flex-1 h-px bg-gray-300" />
+						</View>
+
+						{/* Google Sign-Inボタン */}
+						<TouchableHighlight
+							onPress={handleGoogleSignIn}
+							disabled={isLoading}
+							activeOpacity={0.7}
+							className="bg-white rounded-md p-4 mb-3 border-2 border-gray-300"
+							underlayColor="#f3f4f6"
 						>
 							<View className="flex-row items-center justify-center">
-								<Ionicons name="logo-apple" size={24} color="white" />
-								<Text className="ml-2 text-center text-white font-noto-bold text-lg">
-									Appleでサインアップ
+								<GoogleIcon size={24} />
+								<Text className="ml-2 text-center text-gray-700 font-noto-bold text-lg">
+									Googleでサインアップ
 								</Text>
 							</View>
 						</TouchableHighlight>
-					)}
 
-					<View className="flex-row justify-center mt-4">
-						<Text
-							className="font-noto-regular"
-							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-						>
-							既にアカウントをお持ちの方は{" "}
-						</Text>
-						<Link href="/login" asChild>
-							<TouchableHighlight>
-								<Text className="text-blue-500 font-noto-bold">ログイン</Text>
+						{/* Apple Sign-Inボタン (iOSのみ) */}
+						{Platform.OS === "ios" && (
+							<TouchableHighlight
+								onPress={handleAppleSignIn}
+								disabled={isLoading}
+								activeOpacity={0.7}
+								className="bg-black rounded-md p-4 mb-6 border-2 border-black"
+								underlayColor="#1f1f1f"
+							>
+								<View className="flex-row items-center justify-center">
+									<Ionicons name="logo-apple" size={24} color="white" />
+									<Text className="ml-2 text-center text-white font-noto-bold text-lg">
+										Appleでサインアップ
+									</Text>
+								</View>
 							</TouchableHighlight>
-						</Link>
+						)}
+
+						<View className="flex-row justify-center mt-4">
+							<Text className="font-noto-regular" style={{ color: isDark ? "#9ca3af" : "#6b7280" }}>
+								既にアカウントをお持ちの方は{" "}
+							</Text>
+							<Link href="/login" asChild>
+								<TouchableHighlight>
+									<Text className="text-blue-500 font-noto-bold">ログイン</Text>
+								</TouchableHighlight>
+							</Link>
+						</View>
 					</View>
-				</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

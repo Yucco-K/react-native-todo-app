@@ -5,17 +5,11 @@ const googleServicesFileRelativePath = "./GoogleService-Info.plist";
 const googleServicesEnvPath = process.env.GOOGLE_SERVICE_INFO;
 
 if (googleServicesEnvPath) {
-	const destinationPath = path.resolve(
-		__dirname,
-		googleServicesFileRelativePath
-	);
+	const destinationPath = path.resolve(__dirname, googleServicesFileRelativePath);
 	try {
 		fs.copyFileSync(googleServicesEnvPath, destinationPath);
 	} catch (error) {
-		console.warn(
-			"Failed to copy GoogleService-Info.plist from environment variable:",
-			error
-		);
+		console.warn("Failed to copy GoogleService-Info.plist from environment variable:", error);
 	}
 }
 
@@ -34,28 +28,41 @@ module.exports = {
 			resizeMode: "contain",
 			backgroundColor: "#ffffff",
 		},
-	ios: {
-		supportsTablet: true,
-		bundleIdentifier: "com.yuccok.reactnativetodoapp",
-		buildNumber: "5",
-		googleServicesFile: googleServicesFileRelativePath,
-		infoPlist: {
-			ITSAppUsesNonExemptEncryption: false,
-			UISupportedInterfaceOrientations: [
-				"UIInterfaceOrientationPortrait",
-			],
-			UISupportedInterfaceOrientations_iPad: [
-				"UIInterfaceOrientationPortrait",
-				"UIInterfaceOrientationPortraitUpsideDown",
-			],
+		ios: {
+			supportsTablet: true,
+			bundleIdentifier: "com.yuccok.reactnativetodoapp",
+			buildNumber: "6",
+			googleServicesFile: googleServicesFileRelativePath,
+			associatedDomains: ["applinks:reactnativetodoapp.page.link"],
+			infoPlist: {
+				ITSAppUsesNonExemptEncryption: false,
+				UISupportedInterfaceOrientations: ["UIInterfaceOrientationPortrait"],
+				UISupportedInterfaceOrientations_iPad: [
+					"UIInterfaceOrientationPortrait",
+					"UIInterfaceOrientationPortraitUpsideDown",
+				],
+			},
 		},
-	},
 		android: {
 			adaptiveIcon: {
 				foregroundImage: "./assets/images/adaptive-icon.png",
 				backgroundColor: "#ffffff",
 			},
 			package: "com.yuccok.reactnativetodoapp",
+			intentFilters: [
+				{
+					action: "VIEW",
+					autoVerify: true,
+					data: [
+						{
+							scheme: "https",
+							host: "reactnativetodoapp.page.link",
+							pathPrefix: "/",
+						},
+					],
+					category: ["BROWSABLE", "DEFAULT"],
+				},
+			],
 		},
 		web: {
 			bundler: "metro",

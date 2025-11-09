@@ -1,11 +1,3 @@
-import { PraiseToast } from "@/components/PraiseToast";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { OrganizationProvider } from "@/contexts/OrganizationContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import {
-	TodoRefreshProvider,
-	useTodoRefresh,
-} from "@/contexts/TodoRefreshContext";
 import {
 	NotoSansJP_400Regular,
 	NotoSansJP_700Bold,
@@ -15,6 +7,11 @@ import * as Notifications from "expo-notifications";
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useRef } from "react";
 import Toast from "react-native-toast-message";
+import { PraiseToast } from "@/components/PraiseToast";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { TodoRefreshProvider, useTodoRefresh } from "@/contexts/TodoRefreshContext";
 import "../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -40,8 +37,8 @@ function RootLayoutNav() {
 	// 通知リスナーを設定
 	useEffect(() => {
 		// 通知を受信したときの処理
-		notificationListener.current =
-			Notifications.addNotificationReceivedListener(async (notification) => {
+		notificationListener.current = Notifications.addNotificationReceivedListener(
+			async (notification) => {
 				if (!user) return;
 
 				const { title, data } = notification.request.content;
@@ -60,20 +57,19 @@ function RootLayoutNav() {
 
 				// 通知履歴はサーバー側（sendPushNotification）で保存されるため、
 				// ここでは保存しない（重複を防ぐため）
-			});
+			},
+		);
 
 		// 通知をタップしたときの処理
-		responseListener.current =
-			Notifications.addNotificationResponseReceivedListener((response) => {
-				console.log("👆 通知をタップしました:", response);
-				const notificationData =
-					response.notification.request.content.data ?? {};
-				if (notificationData?.type === "reminder") {
-					console.log("🔄 通知タップ: リマインドのためTodoリストを更新");
-					triggerRefresh();
-				}
-				// 必要に応じて画面遷移などを実装
-			});
+		responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+			console.log("👆 通知をタップしました:", response);
+			const notificationData = response.notification.request.content.data ?? {};
+			if (notificationData?.type === "reminder") {
+				console.log("🔄 通知タップ: リマインドのためTodoリストを更新");
+				triggerRefresh();
+			}
+			// 必要に応じて画面遷移などを実装
+		});
 
 		return () => {
 			if (notificationListener.current) {

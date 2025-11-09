@@ -1,18 +1,3 @@
-import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
-import { DrawerMenu } from "@/components/DrawerMenu";
-import { InvitationListModal } from "@/components/InvitationListModal";
-import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
-import ReminderNotificationModal from "@/components/ReminderNotificationModal";
-import { useOrganization } from "@/contexts/OrganizationContext";
-import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
-import { deleteAccount } from "@/services/accountService";
-import { getMyInvitations } from "@/services/organizationService";
-import {
-	getDueReminders,
-	markReminderAsNotified,
-} from "@/services/todoService";
-import type { Organization } from "@/types/Organization";
-import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -29,6 +14,18 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { CreateOrganizationModal } from "@/components/CreateOrganizationModal";
+import { DrawerMenu } from "@/components/DrawerMenu";
+import { InvitationListModal } from "@/components/InvitationListModal";
+import { JoinOrganizationModal } from "@/components/JoinOrganizationModal";
+import ReminderNotificationModal from "@/components/ReminderNotificationModal";
+import { useOrganization } from "@/contexts/OrganizationContext";
+import { useTodoRefresh } from "@/contexts/TodoRefreshContext";
+import { deleteAccount } from "@/services/accountService";
+import { getMyInvitations } from "@/services/organizationService";
+import { getDueReminders, markReminderAsNotified } from "@/services/todoService";
+import type { Organization } from "@/types/Organization";
+import type { Todo } from "@/types/Todo";
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -38,15 +35,12 @@ export default function TabLayout() {
 	const [invitationsVisible, setInvitationsVisible] = useState(false);
 	const [remindersVisible, setRemindersVisible] = useState(false);
 	const [dueReminders, setDueReminders] = useState<Todo[]>([]);
-	const [isDeleteAccountModalVisible, setIsDeleteAccountModalVisible] =
-		useState(false);
+	const [isDeleteAccountModalVisible, setIsDeleteAccountModalVisible] = useState(false);
 	const [deletePassword, setDeletePassword] = useState("");
 	const [deletePasswordError, setDeletePasswordError] = useState("");
 	const { selectedOrganization } = useOrganization();
 	const { triggerRefresh } = useTodoRefresh();
-	const appState = useRef(
-		Platform.OS !== "web" ? AppState.currentState : "active"
-	);
+	const appState = useRef(Platform.OS !== "web" ? AppState.currentState : "active");
 	const hasCheckedInitialInvitations = useRef(false);
 	const hasCheckedInitialReminders = useRef(false);
 
@@ -79,7 +73,7 @@ export default function TabLayout() {
 						setIsDeleteAccountModalVisible(true);
 					},
 				},
-			]
+			],
 		);
 	};
 
@@ -118,7 +112,7 @@ export default function TabLayout() {
 				console.log(
 					"📬 未読招待があります:",
 					invitations.length,
-					"件 - モーダルを自動的に開きます"
+					"件 - モーダルを自動的に開きます",
 				);
 				setInvitationsVisible(true);
 			}
@@ -132,17 +126,13 @@ export default function TabLayout() {
 		try {
 			const reminders = await getDueReminders();
 			if (reminders.length > 0) {
-				console.log(
-					"⏰ リマインドが",
-					reminders.length,
-					"件あります - モーダルを自動的に開きます"
-				);
+				console.log("⏰ リマインドが", reminders.length, "件あります - モーダルを自動的に開きます");
 				setDueReminders(reminders);
 				setRemindersVisible(true);
 
 				// 表示したタイミングで即座に通知済みに更新
 				const results = await Promise.allSettled(
-					reminders.map((reminder) => markReminderAsNotified(reminder.id))
+					reminders.map((reminder) => markReminderAsNotified(reminder.id)),
 				);
 				let hasUpdate = false;
 				results.forEach((result, index) => {
@@ -189,13 +179,8 @@ export default function TabLayout() {
 		if (Platform.OS === "web") return;
 
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
-			if (
-				appState.current.match(/inactive|background/) &&
-				nextAppState === "active"
-			) {
-				console.log(
-					"🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中..."
-				);
+			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中...");
 				checkForPendingInvitations();
 				checkForDueReminders();
 			}
@@ -222,10 +207,7 @@ export default function TabLayout() {
 						fontSize: 20,
 					},
 					headerLeft: () => (
-						<TouchableOpacity
-							onPress={() => setDrawerVisible(true)}
-							style={{ marginLeft: 15 }}
-						>
+						<TouchableOpacity onPress={() => setDrawerVisible(true)} style={{ marginLeft: 15 }}>
 							<Ionicons name="menu" size={28} color="#fff" />
 						</TouchableOpacity>
 					),
@@ -255,26 +237,20 @@ export default function TabLayout() {
 				}}
 			>
 				<Stack.Screen name="mylist" />
-				<Stack.Screen
-					name="organization-settings"
-					options={{ headerShown: false }}
-				/>
-				<Stack.Screen
-					name="reminder-settings"
-					options={{ headerShown: false }}
-				/>
+				<Stack.Screen name="organization-settings" options={{ headerShown: false }} />
+				<Stack.Screen name="reminder-settings" options={{ headerShown: false }} />
 			</Stack>
 
-		{/* ドロワーメニュー */}
-		<DrawerMenu
-			visible={drawerVisible}
-			onClose={() => setDrawerVisible(false)}
-			onCreateOrganization={() => setCreateOrgVisible(true)}
-			onJoinOrganization={() => setJoinOrgVisible(true)}
-			onManageOrganization={handleManageOrganization}
-			onViewInvitations={() => setInvitationsVisible(true)}
-			onDeleteAccount={handleDeleteAccountRequest}
-		/>
+			{/* ドロワーメニュー */}
+			<DrawerMenu
+				visible={drawerVisible}
+				onClose={() => setDrawerVisible(false)}
+				onCreateOrganization={() => setCreateOrgVisible(true)}
+				onJoinOrganization={() => setJoinOrgVisible(true)}
+				onManageOrganization={handleManageOrganization}
+				onViewInvitations={() => setInvitationsVisible(true)}
+				onDeleteAccount={handleDeleteAccountRequest}
+			/>
 
 			{/* 組織作成モーダル */}
 			<CreateOrganizationModal
@@ -283,10 +259,7 @@ export default function TabLayout() {
 			/>
 
 			{/* 組織参加モーダル */}
-			<JoinOrganizationModal
-				visible={joinOrgVisible}
-				onClose={() => setJoinOrgVisible(false)}
-			/>
+			<JoinOrganizationModal visible={joinOrgVisible} onClose={() => setJoinOrgVisible(false)} />
 
 			{/* 招待一覧モーダル */}
 			<InvitationListModal
@@ -294,85 +267,79 @@ export default function TabLayout() {
 				onClose={() => setInvitationsVisible(false)}
 			/>
 
-		{/* リマインド通知モーダル */}
-		<ReminderNotificationModal
-			visible={remindersVisible}
-			reminders={dueReminders}
-			onClose={() => {
-				setRemindersVisible(false);
-				setDueReminders([]);
-			}}
-		/>
+			{/* リマインド通知モーダル */}
+			<ReminderNotificationModal
+				visible={remindersVisible}
+				reminders={dueReminders}
+				onClose={() => {
+					setRemindersVisible(false);
+					setDueReminders([]);
+				}}
+			/>
 
-		{/* アカウント削除モーダル */}
-		<Modal
-			visible={isDeleteAccountModalVisible}
-			transparent
-			animationType="fade"
-			onRequestClose={() => setIsDeleteAccountModalVisible(false)}
-		>
-			<Pressable
-				className="flex-1 bg-black/75 justify-center items-center"
-				onPress={() => setIsDeleteAccountModalVisible(false)}
+			{/* アカウント削除モーダル */}
+			<Modal
+				visible={isDeleteAccountModalVisible}
+				transparent
+				animationType="fade"
+				onRequestClose={() => setIsDeleteAccountModalVisible(false)}
 			>
 				<Pressable
-					className="bg-white rounded-2xl p-6 w-11/12 max-w-md"
-					onPress={(e) => e.stopPropagation()}
+					className="flex-1 bg-black/75 justify-center items-center"
+					onPress={() => setIsDeleteAccountModalVisible(false)}
 				>
-					<Text className="font-noto-bold text-xl mb-4 text-gray-900">
-						アカウント削除の確認
-					</Text>
+					<Pressable
+						className="bg-white rounded-2xl p-6 w-11/12 max-w-md"
+						onPress={(e) => e.stopPropagation()}
+					>
+						<Text className="font-noto-bold text-xl mb-4 text-gray-900">アカウント削除の確認</Text>
 
-					<Text className="font-noto-regular text-base mb-4 text-gray-700">
-						本人確認のため、パスワードを入力してください。
-					</Text>
+						<Text className="font-noto-regular text-base mb-4 text-gray-700">
+							本人確認のため、パスワードを入力してください。
+						</Text>
 
-					<View className="mb-4">
-						<TextInput
-							className="border-2 border-gray-300 rounded-md px-3 py-3 font-noto-regular text-base"
-							placeholder="パスワード"
-							value={deletePassword}
-							onChangeText={(text) => {
-								setDeletePassword(text);
-								setDeletePasswordError("");
-							}}
-							secureTextEntry
-							autoCapitalize="none"
-							autoComplete="password"
-						/>
-						{deletePasswordError ? (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{deletePasswordError}
-							</Text>
-						) : null}
-					</View>
+						<View className="mb-4">
+							<TextInput
+								className="border-2 border-gray-300 rounded-md px-3 py-3 font-noto-regular text-base"
+								placeholder="パスワード"
+								value={deletePassword}
+								onChangeText={(text) => {
+									setDeletePassword(text);
+									setDeletePasswordError("");
+								}}
+								secureTextEntry
+								autoCapitalize="none"
+								autoComplete="password"
+							/>
+							{deletePasswordError ? (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{deletePasswordError}
+								</Text>
+							) : null}
+						</View>
 
-					<View className="flex-row justify-end gap-3">
-						<TouchableOpacity
-							className="px-6 py-3 rounded-md bg-gray-200"
-							onPress={() => {
-								setIsDeleteAccountModalVisible(false);
-								setDeletePassword("");
-								setDeletePasswordError("");
-							}}
-						>
-							<Text className="font-noto-bold text-base text-gray-700">
-								キャンセル
-							</Text>
-						</TouchableOpacity>
+						<View className="flex-row justify-end gap-3">
+							<TouchableOpacity
+								className="px-6 py-3 rounded-md bg-gray-200"
+								onPress={() => {
+									setIsDeleteAccountModalVisible(false);
+									setDeletePassword("");
+									setDeletePasswordError("");
+								}}
+							>
+								<Text className="font-noto-bold text-base text-gray-700">キャンセル</Text>
+							</TouchableOpacity>
 
-						<TouchableOpacity
-							className="px-6 py-3 rounded-md bg-red-600"
-							onPress={handleDeleteAccount}
-						>
-							<Text className="font-noto-bold text-base text-white">
-								削除する
-							</Text>
-						</TouchableOpacity>
-					</View>
+							<TouchableOpacity
+								className="px-6 py-3 rounded-md bg-red-600"
+								onPress={handleDeleteAccount}
+							>
+								<Text className="font-noto-bold text-base text-white">削除する</Text>
+							</TouchableOpacity>
+						</View>
+					</Pressable>
 				</Pressable>
-			</Pressable>
-		</Modal>
-	</>
-);
+			</Modal>
+		</>
+	);
 }

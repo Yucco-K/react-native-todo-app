@@ -1,8 +1,4 @@
-import {
-	deleteUser,
-	EmailAuthProvider,
-	reauthenticateWithCredential,
-} from "firebase/auth";
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import {
 	collection,
 	deleteDoc,
@@ -48,7 +44,7 @@ async function deleteUserData(userId: string): Promise<void> {
 	// 3. ユーザーの通知履歴を削除
 	const notificationsQuery = query(
 		collection(db, "notificationHistory"),
-		where("userId", "==", userId)
+		where("userId", "==", userId),
 	);
 	const notificationsSnapshot = await getDocs(notificationsQuery);
 	notificationsSnapshot.forEach((doc) => {
@@ -56,10 +52,7 @@ async function deleteUserData(userId: string): Promise<void> {
 	});
 
 	// 4. ユーザーの褒め言葉フィードバックを削除
-	const feedbackQuery = query(
-		collection(db, "praiseFeedback"),
-		where("userId", "==", userId)
-	);
+	const feedbackQuery = query(collection(db, "praiseFeedback"), where("userId", "==", userId));
 	const feedbackSnapshot = await getDocs(feedbackQuery);
 	feedbackSnapshot.forEach((doc) => {
 		batch.delete(doc.ref);
@@ -73,17 +66,14 @@ async function deleteUserData(userId: string): Promise<void> {
 	await batch.commit();
 
 	// 6. ユーザーが所有する組織を削除（バッチ外で実行）
-	const orgsQuery = query(
-		collection(db, "organizations"),
-		where("ownerId", "==", userId)
-	);
+	const orgsQuery = query(collection(db, "organizations"), where("ownerId", "==", userId));
 	const orgsSnapshot = await getDocs(orgsQuery);
 
 	for (const orgDoc of orgsSnapshot.docs) {
 		// 組織に関連する招待を削除
 		const invitationsQuery = query(
 			collection(db, "invitations"),
-			where("organizationId", "==", orgDoc.id)
+			where("organizationId", "==", orgDoc.id),
 		);
 		const invitationsSnapshot = await getDocs(invitationsQuery);
 
@@ -98,22 +88,22 @@ async function deleteUserData(userId: string): Promise<void> {
 	// 7. ユーザーがメンバーとして参加している組織から削除
 	const memberOrgsQuery = query(
 		collection(db, "organizations"),
-		where("memberIds", "array-contains", userId)
+		where("memberIds", "array-contains", userId),
 	);
 	const memberOrgsSnapshot = await getDocs(memberOrgsQuery);
 
 	for (const orgDoc of memberOrgsSnapshot.docs) {
 		const orgData = orgDoc.data();
-		
+
 		// オーナーでない場合のみメンバーリストから削除
 		if (orgData.ownerId !== userId) {
 			const updatedMembers = (orgData.memberIds as string[]).filter(
-				(memberId: string) => memberId !== userId
+				(memberId: string) => memberId !== userId,
 			);
 			await setDoc(
 				doc(db, "organizations", orgDoc.id),
 				{ memberIds: updatedMembers },
-				{ merge: true }
+				{ merge: true },
 			);
 		}
 	}
@@ -121,7 +111,7 @@ async function deleteUserData(userId: string): Promise<void> {
 	// 8. ユーザー宛ての招待を削除
 	const userInvitationsQuery = query(
 		collection(db, "invitations"),
-		where("invitedEmail", "==", auth.currentUser?.email || "")
+		where("invitedEmail", "==", auth.currentUser?.email || ""),
 	);
 	const userInvitationsSnapshot = await getDocs(userInvitationsQuery);
 
@@ -159,4 +149,3 @@ export async function deleteAccount(password: string): Promise<void> {
 		throw error;
 	}
 }
-

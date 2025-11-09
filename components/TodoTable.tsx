@@ -1,7 +1,9 @@
-import {
-	notifyTodoCompleted,
-	notifyTodoDeleted,
-} from "@/services/notificationService";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { notifyTodoCompleted, notifyTodoDeleted } from "@/services/notificationService";
 import { generatePraiseMessage } from "@/services/praiseService";
 import {
 	deleteExpiredCompletedTodos,
@@ -9,22 +11,8 @@ import {
 	getTodos as getTodosService,
 	toggleTodoComplete,
 } from "@/services/todoService";
-import {
-	getUserStats,
-	incrementCompletedTaskCount,
-} from "@/services/userStatsService";
+import { getUserStats, incrementCompletedTaskCount } from "@/services/userStatsService";
 import type { Todo } from "@/types/Todo";
-import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import Toast from "react-native-toast-message";
 import EditTodoModal from "./EditTodoModal";
 import SearchModal from "./SearchModal";
 import TodoItem from "./ui/TodoItem";
@@ -78,8 +66,7 @@ export default function TodoTable({
 								"インデックスが必要です。Firestore Consoleでインデックスを作成してください。";
 							break;
 						case "unavailable":
-							errorMessage =
-								"Firestoreに接続できません。インターネット接続を確認してください。";
+							errorMessage = "Firestoreに接続できません。インターネット接続を確認してください。";
 							break;
 						default:
 							errorMessage = `読み込みエラー: ${error.code}`;
@@ -152,8 +139,7 @@ export default function TodoTable({
 					"💯 お疲れ様！完了です！",
 					"🎯 目標達成！完了です！",
 				];
-				const randomTitle =
-					titleMessages[Math.floor(Math.random() * titleMessages.length)];
+				const randomTitle = titleMessages[Math.floor(Math.random() * titleMessages.length)];
 
 				console.log(
 					"🎨 新しいテーマ:",
@@ -161,7 +147,7 @@ export default function TodoTable({
 					"タイトル:",
 					randomTitle,
 					"褒め言葉:",
-					praiseMessage
+					praiseMessage,
 				);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
@@ -269,7 +255,7 @@ export default function TodoTable({
 	useFocusEffect(
 		useCallback(() => {
 			getTodos();
-		}, [getTodos])
+		}, [getTodos]),
 	);
 
 	return (
@@ -281,25 +267,18 @@ export default function TodoTable({
 					borderColor: isDark ? "#4b5563" : "#9ca3af",
 				}}
 			>
-			<View style={{ width: 32 }} className="mr-2" />
-			<Text
-				className="flex-1 font-noto-bold text-lg"
-				style={{ color: isDark ? "#f3f4f6" : "#000000" }}
-			>
-				Todo
-			</Text>
+				<View style={{ width: 32 }} className="mr-2" />
+				<Text
+					className="flex-1 font-noto-bold text-lg"
+					style={{ color: isDark ? "#f3f4f6" : "#000000" }}
+				>
+					Todo
+				</Text>
 
-			{/* 検索アイコンボタン */}
-			<TouchableOpacity
-				onPress={() => setIsSearchModalVisible(true)}
-				className="p-2"
-			>
-				<Ionicons
-					name="search"
-					size={24}
-					color={isDark ? "#60a5fa" : "#3b82f6"}
-				/>
-			</TouchableOpacity>
+				{/* 検索アイコンボタン */}
+				<TouchableOpacity onPress={() => setIsSearchModalVisible(true)} className="p-2">
+					<Ionicons name="search" size={24} color={isDark ? "#60a5fa" : "#3b82f6"} />
+				</TouchableOpacity>
 			</View>
 			{isLoading ? (
 				<View className="py-4">

@@ -19,10 +19,7 @@ import Toast from "react-native-toast-message";
 import { auth } from "../../config/firebase";
 import { useOrganization } from "../../contexts/OrganizationContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-	getCurrentUserDisplayName,
-	notifyInvitation,
-} from "../../services/notificationService";
+import { getCurrentUserDisplayName, notifyInvitation } from "../../services/notificationService";
 import {
 	deleteOrganization,
 	getOrganizationMembers,
@@ -35,8 +32,7 @@ import {
 export default function OrganizationSettingsScreen() {
 	const params = useLocalSearchParams();
 	const router = useRouter();
-	const { organizations, refreshOrganizations, selectOrganization } =
-		useOrganization();
+	const { organizations, refreshOrganizations, selectOrganization } = useOrganization();
 	const { isDark } = useTheme();
 
 	const [members, setMembers] = useState<
@@ -101,10 +97,7 @@ export default function OrganizationSettingsScreen() {
 
 		setIsInviting(true);
 		try {
-			const invitedUserId = await inviteByEmail(
-				organization.id,
-				inviteEmail.trim()
-			);
+			const invitedUserId = await inviteByEmail(organization.id, inviteEmail.trim());
 
 			const inviterName = await getCurrentUserDisplayName();
 			await notifyInvitation(invitedUserId, organization.name, inviterName);
@@ -139,76 +132,64 @@ export default function OrganizationSettingsScreen() {
 		}
 	};
 
-	const handleRemoveMember = (member: {
-		userId: string;
-		email: string;
-		nickname?: string;
-	}) => {
+	const handleRemoveMember = (member: { userId: string; email: string; nickname?: string }) => {
 		if (!organization) return;
 
-		Alert.alert(
-			"メンバー削除",
-			`${member.nickname || member.email} を削除しますか？`,
-			[
-				{ text: "キャンセル", style: "cancel" },
-				{
-					text: "削除",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							await removeMember(organization.id, member.userId);
-							await fetchMembers();
-						} catch (error) {
-							console.error("Error removing member:", error);
-							Toast.show({
-								type: "error",
-								text1: "削除失敗",
-								text2: "メンバーの削除に失敗しました",
-							});
-						}
-					},
+		Alert.alert("メンバー削除", `${member.nickname || member.email} を削除しますか？`, [
+			{ text: "キャンセル", style: "cancel" },
+			{
+				text: "削除",
+				style: "destructive",
+				onPress: async () => {
+					try {
+						await removeMember(organization.id, member.userId);
+						await fetchMembers();
+					} catch (error) {
+						console.error("Error removing member:", error);
+						Toast.show({
+							type: "error",
+							text1: "削除失敗",
+							text2: "メンバーの削除に失敗しました",
+						});
+					}
 				},
-			]
-		);
+			},
+		]);
 	};
 
 	const handleLeaveOrganization = () => {
 		if (!organization) return;
 
-		Alert.alert(
-			"グループから退出",
-			`「${organization.name}」から退出しますか？`,
-			[
-				{ text: "キャンセル", style: "cancel" },
-				{
-					text: "退出",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							await leaveOrganization(organization.id);
-							await refreshOrganizations();
-							selectOrganization(null);
+		Alert.alert("グループから退出", `「${organization.name}」から退出しますか？`, [
+			{ text: "キャンセル", style: "cancel" },
+			{
+				text: "退出",
+				style: "destructive",
+				onPress: async () => {
+					try {
+						await leaveOrganization(organization.id);
+						await refreshOrganizations();
+						selectOrganization(null);
 
-							router.back();
-						} catch (error) {
-							console.error("Error leaving organization:", error);
-							const errorMessage =
-								error &&
-								typeof error === "object" &&
-								"message" in error &&
-								typeof error.message === "string"
-									? error.message
-									: "グループからの退出に失敗しました";
-							Toast.show({
-								type: "error",
-								text1: "退出失敗",
-								text2: errorMessage,
-							});
-						}
-					},
+						router.back();
+					} catch (error) {
+						console.error("Error leaving organization:", error);
+						const errorMessage =
+							error &&
+							typeof error === "object" &&
+							"message" in error &&
+							typeof error.message === "string"
+								? error.message
+								: "グループからの退出に失敗しました";
+						Toast.show({
+							type: "error",
+							text1: "退出失敗",
+							text2: errorMessage,
+						});
+					}
 				},
-			]
-		);
+			},
+		]);
 	};
 
 	const handleDeleteOrganization = () => {
@@ -239,7 +220,7 @@ export default function OrganizationSettingsScreen() {
 						}
 					},
 				},
-			]
+			],
 		);
 	};
 
@@ -296,22 +277,12 @@ export default function OrganizationSettingsScreen() {
 	}
 
 	return (
-		<View
-			className="flex-1"
-			style={{ backgroundColor: isDark ? "#111827" : "#f9fafb" }}
-		>
+		<View className="flex-1" style={{ backgroundColor: isDark ? "#111827" : "#f9fafb" }}>
 			{/* ヘッダー */}
-			<View
-				className="px-6 pt-16 pb-4"
-				style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-			>
+			<View className="px-6 pt-16 pb-4" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 				<View className="flex-row items-center">
 					<TouchableOpacity onPress={() => router.back()} className="mr-4">
-						<Ionicons
-							name="arrow-back"
-							size={24}
-							color={isDark ? "#60a5fa" : "#2563eb"}
-						/>
+						<Ionicons name="arrow-back" size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
 					</TouchableOpacity>
 					{isOwner ? (
 						<TouchableOpacity
@@ -377,10 +348,7 @@ export default function OrganizationSettingsScreen() {
 						>
 							{organization.inviteCode}
 						</Text>
-						<TouchableOpacity
-							className="p-2 bg-blue-100 rounded-md"
-							onPress={handleCopyInviteCode}
-						>
+						<TouchableOpacity className="p-2 bg-blue-100 rounded-md" onPress={handleCopyInviteCode}>
 							<Ionicons name="copy-outline" size={24} color="#2563eb" />
 						</TouchableOpacity>
 					</View>
@@ -433,17 +401,13 @@ export default function OrganizationSettingsScreen() {
 
 						{inviteError && (
 							<View className="mb-3 p-3 bg-red-50 rounded-md border border-red-200">
-								<Text className="text-red-700 font-noto-regular text-sm">
-									{inviteError}
-								</Text>
+								<Text className="text-red-700 font-noto-regular text-sm">{inviteError}</Text>
 							</View>
 						)}
 
 						{inviteSuccess && (
 							<View className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
-								<Text className="text-green-700 font-noto-regular text-sm">
-									{inviteSuccess}
-								</Text>
+								<Text className="text-green-700 font-noto-regular text-sm">{inviteSuccess}</Text>
 							</View>
 						)}
 
@@ -485,24 +449,16 @@ export default function OrganizationSettingsScreen() {
 										{member.nickname || member.email}
 									</Text>
 									{member.nickname && (
-										<Text className="text-sm text-gray-500 font-noto-regular">
-											{member.email}
-										</Text>
+										<Text className="text-sm text-gray-500 font-noto-regular">{member.email}</Text>
 									)}
 									{member.userId === organization.ownerId && (
-										<Text className="text-xs text-blue-600 font-noto-bold mt-1">
-											オーナー
-										</Text>
+										<Text className="text-xs text-blue-600 font-noto-bold mt-1">オーナー</Text>
 									)}
 								</View>
 
 								{isOwner && member.userId !== organization.ownerId && (
 									<TouchableOpacity onPress={() => handleRemoveMember(member)}>
-										<Ionicons
-											name="remove-circle-outline"
-											size={24}
-											color="#ef4444"
-										/>
+										<Ionicons name="remove-circle-outline" size={24} color="#ef4444" />
 									</TouchableOpacity>
 								)}
 							</View>
@@ -528,9 +484,7 @@ export default function OrganizationSettingsScreen() {
 							className="px-4 py-3 bg-red-600 rounded-md mb-3"
 							onPress={handleDeleteOrganization}
 						>
-							<Text className="text-white text-center text-lg font-noto-bold">
-								グループを削除
-							</Text>
+							<Text className="text-white text-center text-lg font-noto-bold">グループを削除</Text>
 						</TouchableOpacity>
 					)}
 
@@ -540,9 +494,7 @@ export default function OrganizationSettingsScreen() {
 						className="bg-gray-300 rounded-md py-3"
 						underlayColor="#d1d5db"
 					>
-						<Text className="text-gray-700 font-noto-bold text-lg text-center">
-							閉じる
-						</Text>
+						<Text className="text-gray-700 font-noto-bold text-lg text-center">閉じる</Text>
 					</TouchableHighlight>
 				</View>
 			</ScrollView>
@@ -582,11 +534,7 @@ export default function OrganizationSettingsScreen() {
 									<TextInput
 										className="border-2 rounded-md px-4 py-3 text-lg font-noto-regular"
 										style={{
-											borderColor: editNameError
-												? "#ef4444"
-												: isDark
-													? "#4b5563"
-													: "#d1d5db",
+											borderColor: editNameError ? "#ef4444" : isDark ? "#4b5563" : "#d1d5db",
 											backgroundColor: isDark ? "#374151" : "#ffffff",
 											color: isDark ? "#f3f4f6" : "#000000",
 										}}
@@ -650,9 +598,7 @@ export default function OrganizationSettingsScreen() {
 										className="flex-1 bg-blue-600 rounded-md py-3"
 										underlayColor="#2563eb"
 									>
-										<Text className="text-white font-noto-bold text-lg text-center">
-											更新
-										</Text>
+										<Text className="text-white font-noto-bold text-lg text-center">更新</Text>
 									</TouchableHighlight>
 								</View>
 							</View>

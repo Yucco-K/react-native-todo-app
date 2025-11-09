@@ -1,6 +1,3 @@
-import { GoogleIcon } from "@/components/ui/GoogleIcon";
-import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
@@ -21,6 +18,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { GoogleIcon } from "@/components/ui/GoogleIcon";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // バリデーションスキーマ
 const loginSchema = z.object({
@@ -37,9 +37,7 @@ export default function LoginScreen() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-		{}
-	);
+	const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
@@ -58,9 +56,7 @@ export default function LoginScreen() {
 
 	const checkLockoutStatus = useCallback(async () => {
 		try {
-			const lockoutTimeStr = await AsyncStorage.getItem(
-				STORAGE_KEY_LOCKOUT_TIME
-			);
+			const lockoutTimeStr = await AsyncStorage.getItem(STORAGE_KEY_LOCKOUT_TIME);
 			if (lockoutTimeStr) {
 				const lockoutTime = Number.parseInt(lockoutTimeStr, 10);
 				const now = Date.now();
@@ -71,10 +67,7 @@ export default function LoginScreen() {
 					setRemainingTime(Math.ceil(timeRemaining / 1000));
 				} else {
 					// ロックアウト期間が過ぎた場合、カウントをリセット
-					await AsyncStorage.multiRemove([
-						STORAGE_KEY_FAILED_ATTEMPTS,
-						STORAGE_KEY_LOCKOUT_TIME,
-					]);
+					await AsyncStorage.multiRemove([STORAGE_KEY_FAILED_ATTEMPTS, STORAGE_KEY_LOCKOUT_TIME]);
 				}
 			}
 		} catch (error) {
@@ -107,19 +100,14 @@ export default function LoginScreen() {
 
 	const incrementFailedAttempts = async () => {
 		try {
-			const attemptsStr = await AsyncStorage.getItem(
-				STORAGE_KEY_FAILED_ATTEMPTS
-			);
+			const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
 			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
 			const newAttempts = attempts + 1;
 
 			if (newAttempts >= MAX_ATTEMPTS) {
 				// 7回目の失敗でロックアウト
 				const lockoutTime = Date.now() + LOCKOUT_DURATION_MS;
-				await AsyncStorage.setItem(
-					STORAGE_KEY_LOCKOUT_TIME,
-					lockoutTime.toString()
-				);
+				await AsyncStorage.setItem(STORAGE_KEY_LOCKOUT_TIME, lockoutTime.toString());
 				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, "0");
 				setIsLockedOut(true);
 				setRemainingTime(Math.ceil(LOCKOUT_DURATION_MS / 1000));
@@ -131,10 +119,7 @@ export default function LoginScreen() {
 					visibilityTime: 8000,
 				});
 			} else {
-				await AsyncStorage.setItem(
-					STORAGE_KEY_FAILED_ATTEMPTS,
-					newAttempts.toString()
-				);
+				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, newAttempts.toString());
 				const remainingAttempts = MAX_ATTEMPTS - newAttempts;
 				if (remainingAttempts <= 3) {
 					Toast.show({
@@ -152,10 +137,7 @@ export default function LoginScreen() {
 
 	const resetFailedAttempts = async () => {
 		try {
-			await AsyncStorage.multiRemove([
-				STORAGE_KEY_FAILED_ATTEMPTS,
-				STORAGE_KEY_LOCKOUT_TIME,
-			]);
+			await AsyncStorage.multiRemove([STORAGE_KEY_FAILED_ATTEMPTS, STORAGE_KEY_LOCKOUT_TIME]);
 		} catch (error) {
 			console.log("失敗回数のリセットエラー:", error);
 		}
@@ -215,7 +197,7 @@ export default function LoginScreen() {
 					Alert.alert(
 						"メール認証が必要です",
 						"アカウントを使用するには、メールアドレスの認証が必要です。\n\n登録時に送信された認証メールのリンクをクリックしてください。\n\nメールが届いていない場合は、迷惑メールフォルダをご確認ください。",
-						[{ text: "OK" }]
+						[{ text: "OK" }],
 					);
 					setIsLoading(false);
 					return;
@@ -243,12 +225,10 @@ export default function LoginScreen() {
 							errorMessage = "このアカウントは無効化されています";
 							break;
 						case "auth/too-many-requests":
-							errorMessage =
-								"ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
+							errorMessage = "ログイン試行回数が多すぎます。しばらく待ってから再度お試しください";
 							break;
 						case "auth/network-request-failed":
-							errorMessage =
-								"ネットワークエラー: インターネット接続を確認してください";
+							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
 							break;
 						default:
 							errorMessage = `ログインエラー: ${error.code}`;
@@ -266,9 +246,7 @@ export default function LoginScreen() {
 				await incrementFailedAttempts();
 				// incrementFailedAttempts内でToastを表示しない場合もあるため、
 				// ここでも基本的なエラーメッセージを表示
-				const attemptsStr = await AsyncStorage.getItem(
-					STORAGE_KEY_FAILED_ATTEMPTS
-				);
+				const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
 				const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
 				const remainingAttempts = MAX_ATTEMPTS - attempts;
 
@@ -325,9 +303,14 @@ export default function LoginScreen() {
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
 			console.log("Apple ログインエラー:", error);
-			
+
 			// ユーザーがキャンセルした場合は何も表示しない
-			if (error && typeof error === "object" && "message" in error && error.message === "USER_CANCELED") {
+			if (
+				error &&
+				typeof error === "object" &&
+				"message" in error &&
+				error.message === "USER_CANCELED"
+			) {
 				console.log("ユーザーがApple Sign-Inをキャンセルしました");
 			} else {
 				Toast.show({
@@ -342,10 +325,7 @@ export default function LoginScreen() {
 	};
 
 	return (
-		<SafeAreaView
-			className="flex-1"
-			style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}
-		>
+		<SafeAreaView className="flex-1" style={{ backgroundColor: isDark ? "#1f2937" : "#ffffff" }}>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				className="flex-1"
@@ -381,158 +361,149 @@ export default function LoginScreen() {
 								autoCapitalize="none"
 								autoComplete="email"
 							/>
-						{errors.email && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.email}
-							</Text>
-						)}
-					</View>
-
-					<View className="mb-6">
-				<View
-					className="flex-row items-center border-2 rounded-md px-3"
-					style={{
-						borderColor: isDark ? "#4b5563" : "#d1d5db",
-						backgroundColor: isDark ? "#374151" : "#ffffff",
-					}}
-				>
-					<TextInput
-						className="flex-1 font-noto-regular py-3"
-						style={{
-							color: isDark ? "#d1d5db" : "#000000",
-						}}
-						placeholder="パスワード"
-						placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
-						value={password}
-						onChangeText={setPassword}
-						secureTextEntry={!isPasswordVisible}
-						autoCapitalize="none"
-						autoComplete="password"
-					/>
-					<TouchableOpacity
-						onPress={() => setIsPasswordVisible((prev) => !prev)}
-						activeOpacity={0.7}
-						style={{ paddingLeft: 8 }}
-					>
-						<Ionicons
-							name={isPasswordVisible ? "eye-off" : "eye"}
-							size={22}
-							color={isDark ? "#d1d5db" : "#6b7280"}
-						/>
-					</TouchableOpacity>
-				</View>
-						{errors.password && (
-							<Text className="text-red-500 text-base mt-1 font-noto-regular">
-								{errors.password}
-							</Text>
-						)}
-					</View>
-
-					{isLockedOut && (
-						<View className="mb-4 bg-red-100 border border-red-400 rounded-md p-4">
-							<Text className="text-red-700 font-noto-bold text-base text-center mb-1">
-								⚠️ ログインが一時停止されています
-							</Text>
-							<Text className="text-red-600 font-noto-regular text-sm text-center">
-								セキュリティのため、{Math.floor(remainingTime / 60)}分
-								{remainingTime % 60}
-								秒後に再試行できます
-							</Text>
+							{errors.email && (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{errors.email}
+								</Text>
+							)}
 						</View>
-					)}
 
-				<TouchableHighlight
-					onPress={handleLogin}
-					disabled={isLoading || isLockedOut}
-					activeOpacity={0.7}
-					className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
-					underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
-				>
-					{isLoading ? (
-						<ActivityIndicator color="white" />
-					) : (
-						<Text className="text-white text-center font-noto-bold text-xl">
-							ログイン
-						</Text>
-					)}
-				</TouchableHighlight>
-
-				{/* パスワードを忘れた場合 */}
-				<TouchableOpacity
-					onPress={() => router.push("/forgot-password")}
-					className="mb-4"
-				>
-					<Text
-						className="text-center font-noto-regular text-base"
-						style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
-					>
-						パスワードを忘れた場合
-					</Text>
-				</TouchableOpacity>
-
-					{/* 区切り線 */}
-					<View className="flex-row items-center my-4">
-						<View className="flex-1 h-px bg-gray-300" />
-						<Text
-							className="mx-4 font-noto-regular"
-							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-						>
-							または
-						</Text>
-						<View className="flex-1 h-px bg-gray-300" />
-					</View>
-
-					{/* Google Sign-Inボタン */}
-					<TouchableHighlight
-						onPress={handleGoogleSignIn}
-						disabled={isLoading || isLockedOut}
-						activeOpacity={0.7}
-						className={`rounded-md p-4 mb-3 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"}`}
-						underlayColor="#f3f4f6"
-					>
-						<View className="flex-row items-center justify-center">
-							<GoogleIcon size={24} />
-							<Text
-								className="ml-2 text-center font-noto-bold text-lg"
-								style={{ color: isDark ? "#374151" : "#374151" }}
+						<View className="mb-6">
+							<View
+								className="flex-row items-center border-2 rounded-md px-3"
+								style={{
+									borderColor: isDark ? "#4b5563" : "#d1d5db",
+									backgroundColor: isDark ? "#374151" : "#ffffff",
+								}}
 							>
-								Googleでログイン
-							</Text>
+								<TextInput
+									className="flex-1 font-noto-regular py-3"
+									style={{
+										color: isDark ? "#d1d5db" : "#000000",
+									}}
+									placeholder="パスワード"
+									placeholderTextColor={isDark ? "#9ca3af" : "#6b7280"}
+									value={password}
+									onChangeText={setPassword}
+									secureTextEntry={!isPasswordVisible}
+									autoCapitalize="none"
+									autoComplete="password"
+								/>
+								<TouchableOpacity
+									onPress={() => setIsPasswordVisible((prev) => !prev)}
+									activeOpacity={0.7}
+									style={{ paddingLeft: 8 }}
+								>
+									<Ionicons
+										name={isPasswordVisible ? "eye-off" : "eye"}
+										size={22}
+										color={isDark ? "#d1d5db" : "#6b7280"}
+									/>
+								</TouchableOpacity>
+							</View>
+							{errors.password && (
+								<Text className="text-red-500 text-base mt-1 font-noto-regular">
+									{errors.password}
+								</Text>
+							)}
 						</View>
-					</TouchableHighlight>
 
-					{/* Apple Sign-Inボタン (iOSのみ) */}
-					{Platform.OS === "ios" && (
+						{isLockedOut && (
+							<View className="mb-4 bg-red-100 border border-red-400 rounded-md p-4">
+								<Text className="text-red-700 font-noto-bold text-base text-center mb-1">
+									⚠️ ログインが一時停止されています
+								</Text>
+								<Text className="text-red-600 font-noto-regular text-sm text-center">
+									セキュリティのため、{Math.floor(remainingTime / 60)}分{remainingTime % 60}
+									秒後に再試行できます
+								</Text>
+							</View>
+						)}
+
 						<TouchableHighlight
-							onPress={handleAppleSignIn}
+							onPress={handleLogin}
 							disabled={isLoading || isLockedOut}
 							activeOpacity={0.7}
-							className={`rounded-md p-4 mb-6 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-black border-black"}`}
-							underlayColor="#1f1f1f"
+							className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
+							underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
+						>
+							{isLoading ? (
+								<ActivityIndicator color="white" />
+							) : (
+								<Text className="text-white text-center font-noto-bold text-xl">ログイン</Text>
+							)}
+						</TouchableHighlight>
+
+						{/* パスワードを忘れた場合 */}
+						<TouchableOpacity onPress={() => router.push("/forgot-password")} className="mb-4">
+							<Text
+								className="text-center font-noto-regular text-base"
+								style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
+							>
+								パスワードを忘れた場合
+							</Text>
+						</TouchableOpacity>
+
+						{/* 区切り線 */}
+						<View className="flex-row items-center my-4">
+							<View className="flex-1 h-px bg-gray-300" />
+							<Text
+								className="mx-4 font-noto-regular"
+								style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+							>
+								または
+							</Text>
+							<View className="flex-1 h-px bg-gray-300" />
+						</View>
+
+						{/* Google Sign-Inボタン */}
+						<TouchableHighlight
+							onPress={handleGoogleSignIn}
+							disabled={isLoading || isLockedOut}
+							activeOpacity={0.7}
+							className={`rounded-md p-4 mb-3 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-white border-gray-300"}`}
+							underlayColor="#f3f4f6"
 						>
 							<View className="flex-row items-center justify-center">
-								<Ionicons name="logo-apple" size={24} color="white" />
-								<Text className="ml-2 text-center text-white font-noto-bold text-lg">
-									Appleでログイン
+								<GoogleIcon size={24} />
+								<Text
+									className="ml-2 text-center font-noto-bold text-lg"
+									style={{ color: isDark ? "#374151" : "#374151" }}
+								>
+									Googleでログイン
 								</Text>
 							</View>
 						</TouchableHighlight>
-					)}
 
-					<View className="flex-row justify-center">
-						<Text
-							className="font-noto-regular"
-							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-						>
-							アカウントをお持ちでない方は{" "}
-						</Text>
-						<Link href="/signup" asChild>
-							<TouchableHighlight>
-								<Text className="text-blue-500 font-noto-bold">新規登録</Text>
+						{/* Apple Sign-Inボタン (iOSのみ) */}
+						{Platform.OS === "ios" && (
+							<TouchableHighlight
+								onPress={handleAppleSignIn}
+								disabled={isLoading || isLockedOut}
+								activeOpacity={0.7}
+								className={`rounded-md p-4 mb-6 border-2 ${isLockedOut ? "bg-gray-100 border-gray-300" : "bg-black border-black"}`}
+								underlayColor="#1f1f1f"
+							>
+								<View className="flex-row items-center justify-center">
+									<Ionicons name="logo-apple" size={24} color="white" />
+									<Text className="ml-2 text-center text-white font-noto-bold text-lg">
+										Appleでログイン
+									</Text>
+								</View>
 							</TouchableHighlight>
-						</Link>
+						)}
+
+						<View className="flex-row justify-center">
+							<Text className="font-noto-regular" style={{ color: isDark ? "#9ca3af" : "#6b7280" }}>
+								アカウントをお持ちでない方は{" "}
+							</Text>
+							<Link href="/signup" asChild>
+								<TouchableHighlight>
+									<Text className="text-blue-500 font-noto-bold">新規登録</Text>
+								</TouchableHighlight>
+							</Link>
+						</View>
 					</View>
-				</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

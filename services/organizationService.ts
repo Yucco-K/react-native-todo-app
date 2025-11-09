@@ -62,7 +62,7 @@ async function notifyOrganizationMembers(
 	title: string,
 	body: string,
 	notificationType: string,
-	excludeUserId?: string
+	excludeUserId?: string,
 ): Promise<void> {
 	try {
 		const { sendPushNotification } = await import("./notificationService");
@@ -73,9 +73,7 @@ async function notifyOrganizationMembers(
 			actionUserId: excludeUserId,
 		});
 
-		console.log(
-			`✅ グループ通知送信完了: ${title} (操作者: ${excludeUserId || "なし"})`
-		);
+		console.log(`✅ グループ通知送信完了: ${title} (操作者: ${excludeUserId || "なし"})`);
 	} catch (error) {
 		console.error("Error notifying organization members:", error);
 	}
@@ -120,7 +118,7 @@ export async function createOrganization(name: string): Promise<Organization> {
  */
 export async function updateOrganizationName(
 	organizationId: string,
-	newName: string
+	newName: string,
 ): Promise<void> {
 	const userId = auth.currentUser?.uid;
 	if (!userId) {
@@ -164,7 +162,7 @@ export async function updateOrganizationName(
 		"グループ名が変更されました",
 		`${displayName} がグループ名を「${oldName}」から「${trimmedName}」に変更しました`,
 		"organization_renamed",
-		userId
+		userId,
 	);
 }
 
@@ -179,7 +177,7 @@ export async function getMyOrganizations(): Promise<Organization[]> {
 
 	const q = query(
 		collection(db, ORGANIZATIONS_COLLECTION),
-		where("members", "array-contains", userId)
+		where("members", "array-contains", userId),
 	);
 
 	const querySnapshot = await getDocs(q);
@@ -204,7 +202,7 @@ export async function getMyOrganizations(): Promise<Organization[]> {
  * 組織のメンバー情報を取得
  */
 export async function getOrganizationMembers(
-	orgId: string
+	orgId: string,
 ): Promise<Array<{ userId: string; email: string; nickname?: string }>> {
 	const orgDoc = await getDoc(doc(db, ORGANIZATIONS_COLLECTION, orgId));
 	if (!orgDoc.exists()) {
@@ -246,7 +244,7 @@ export async function joinByInviteCode(code: string): Promise<Organization> {
 	// 招待コードで組織を検索
 	const q = query(
 		collection(db, ORGANIZATIONS_COLLECTION),
-		where("inviteCode", "==", code.toUpperCase())
+		where("inviteCode", "==", code.toUpperCase()),
 	);
 
 	const querySnapshot = await getDocs(q);
@@ -274,7 +272,7 @@ export async function joinByInviteCode(code: string): Promise<Organization> {
 		"新しいメンバーが参加しました",
 		`${displayName} が「${orgData.name}」に参加しました`,
 		"member_joined",
-		userId
+		userId,
 	);
 
 	return {
@@ -290,10 +288,7 @@ export async function joinByInviteCode(code: string): Promise<Organization> {
 /**
  * メールアドレスでユーザーを招待
  */
-export async function inviteByEmail(
-	orgId: string,
-	email: string
-): Promise<string> {
+export async function inviteByEmail(orgId: string, email: string): Promise<string> {
 	const userId = auth.currentUser?.uid;
 	if (!userId) {
 		throw new Error("ユーザーがログインしていません");
@@ -324,10 +319,7 @@ export async function inviteByEmail(
 
 	// 招待されるユーザーを検索
 	console.log("🔍 ユーザーを検索中:", { email });
-	const usersQuery = query(
-		collection(db, "users"),
-		where("email", "==", email)
-	);
+	const usersQuery = query(collection(db, "users"), where("email", "==", email));
 	const usersSnapshot = await getDocs(usersQuery);
 
 	console.log("📊 検索結果:", {
@@ -355,7 +347,7 @@ export async function inviteByEmail(
 		collection(db, INVITATIONS_COLLECTION),
 		where("organizationId", "==", orgId),
 		where("invitedEmail", "==", email),
-		where("status", "==", "pending")
+		where("status", "==", "pending"),
 	);
 	const invitationsSnapshot = await getDocs(invitationsQuery);
 
@@ -389,7 +381,7 @@ export async function getMyInvitations(): Promise<Invitation[]> {
 	const q = query(
 		collection(db, INVITATIONS_COLLECTION),
 		where("invitedEmail", "==", userEmail),
-		where("status", "==", "pending")
+		where("status", "==", "pending"),
 	);
 
 	const querySnapshot = await getDocs(q);
@@ -420,9 +412,7 @@ export async function acceptInvitation(invitationId: string): Promise<void> {
 		throw new Error("ユーザーがログインしていません");
 	}
 
-	const invitationDoc = await getDoc(
-		doc(db, INVITATIONS_COLLECTION, invitationId)
-	);
+	const invitationDoc = await getDoc(doc(db, INVITATIONS_COLLECTION, invitationId));
 	if (!invitationDoc.exists()) {
 		throw new Error("招待が見つかりません");
 	}
@@ -430,12 +420,9 @@ export async function acceptInvitation(invitationId: string): Promise<void> {
 	const invitationData = invitationDoc.data();
 
 	// 組織にメンバーを追加
-	await updateDoc(
-		doc(db, ORGANIZATIONS_COLLECTION, invitationData.organizationId),
-		{
-			members: arrayUnion(userId),
-		}
-	);
+	await updateDoc(doc(db, ORGANIZATIONS_COLLECTION, invitationData.organizationId), {
+		members: arrayUnion(userId),
+	});
 
 	// 招待のステータスを更新
 	await updateDoc(doc(db, INVITATIONS_COLLECTION, invitationId), {
@@ -449,7 +436,7 @@ export async function acceptInvitation(invitationId: string): Promise<void> {
 		"新しいメンバーが参加しました",
 		`${displayName} が「${invitationData.organizationName}」に参加しました`,
 		"member_joined",
-		userId
+		userId,
 	);
 }
 
@@ -465,10 +452,7 @@ export async function declineInvitation(invitationId: string): Promise<void> {
 /**
  * メンバーを削除（オーナーのみ）
  */
-export async function removeMember(
-	orgId: string,
-	memberUserId: string
-): Promise<void> {
+export async function removeMember(orgId: string, memberUserId: string): Promise<void> {
 	const userId = auth.currentUser?.uid;
 	if (!userId) {
 		throw new Error("ユーザーがログインしていません");
@@ -503,7 +487,7 @@ export async function removeMember(
 		"メンバーが退出しました",
 		`${removedMemberName} が「${orgData.name}」から退出しました`,
 		"member_left",
-		userId
+		userId,
 	);
 }
 
@@ -525,9 +509,7 @@ export async function leaveOrganization(orgId: string): Promise<void> {
 
 	// オーナーは退出できない
 	if (orgData.ownerId === userId) {
-		throw new Error(
-			"オーナーは組織から退出できません。組織を削除してください。"
-		);
+		throw new Error("オーナーは組織から退出できません。組織を削除してください。");
 	}
 
 	// メンバーから削除
@@ -542,7 +524,7 @@ export async function leaveOrganization(orgId: string): Promise<void> {
 		"メンバーが退出しました",
 		`${displayName} が「${orgData.name}」から退出しました`,
 		"member_left",
-		userId
+		userId,
 	);
 }
 
@@ -574,7 +556,7 @@ export async function deleteOrganization(orgId: string): Promise<void> {
 		"グループが削除されました",
 		`${displayName} がグループ「${orgData.name}」を削除しました`,
 		"organization_deleted",
-		userId
+		userId,
 	);
 
 	// 組織を削除
@@ -583,12 +565,10 @@ export async function deleteOrganization(orgId: string): Promise<void> {
 	// 関連する招待を削除
 	const invitationsQuery = query(
 		collection(db, INVITATIONS_COLLECTION),
-		where("organizationId", "==", orgId)
+		where("organizationId", "==", orgId),
 	);
 	const invitationsSnapshot = await getDocs(invitationsQuery);
 
-	const deletePromises = invitationsSnapshot.docs.map((doc) =>
-		deleteDoc(doc.ref)
-	);
+	const deletePromises = invitationsSnapshot.docs.map((doc) => deleteDoc(doc.ref));
 	await Promise.all(deletePromises);
 }

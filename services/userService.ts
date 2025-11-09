@@ -43,7 +43,7 @@ export async function saveUserNickname(nickname: string): Promise<void> {
 				nickname: nickname.trim(),
 				updatedAt: new Date(),
 			},
-			{ merge: true }
+			{ merge: true },
 		);
 	} catch (error) {
 		console.error("Error saving user nickname:", error);
@@ -54,9 +54,7 @@ export async function saveUserNickname(nickname: string): Promise<void> {
 /**
  * 指定されたユーザーIDのニックネームを取得
  */
-export async function getUserNicknameById(
-	userId: string
-): Promise<string | null> {
+export async function getUserNicknameById(userId: string): Promise<string | null> {
 	try {
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
@@ -119,7 +117,7 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 					pushToken: null, // プッシュトークンを削除
 					updatedAt: new Date(),
 				},
-				{ merge: true }
+				{ merge: true },
 			);
 			console.log(`✅ 通知設定をOFFにし、プッシュトークンを削除しました`);
 		} else {
@@ -131,11 +129,9 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 					notificationEnabled: enabled,
 					updatedAt: new Date(),
 				},
-				{ merge: true }
+				{ merge: true },
 			);
-			console.log(
-				`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`
-			);
+			console.log(`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`);
 		}
 	} catch (error) {
 		console.error("Error setting notification enabled:", error);
@@ -185,7 +181,7 @@ export async function saveUserAvatarUrl(avatarUrl: string): Promise<void> {
 				avatarUrl: avatarUrl.trim(),
 				updatedAt: new Date(),
 			},
-			{ merge: true }
+			{ merge: true },
 		);
 	} catch (error) {
 		console.error("Error saving user avatar URL:", error);
@@ -196,13 +192,9 @@ export async function saveUserAvatarUrl(avatarUrl: string): Promise<void> {
 /**
  * 指定されたユーザーIDのアバターURLを取得
  */
-export async function getUserAvatarUrlById(
-	userId: string
-): Promise<string | null> {
+export async function getUserAvatarUrlById(userId: string): Promise<string | null> {
 	try {
-		console.log(
-			`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`
-		);
+		console.log(`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`);
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
 

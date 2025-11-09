@@ -1,6 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { TODO_CATEGORIES } from "@/types/Category";
-import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -12,6 +9,9 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
+import { TODO_CATEGORIES } from "@/types/Category";
+import type { Todo } from "@/types/Todo";
 
 type TodoItemProps = Todo & {
 	onToggleComplete?: (id: string) => void;
@@ -46,10 +46,7 @@ export default function TodoItem({
 	const isOwner = user?.uid === userId;
 
 	return (
-		<View
-			className="py-2 border-b"
-			style={{ borderColor: isDark ? "#4b5563" : "#e5e7eb" }}
-		>
+		<View className="py-2 border-b" style={{ borderColor: isDark ? "#4b5563" : "#e5e7eb" }}>
 			<View className="flex-row items-center justify-between">
 				{/* 左側: チェックボックスとTodo内容 */}
 				<TouchableOpacity
@@ -67,14 +64,10 @@ export default function TodoItem({
 						>
 							<View
 								className={`w-9 h-9 rounded border-2 items-center justify-center ${
-									completed
-										? "bg-green-500 border-green-500"
-										: "border-gray-400"
+									completed ? "bg-green-500 border-green-500" : "border-gray-400"
 								}`}
 							>
-								{completed && (
-									<Text className="text-white font-noto-bold text-2xl">✓</Text>
-								)}
+								{completed && <Text className="text-white font-noto-bold text-2xl">✓</Text>}
 							</View>
 						</TouchableOpacity>
 					</View>
@@ -106,9 +99,7 @@ export default function TodoItem({
 									<View className="mt-2 flex-row">
 										<View className="bg-blue-100 px-3 py-1 rounded-full">
 											<Text className="text-blue-700 font-noto-bold text-base">
-												{TODO_CATEGORIES[
-													category as keyof typeof TODO_CATEGORIES
-												] || "その他"}
+												{TODO_CATEGORIES[category as keyof typeof TODO_CATEGORIES] || "その他"}
 											</Text>
 										</View>
 									</View>
@@ -135,19 +126,11 @@ export default function TodoItem({
 
 								{/* リマインド情報 */}
 								{remindAt && (
-									<View
-										className={`flex-row items-center ${content ? "mt-3" : "mt-2"}`}
-									>
+									<View className={`flex-row items-center ${content ? "mt-3" : "mt-2"}`}>
 										<Ionicons
 											name="notifications"
 											size={18}
-											color={
-												remindNotified
-													? isDark
-														? "#9ca3af"
-														: "#6b7280"
-													: "#f59e0b"
-											}
+											color={remindNotified ? (isDark ? "#9ca3af" : "#6b7280") : "#f59e0b"}
 										/>
 										<Text
 											className="ml-2 font-noto-regular text-base"
@@ -159,11 +142,7 @@ export default function TodoItem({
 											<Text
 												className="ml-2 font-noto-regular text-sm"
 												style={{
-													color: remindNotified
-														? isDark
-															? "#9ca3af"
-															: "#6b7280"
-														: "#f59e0b",
+													color: remindNotified ? (isDark ? "#9ca3af" : "#6b7280") : "#f59e0b",
 												}}
 											>
 												{remindNotified ? "通知済み" : "未通知"}
@@ -195,10 +174,7 @@ export default function TodoItem({
 				animationType="fade"
 				onRequestClose={() => setMenuVisible(false)}
 			>
-				<Pressable
-					className="flex-1 bg-black/75"
-					onPress={() => setMenuVisible(false)}
-				>
+				<Pressable className="flex-1 bg-black/75" onPress={() => setMenuVisible(false)}>
 					<View className="flex-1 items-end justify-start pt-20 pr-4">
 						<View
 							className="rounded-lg shadow-lg overflow-hidden min-w-[180px]"
@@ -269,18 +245,12 @@ export default function TodoItem({
 									<Ionicons
 										name={remindAt ? "notifications" : "notifications-outline"}
 										size={22}
-										color={
-											remindAt ? "#f59e0b" : isDark ? "#60a5fa" : "#3b82f6"
-										}
+										color={remindAt ? "#f59e0b" : isDark ? "#60a5fa" : "#3b82f6"}
 									/>
 									<Text
 										className="ml-3 font-noto-regular text-base"
 										style={{
-											color: remindAt
-												? "#f59e0b"
-												: isDark
-													? "#d1d5db"
-													: "#374151",
+											color: remindAt ? "#f59e0b" : isDark ? "#d1d5db" : "#374151",
 										}}
 									>
 										{remindAt ? "リマインド変更" : "リマインド設定"}
@@ -288,32 +258,26 @@ export default function TodoItem({
 								</Pressable>
 							)}
 
-						{/* 削除ボタン - 作成者のみ */}
-						{isOwner && (
-							<Pressable
-								className="flex-row items-center px-4 py-3"
-								onPress={() => {
-									setMenuVisible(false);
-									Alert.alert(
-										"TODO削除",
-										`「${title}」を削除しますか？`,
-										[
+							{/* 削除ボタン - 作成者のみ */}
+							{isOwner && (
+								<Pressable
+									className="flex-row items-center px-4 py-3"
+									onPress={() => {
+										setMenuVisible(false);
+										Alert.alert("TODO削除", `「${title}」を削除しますか？`, [
 											{ text: "キャンセル", style: "cancel" },
 											{
 												text: "削除",
 												style: "destructive",
 												onPress: () => onDelete?.(id),
 											},
-										]
-									);
-								}}
-							>
-								<Ionicons name="trash-outline" size={22} color="#ef4444" />
-								<Text className="ml-3 font-noto-regular text-red-500 text-base">
-									削除
-								</Text>
-							</Pressable>
-						)}
+										]);
+									}}
+								>
+									<Ionicons name="trash-outline" size={22} color="#ef4444" />
+									<Text className="ml-3 font-noto-regular text-red-500 text-base">削除</Text>
+								</Pressable>
+							)}
 
 							{/* 作成者でない場合のメッセージ */}
 							{!isOwner && (
