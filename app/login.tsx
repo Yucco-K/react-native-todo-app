@@ -493,16 +493,24 @@ export default function LoginScreen() {
 							</TouchableHighlight>
 						)}
 
-						<View className="flex-row justify-center">
-							<Text className="font-noto-regular" style={{ color: isDark ? "#9ca3af" : "#6b7280" }}>
-								アカウントをお持ちでない方は{" "}
-							</Text>
-							<Link href="/signup" asChild>
-								<TouchableHighlight>
-									<Text className="text-blue-500 font-noto-bold">新規登録</Text>
-								</TouchableHighlight>
-							</Link>
-						</View>
+					<View className="flex-row items-center justify-center">
+						<Text 
+							className="font-noto-regular text-base"
+							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+						>
+							アカウントをお持ちでない方は
+						</Text>
+						<Link href="/signup" asChild>
+							<TouchableOpacity className="ml-2">
+								<Text 
+									className="font-noto-bold text-base"
+									style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
+								>
+									新規登録
+								</Text>
+							</TouchableOpacity>
+						</Link>
+					</View>
 					</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>

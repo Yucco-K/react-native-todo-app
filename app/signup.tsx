@@ -380,16 +380,24 @@ export default function SignupScreen() {
 							</TouchableHighlight>
 						)}
 
-						<View className="flex-row justify-center mt-4">
-							<Text className="font-noto-regular" style={{ color: isDark ? "#9ca3af" : "#6b7280" }}>
-								既にアカウントをお持ちの方は{" "}
-							</Text>
-							<Link href="/login" asChild>
-								<TouchableHighlight>
-									<Text className="text-blue-500 font-noto-bold">ログイン</Text>
-								</TouchableHighlight>
-							</Link>
-						</View>
+					<View className="flex-row items-center justify-center mt-4">
+						<Text 
+							className="font-noto-regular text-base"
+							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+						>
+							すでにアカウントをお持ちの方
+						</Text>
+						<Link href="/login" asChild>
+							<TouchableOpacity className="ml-2">
+								<Text 
+									className="font-noto-bold text-base"
+									style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
+								>
+									ログイン
+								</Text>
+							</TouchableOpacity>
+						</Link>
+					</View>
 					</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
