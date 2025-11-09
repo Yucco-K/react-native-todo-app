@@ -30,11 +30,15 @@ import type { Todo } from "@/types/Todo";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import {
+	Alert,
 	AppState,
 	type AppStateStatus,
 	Keyboard,
+	Modal,
+	Pressable,
 	Switch,
 	Text,
+	TextInput,
 	TouchableHighlight,
 	TouchableOpacity,
 	TouchableWithoutFeedback,

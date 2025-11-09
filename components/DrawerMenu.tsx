@@ -19,6 +19,7 @@ type DrawerMenuProps = {
 	onJoinOrganization: () => void;
 	onManageOrganization: (org: Organization) => void;
 	onViewInvitations: () => void;
+	onDeleteAccount: () => void;
 };
 
 export function DrawerMenu({
@@ -28,6 +29,7 @@ export function DrawerMenu({
 	onJoinOrganization,
 	onManageOrganization,
 	onViewInvitations,
+	onDeleteAccount,
 }: DrawerMenuProps) {
 	const { organizations, selectedOrganization, selectOrganization } =
 		useOrganization();
@@ -263,38 +265,64 @@ export function DrawerMenu({
 									</Text>
 								</TouchableOpacity>
 
-								<TouchableOpacity
-									className="flex-row items-center p-4 rounded-lg border"
-									style={{
-										backgroundColor: isDark
-											? "rgba(107, 114, 128, 0.3)"
-											: "#f9fafb",
-										borderColor: isDark
-											? "rgba(156, 163, 175, 0.4)"
-											: "#d1d5db",
-									}}
-									onPress={() => {
-										onViewInvitations();
-										onClose();
-									}}
+							<TouchableOpacity
+								className="flex-row items-center p-4 rounded-lg border mb-4"
+								style={{
+									backgroundColor: isDark
+										? "rgba(107, 114, 128, 0.3)"
+										: "#f9fafb",
+									borderColor: isDark
+										? "rgba(156, 163, 175, 0.4)"
+										: "#d1d5db",
+								}}
+								onPress={() => {
+									onViewInvitations();
+									onClose();
+								}}
+							>
+								<Ionicons
+									name="mail"
+									size={24}
+									color={isDark ? "#d1d5db" : "#6b7280"}
+								/>
+								<Text
+									className="ml-3 text-lg font-noto-bold"
+									style={{ color: isDark ? "#d1d5db" : "#374151" }}
 								>
-									<Ionicons
-										name="mail"
-										size={24}
-										color={isDark ? "#d1d5db" : "#6b7280"}
-									/>
-									<Text
-										className="ml-3 text-lg font-noto-bold"
-										style={{ color: isDark ? "#d1d5db" : "#374151" }}
-									>
-										招待一覧
-									</Text>
-								</TouchableOpacity>
-							</View>
-						</ScrollView>
-					</View>
-				</Pressable>
+									招待一覧
+								</Text>
+							</TouchableOpacity>
+
+							<TouchableOpacity
+								className="flex-row items-center p-4 rounded-lg border"
+								style={{
+									backgroundColor: isDark
+										? "rgba(239, 68, 68, 0.2)"
+										: "#fef2f2",
+									borderColor: isDark ? "rgba(239, 68, 68, 0.4)" : "#fca5a5",
+								}}
+								onPress={() => {
+									onDeleteAccount();
+									onClose();
+								}}
+							>
+								<Ionicons
+									name="trash-outline"
+									size={24}
+									color={isDark ? "#ef4444" : "#dc2626"}
+								/>
+								<Text
+									className="ml-3 text-lg font-noto-bold"
+									style={{ color: isDark ? "#ef4444" : "#dc2626" }}
+								>
+									アカウント削除
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</ScrollView>
+				</View>
 			</Pressable>
-		</Modal>
-	);
+		</Pressable>
+	</Modal>
+);
 }
