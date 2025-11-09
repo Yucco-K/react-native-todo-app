@@ -60,10 +60,8 @@ export default function TodoTable({
 
 			// 削除があった場合はログ出力（本番環境ではトーストを表示しない）
 			if (deletedCount > 0 && __DEV__) {
-				console.log(`🗑️ ${deletedCount}件の完了済みTodoを自動削除しました`);
 			}
 		} catch (error) {
-			console.error("Todo取得エラー:", error);
 			let errorMessage = "Todoの読み込みに失敗しました";
 
 			if (error && typeof error === "object") {
@@ -87,7 +85,6 @@ export default function TodoTable({
 				}
 
 				if ("message" in error && typeof error.message === "string") {
-					console.error("詳細:", error.message);
 					if (__DEV__) {
 						errorMessage += `\n\n[開発モード] ${error.message}`;
 					}
@@ -155,7 +152,6 @@ export default function TodoTable({
 				const randomTitle =
 					titleMessages[Math.floor(Math.random() * titleMessages.length)];
 
-				console.log(
 					"🎨 新しいテーマ:",
 					randomThemeIndex,
 					"タイトル:",
@@ -190,7 +186,6 @@ export default function TodoTable({
 					try {
 						await notifyTodoCompleted(todo.title);
 					} catch (error) {
-						console.error("完了通知送信エラー:", error);
 					}
 				}
 			}
@@ -198,7 +193,6 @@ export default function TodoTable({
 			// リストを再取得
 			getTodos();
 		} catch (error) {
-			console.error(error);
 			Toast.show({
 				type: "error",
 				text1: "更新失敗",
@@ -219,7 +213,6 @@ export default function TodoTable({
 				try {
 					await notifyTodoDeleted(todo.title);
 				} catch (error) {
-					console.error("通知送信エラー:", error);
 				}
 			}
 
@@ -232,7 +225,6 @@ export default function TodoTable({
 			// リストを再取得
 			getTodos();
 		} catch (error) {
-			console.error(error);
 			Toast.show({
 				type: "error",
 				text1: "削除失敗",
@@ -242,7 +234,6 @@ export default function TodoTable({
 	};
 
 	const handleSetReminder = (todo: Todo) => {
-		console.log("➡️ リマインド設定へ遷移", {
 			id: todo.id,
 			organizationId: todo.organizationId ?? null,
 		});

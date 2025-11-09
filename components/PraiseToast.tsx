@@ -188,7 +188,6 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 			await savePraiseFeedback(message, category, type);
 			setFeedback(type);
 		} catch (error) {
-			console.error("フィードバック保存エラー:", error);
 		}
 	};
 
@@ -230,7 +229,6 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				{/* ライクボタン */}
 				<Pressable
 					onPress={() => {
-						console.log("👍 Like button pressed");
 						handleFeedback("like");
 					}}
 					style={({ pressed }) => ({
@@ -258,7 +256,6 @@ export function PraiseToast({ text1, text2, props }: ToastConfigParams<any>) {
 				{/* ディスライクボタン */}
 				<Pressable
 					onPress={() => {
-						console.log("👎 Dislike button pressed");
 						handleFeedback("dislike");
 					}}
 					style={({ pressed }) => ({

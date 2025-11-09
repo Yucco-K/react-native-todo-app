@@ -21,7 +21,6 @@ export async function getUserNickname(): Promise<string | null> {
 
 		return null;
 	} catch (error) {
-		console.error("Error getting user nickname:", error);
 		return null;
 	}
 }
@@ -46,7 +45,6 @@ export async function saveUserNickname(nickname: string): Promise<void> {
 			{ merge: true }
 		);
 	} catch (error) {
-		console.error("Error saving user nickname:", error);
 		throw error;
 	}
 }
@@ -68,7 +66,6 @@ export async function getUserNicknameById(
 
 		return null;
 	} catch (error) {
-		console.error("Error getting user nickname by ID:", error);
 		return null;
 	}
 }
@@ -93,7 +90,6 @@ export async function getNotificationEnabled(): Promise<boolean> {
 
 		return true;
 	} catch (error) {
-		console.error("Error getting notification enabled:", error);
 		return true;
 	}
 }
@@ -121,7 +117,6 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				},
 				{ merge: true }
 			);
-			console.log(`✅ 通知設定をOFFにし、プッシュトークンを削除しました`);
 		} else {
 			// 通知をONにする場合は、notificationEnabledのみ更新
 			// （プッシュトークンは次回アプリ起動時に再登録される）
@@ -133,12 +128,10 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				},
 				{ merge: true }
 			);
-			console.log(
 				`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`
 			);
 		}
 	} catch (error) {
-		console.error("Error setting notification enabled:", error);
 		throw error;
 	}
 }
@@ -163,7 +156,6 @@ export async function getUserAvatarUrl(): Promise<string | null> {
 
 		return null;
 	} catch (error) {
-		console.error("Error getting user avatar URL:", error);
 		return null;
 	}
 }
@@ -188,7 +180,6 @@ export async function saveUserAvatarUrl(avatarUrl: string): Promise<void> {
 			{ merge: true }
 		);
 	} catch (error) {
-		console.error("Error saving user avatar URL:", error);
 		throw error;
 	}
 }
@@ -200,7 +191,6 @@ export async function getUserAvatarUrlById(
 	userId: string
 ): Promise<string | null> {
 	try {
-		console.log(
 			`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`
 		);
 		const userRef = doc(db, "users", userId);
@@ -208,15 +198,11 @@ export async function getUserAvatarUrlById(
 
 		if (userDoc.exists()) {
 			const data = userDoc.data();
-			console.log(`✅ ユーザー ${userId} のデータ:`, data);
-			console.log(`📸 アバターURL:`, data.avatarUrl || "なし");
 			return data.avatarUrl || null;
 		}
 
-		console.log(`❌ ユーザー ${userId} のドキュメントが存在しません`);
 		return null;
 	} catch (error) {
-		console.error("Error getting user avatar URL by ID:", error);
 		return null;
 	}
 }

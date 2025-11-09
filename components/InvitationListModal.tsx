@@ -39,7 +39,6 @@ export function InvitationListModal({
 			const invites = await getMyInvitations();
 			setInvitations(invites);
 		} catch (error) {
-			console.error("Error fetching invitations:", error);
 			Toast.show({
 				type: "error",
 				text1: "取得失敗",
@@ -65,7 +64,6 @@ export function InvitationListModal({
 			// 招待一覧を再取得
 			await fetchInvitations();
 		} catch (error) {
-			console.error("Error accepting invitation:", error);
 			Toast.show({
 				type: "error",
 				text1: "参加失敗",
@@ -84,7 +82,6 @@ export function InvitationListModal({
 			// 招待一覧を再取得
 			await fetchInvitations();
 		} catch (error) {
-			console.error("Error declining invitation:", error);
 			Toast.show({
 				type: "error",
 				text1: "失敗",

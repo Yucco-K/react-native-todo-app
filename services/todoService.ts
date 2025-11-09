@@ -71,7 +71,6 @@ export const getTodos = async (
 			});
 		});
 
-		console.log("📋 Todo取得結果:", {
 			organizationId: organizationId || "null (マイリスト)",
 			取得件数: todos.length,
 			タイトル一覧: todos.map((t) => t.title),
@@ -79,7 +78,6 @@ export const getTodos = async (
 
 		return todos;
 	} catch (error) {
-		console.error("Error getting todos:", error);
 		throw error;
 	}
 };
@@ -120,7 +118,6 @@ export const createTodo = async (
 		};
 
 		const docRef = await addDoc(collection(db, COLLECTION_NAME), todoData);
-		console.log("✅ Firestore保存成功:", {
 			id: docRef.id,
 			title: todoData.title,
 			category: todoData.category,
@@ -128,7 +125,6 @@ export const createTodo = async (
 		});
 		return docRef.id;
 	} catch (error) {
-		console.error("Error creating todo:", error);
 		throw error;
 	}
 };
@@ -144,7 +140,6 @@ export const updateTodo = async (
 		const todoRef = doc(db, COLLECTION_NAME, id);
 		await updateDoc(todoRef, updates);
 	} catch (error) {
-		console.error("Error updating todo:", error);
 		throw error;
 	}
 };
@@ -157,7 +152,6 @@ export const deleteTodo = async (id: string): Promise<void> => {
 		const todoRef = doc(db, COLLECTION_NAME, id);
 		await deleteDoc(todoRef);
 	} catch (error) {
-		console.error("Error deleting todo:", error);
 		throw error;
 	}
 };
@@ -196,7 +190,6 @@ export const toggleTodoComplete = async (
 			});
 		}
 	} catch (error) {
-		console.error("Error toggling todo:", error);
 		throw error;
 	}
 };
@@ -211,7 +204,6 @@ export const toggleTodoShared = async (
 	try {
 		await updateTodo(id, { shared: !currentShared });
 	} catch (error) {
-		console.error("Error toggling todo shared:", error);
 		throw error;
 	}
 };
@@ -266,7 +258,6 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 
 				operations.push(historyPromise, deletePromise);
 				deletedCount++;
-				console.log(
 					`🗑️ 期限切れTodo削除: "${data.title}" (完了: ${completedAt.toLocaleDateString()})`
 				);
 			}
@@ -276,14 +267,12 @@ export const deleteExpiredCompletedTodos = async (): Promise<number> => {
 		await Promise.all(operations);
 
 		if (deletedCount > 0) {
-			console.log(
 				`✅ ${deletedCount}件の期限切れTodoを削除し、履歴を保存しました`
 			);
 		}
 
 		return deletedCount;
 	} catch (error) {
-		console.error("Error deleting expired todos:", error);
 		throw error;
 	}
 };
@@ -309,11 +298,9 @@ export const setTodoReminder = async (
 			remindNotified: false, // リマインド設定時は未通知状態に
 		});
 
-		console.log(
 			`⏰ リマインド設定: Todo ID ${todoId} - ${remindAt.toLocaleString()}`
 		);
 	} catch (error) {
-		console.error("Error setting reminder:", error);
 		throw error;
 	}
 };
@@ -335,9 +322,7 @@ export const removeTodoReminder = async (todoId: string): Promise<void> => {
 			remindNotified: deleteField(),
 		});
 
-		console.log(`🔕 リマインド削除: Todo ID ${todoId}`);
 	} catch (error) {
-		console.error("Error removing reminder:", error);
 		throw error;
 	}
 };
@@ -394,7 +379,6 @@ export const getDueReminders = async (): Promise<Todo[]> => {
 
 		return dueTodos;
 	} catch (error) {
-		console.error("Error getting due reminders:", error);
 		return [];
 	}
 };
@@ -410,9 +394,7 @@ export const markReminderAsNotified = async (todoId: string): Promise<void> => {
 			remindNotified: true,
 		});
 
-		console.log(`✅ リマインド通知済み: Todo ID ${todoId}`);
 	} catch (error) {
-		console.error("Error marking reminder as notified:", error);
 		throw error;
 	}
 };
@@ -442,7 +424,6 @@ export const getTodoById = async (id: string): Promise<Todo | null> => {
 			remindNotified: data.remindNotified,
 		};
 	} catch (error) {
-		console.error("Error getTodoById:", error);
 		return null;
 	}
 };
@@ -535,7 +516,6 @@ export const getReminderHistory = async (): Promise<Todo[]> => {
 			return b.remindAt.getTime() - a.remindAt.getTime();
 		});
 
-		console.log("📋 リマインド履歴取得:", {
 			個人TODO: personalSnapshot.size,
 			組織数: organizationIds.length,
 			総リマインド数: reminders.length,
@@ -543,7 +523,6 @@ export const getReminderHistory = async (): Promise<Todo[]> => {
 
 		return reminders;
 	} catch (error) {
-		console.error("Error getting reminder history:", error);
 		return [];
 	}
 };

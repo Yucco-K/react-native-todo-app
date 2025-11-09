@@ -49,7 +49,6 @@ export function JoinOrganizationModal({
 			setInviteCode("");
 			onClose();
 		} catch (error) {
-			console.error("Error joining organization:", error);
 			Toast.show({
 				type: "error",
 				text1: "参加失敗",

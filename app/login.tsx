@@ -50,7 +50,6 @@ export default function LoginScreen() {
 	// Apple/Google Sign-In成功後、userが更新されたらローディングを解除
 	useEffect(() => {
 		if (user) {
-			console.log("✅ 認証状態が更新されました - ローディング解除");
 			setIsLoading(false);
 		}
 	}, [user]);
@@ -77,7 +76,6 @@ export default function LoginScreen() {
 				}
 			}
 		} catch (error) {
-			console.log("ロックアウト状態の確認エラー:", error);
 		}
 	}, []);
 
@@ -145,7 +143,6 @@ export default function LoginScreen() {
 				}
 			}
 		} catch (error) {
-			console.log("失敗回数の記録エラー:", error);
 		}
 	};
 
@@ -156,7 +153,6 @@ export default function LoginScreen() {
 				STORAGE_KEY_LOCKOUT_TIME,
 			]);
 		} catch (error) {
-			console.log("失敗回数のリセットエラー:", error);
 		}
 	};
 
@@ -203,7 +199,6 @@ export default function LoginScreen() {
 			await resetFailedAttempts();
 			router.replace("/");
 		} catch (error) {
-			console.log("ログインエラー:", error);
 			const errorTitle = "ログイン失敗";
 			let errorMessage = "ログインに失敗しました";
 			let isAuthError = false;
@@ -245,7 +240,6 @@ export default function LoginScreen() {
 
 				// エラーメッセージがある場合（ターミナルログに出力）
 				if ("message" in error && typeof error.message === "string") {
-					console.log("詳細:", error.message);
 				}
 			}
 
@@ -288,11 +282,9 @@ export default function LoginScreen() {
 		try {
 			await signInWithGoogle();
 			await resetFailedAttempts();
-			console.log("✅ Google Sign-In成功 - 認証状態の更新を待機中...");
 			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
-			console.log("Google ログインエラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "Google ログイン失敗",
@@ -308,11 +300,9 @@ export default function LoginScreen() {
 		try {
 			await signInWithApple();
 			await resetFailedAttempts();
-			console.log("✅ Apple Sign-In成功 - 認証状態の更新を待機中...");
 			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
-			console.log("Apple ログインエラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "Apple ログイン失敗",

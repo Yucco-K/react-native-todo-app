@@ -98,7 +98,6 @@ export default function TabLayout() {
 				text2: "アカウントが削除されました",
 			});
 		} catch (error) {
-			console.error("アカウント削除エラー:", error);
 			const errorMessage =
 				error &&
 				typeof error === "object" &&
@@ -115,7 +114,6 @@ export default function TabLayout() {
 		try {
 			const invitations = await getMyInvitations();
 			if (invitations.length > 0) {
-				console.log(
 					"📬 未読招待があります:",
 					invitations.length,
 					"件 - モーダルを自動的に開きます"
@@ -123,7 +121,6 @@ export default function TabLayout() {
 				setInvitationsVisible(true);
 			}
 		} catch (error) {
-			console.error("招待チェックエラー:", error);
 		}
 	}, []);
 
@@ -132,7 +129,6 @@ export default function TabLayout() {
 		try {
 			const reminders = await getDueReminders();
 			if (reminders.length > 0) {
-				console.log(
 					"⏰ リマインドが",
 					reminders.length,
 					"件あります - モーダルを自動的に開きます"
@@ -147,7 +143,6 @@ export default function TabLayout() {
 				let hasUpdate = false;
 				results.forEach((result, index) => {
 					if (result.status === "rejected") {
-						console.error("リマインド通知済み更新エラー:", {
 							todoId: reminders[index].id,
 							error: result.reason,
 						});
@@ -161,7 +156,6 @@ export default function TabLayout() {
 				}
 			}
 		} catch (error) {
-			console.error("リマインドチェックエラー:", error);
 		}
 	}, [triggerRefresh]);
 
@@ -169,7 +163,6 @@ export default function TabLayout() {
 	useEffect(() => {
 		if (!hasCheckedInitialInvitations.current) {
 			hasCheckedInitialInvitations.current = true;
-			console.log("🚀 アプリ起動: 未読招待をチェック中...");
 			checkForPendingInvitations();
 		}
 	}, [checkForPendingInvitations]);
@@ -178,7 +171,6 @@ export default function TabLayout() {
 	useEffect(() => {
 		if (!hasCheckedInitialReminders.current) {
 			hasCheckedInitialReminders.current = true;
-			console.log("🚀 アプリ起動: リマインドをチェック中...");
 			checkForDueReminders();
 		}
 	}, [checkForDueReminders]);
@@ -193,7 +185,6 @@ export default function TabLayout() {
 				appState.current.match(/inactive|background/) &&
 				nextAppState === "active"
 			) {
-				console.log(
 					"🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中..."
 				);
 				checkForPendingInvitations();

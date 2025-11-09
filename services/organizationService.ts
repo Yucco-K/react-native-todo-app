@@ -49,7 +49,6 @@ async function getActorDisplayName(userId: string): Promise<string> {
 
 		return "不明なユーザー";
 	} catch (error) {
-		console.error("Error getting actor display name:", error);
 		return "不明なユーザー";
 	}
 }
@@ -73,11 +72,9 @@ async function notifyOrganizationMembers(
 			actionUserId: excludeUserId,
 		});
 
-		console.log(
 			`✅ グループ通知送信完了: ${title} (操作者: ${excludeUserId || "なし"})`
 		);
 	} catch (error) {
-		console.error("Error notifying organization members:", error);
 	}
 }
 
@@ -314,7 +311,6 @@ export async function inviteByEmail(
 
 	// デバッグ: users コレクション全体を確認
 	const allUsersSnapshot = await getDocs(collection(db, "users"));
-	console.log("👥 全ユーザー一覧:", {
 		件数: allUsersSnapshot.size,
 		ユーザー: allUsersSnapshot.docs.map((doc) => ({
 			id: doc.id,
@@ -323,14 +319,12 @@ export async function inviteByEmail(
 	});
 
 	// 招待されるユーザーを検索
-	console.log("🔍 ユーザーを検索中:", { email });
 	const usersQuery = query(
 		collection(db, "users"),
 		where("email", "==", email)
 	);
 	const usersSnapshot = await getDocs(usersQuery);
 
-	console.log("📊 検索結果:", {
 		件数: usersSnapshot.size,
 		見つかったユーザー: usersSnapshot.docs.map((doc) => ({
 			id: doc.id,
@@ -343,7 +337,6 @@ export async function inviteByEmail(
 	}
 
 	const invitedUserId = usersSnapshot.docs[0].id;
-	console.log("✅ 招待対象ユーザー:", { invitedUserId, email });
 
 	// 既にメンバーかチェック
 	if (orgData.members.includes(invitedUserId)) {

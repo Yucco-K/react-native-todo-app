@@ -89,7 +89,6 @@ export default function EditTodoModal({
 			// 	text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
 			// });
 		} catch (error) {
-			console.error("カテゴリ推測エラー:", error);
 
 			// カスタムエラーの場合、ユーザーフレンドリーなメッセージを表示
 			if (error instanceof AICategoryError) {
@@ -114,7 +113,6 @@ export default function EditTodoModal({
 	const handleSave = async () => {
 		if (!todo) return;
 
-		console.log("💾 Todo編集を保存:", {
 			title: todo.title,
 			organizationId: todo.organizationId,
 			shared: todo.shared,
@@ -153,15 +151,12 @@ export default function EditTodoModal({
 
 			// 組織のTodoの場合は通知を送信
 			if (todo.organizationId) {
-				console.log("📢 グループTodo編集通知を送信:", {
 					title,
 					organizationId: todo.organizationId,
 				});
 				try {
 					await notifyTodoUpdated(title);
-					console.log("✅ 編集通知の送信完了");
 				} catch (error) {
-					console.error("通知送信エラー:", error);
 				}
 			}
 
@@ -174,7 +169,6 @@ export default function EditTodoModal({
 			onSave();
 			onClose();
 		} catch (error) {
-			console.error(error);
 			Toast.show({
 				type: "error",
 				text1: "更新失敗",

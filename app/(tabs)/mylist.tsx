@@ -64,7 +64,6 @@ export default function MyListScreen() {
 		Array<{ userId: string; avatarUrl: string | null; timestamp: number }>
 	>([]);
 
-	console.log("📱 MyListScreen: レンダリング", {
 		selectedOrganization: selectedOrganization?.name || "My List",
 		organizationId: selectedOrganization?.id || null,
 	});
@@ -95,18 +94,15 @@ export default function MyListScreen() {
 		}
 
 		try {
-			console.log(
 				"👥 グループメンバーのアバターを読み込み中...",
 				selectedOrganization.id
 			);
 			const members = await getOrganizationMembers(selectedOrganization.id);
-			console.log("👥 取得したメンバー:", members);
 
 			const timestamp = Date.now(); // 現在のタイムスタンプを取得
 			const avatars = await Promise.all(
 				members.map(async (member) => {
 					const baseAvatarUrl = await getUserAvatarUrlById(member.userId);
-					console.log(
 						`👤 メンバー ${member.userId} のアバター:`,
 						baseAvatarUrl
 					);
@@ -125,10 +121,8 @@ export default function MyListScreen() {
 					};
 				})
 			);
-			console.log("👥 最終的なアバター配列:", avatars);
 			setMemberAvatars(avatars);
 		} catch (error) {
-			console.error("メンバーアバター読み込みエラー:", error);
 			setMemberAvatars([]);
 		}
 	}, [selectedOrganization]);
@@ -144,7 +138,6 @@ export default function MyListScreen() {
 			"change",
 			(nextAppState: AppStateStatus) => {
 				if (nextAppState === "active") {
-					console.log(
 						"📱 アプリがフォアグラウンドに戻りました → Todoリストを更新"
 					);
 					triggerRefresh();
@@ -175,7 +168,6 @@ export default function MyListScreen() {
 			// 	text2: "ログアウトしました",
 			// });
 		} catch (error) {
-			console.error(error);
 			Toast.show({
 				type: "error",
 				text1: "エラー",
@@ -190,7 +182,6 @@ export default function MyListScreen() {
 			setReminderHistory(history);
 			setIsReminderHistoryVisible(true);
 		} catch (error) {
-			console.error("リマインド履歴取得エラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "エラー",
@@ -207,7 +198,6 @@ export default function MyListScreen() {
 			setReminderHistory(history);
 			triggerRefresh(); // Todoリストも更新
 		} catch (error) {
-			console.error("リマインド削除エラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "エラー",
@@ -223,7 +213,6 @@ export default function MyListScreen() {
 			setNotificationHistory(history);
 			setIsNotificationHistoryVisible(true);
 		} catch (error) {
-			console.error("通知履歴取得エラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "エラー",
@@ -241,7 +230,6 @@ export default function MyListScreen() {
 				setNotificationHistory(history);
 			}
 		} catch (error) {
-			console.error("通知削除エラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "エラー",
@@ -252,25 +240,19 @@ export default function MyListScreen() {
 
 	const handleToggleNotification = async (value: boolean) => {
 		try {
-			console.log(`🔔 通知設定変更開始: ${value ? "ON" : "OFF"}`);
 			setNotificationEnabledState(value);
 			await setNotificationEnabled(value);
 
 			// 通知をONにした場合、プッシュトークンを即座に再登録
 			if (value) {
-				console.log("📱 プッシュトークン再登録を開始...");
 				try {
 					const token = await registerForPushNotificationsAsync();
-					console.log("📱 取得したトークン:", token ? "存在" : "null");
 					if (token) {
 						await savePushToken(token);
-						console.log("✅ プッシュトークンを再登録しました:", token);
 					} else {
-						console.error("⚠️ プッシュトークンの取得に失敗しました");
 						throw new Error("プッシュトークンの取得に失敗しました");
 					}
 				} catch (tokenError) {
-					console.error("❌ プッシュトークン再登録エラー:", tokenError);
 					// トークン再登録に失敗した場合は通知設定を元に戻す
 					await setNotificationEnabled(false);
 					setNotificationEnabledState(false);
@@ -278,7 +260,6 @@ export default function MyListScreen() {
 				}
 			}
 
-			console.log(`✅ 通知設定変更完了: ${value ? "ON" : "OFF"}`);
 			Toast.show({
 				type: "success",
 				text1: "設定変更",
@@ -287,7 +268,6 @@ export default function MyListScreen() {
 					: "通知をOFFにしました（プッシュトークンも削除されました）",
 			});
 		} catch (error) {
-			console.error("❌ 通知設定エラー:", error);
 			// エラー時は元に戻す
 			setNotificationEnabledState(!value);
 			Toast.show({

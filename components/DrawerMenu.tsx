@@ -36,13 +36,11 @@ export function DrawerMenu({
 	const { isDark } = useTheme();
 
 	const handleSelectMyList = () => {
-		console.log("📝 My Listを選択 → organizationId: null");
 		selectOrganization(null);
 		onClose();
 	};
 
 	const handleSelectOrganization = (org: Organization) => {
-		console.log("📝 グループを選択:", org.name, "→ organizationId:", org.id);
 		selectOrganization(org);
 		onClose();
 	};

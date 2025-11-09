@@ -55,7 +55,6 @@ export function CreateOrganizationModal({
 			setName("");
 			onClose();
 		} catch (error) {
-			console.error("Error creating organization:", error);
 			Toast.show({
 				type: "error",
 				text1: "作成失敗",

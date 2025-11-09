@@ -29,7 +29,6 @@ export async function getUserStats(): Promise<UserStats> {
 			lastCompletedAt: data.lastCompletedAt?.toDate(),
 		};
 	} catch (error) {
-		console.error("Error getting user stats:", error);
 		return { totalCompletedTasks: 0 };
 	}
 }
@@ -67,6 +66,5 @@ export async function incrementCompletedTaskCount(): Promise<void> {
 			});
 		}
 	} catch (error) {
-		console.error("Error updating user stats:", error);
 	}
 }
