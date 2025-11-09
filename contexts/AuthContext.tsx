@@ -315,9 +315,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		} catch (error) {
 			if (error && typeof error === "object" && "code" in error) {
 				if (error.code === "ERR_REQUEST_CANCELED") {
-					// ユーザーがキャンセルした場合は静かに処理
+					// ユーザーがキャンセルした場合
 					console.log("Apple Sign-In canceled by user");
-					return;
+					throw new Error("USER_CANCELED");
 				}
 			}
 			console.error("❌ Apple Sign-In error:", error);

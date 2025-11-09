@@ -325,12 +325,18 @@ export default function LoginScreen() {
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
 			console.log("Apple ログインエラー:", error);
-			Toast.show({
-				type: "error",
-				text1: "Apple ログイン失敗",
-				text2: "Apple ログインに失敗しました",
-				visibilityTime: 4000,
-			});
+			
+			// ユーザーがキャンセルした場合は何も表示しない
+			if (error && typeof error === "object" && "message" in error && error.message === "USER_CANCELED") {
+				console.log("ユーザーがApple Sign-Inをキャンセルしました");
+			} else {
+				Toast.show({
+					type: "error",
+					text1: "Apple ログイン失敗",
+					text2: "Apple ログインに失敗しました",
+					visibilityTime: 4000,
+				});
+			}
 			setIsLoading(false);
 		}
 	};
