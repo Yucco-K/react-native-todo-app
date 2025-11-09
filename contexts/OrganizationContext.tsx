@@ -48,12 +48,14 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 				setSelectedOrganization(null);
 			}
 		} catch (error) {
+			console.error("Error fetching organizations:", error);
 		} finally {
 			setIsLoading(false);
 		}
 	}, [user, selectedOrganization]);
 
 	const selectOrganization = (org: Organization | null) => {
+		console.log("🔄 OrganizationContext: 選択変更", {
 			from: selectedOrganization?.name || "My List",
 			to: org?.name || "My List",
 			organizationId: org?.id || null,

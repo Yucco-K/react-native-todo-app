@@ -30,6 +30,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 					setTheme(systemColorScheme === "dark" ? "dark" : "light");
 				}
 			} catch (error) {
+				console.error("テーマの読み込みに失敗:", error);
 			}
 		};
 		loadTheme();
@@ -41,6 +42,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 		try {
 			await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
 		} catch (error) {
+			console.error("テーマの保存に失敗:", error);
 		}
 	};
 

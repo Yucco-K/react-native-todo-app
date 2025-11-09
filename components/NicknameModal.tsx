@@ -69,6 +69,7 @@ export default function NicknameModal({
 				{ text: "OK", onPress: onClose },
 			]);
 		} catch (error) {
+			console.error(error);
 			setIsLoading(false);
 			Alert.alert(
 				"エラー",
@@ -106,6 +107,7 @@ export default function NicknameModal({
 				setAvatarUrl(result.assets[0].uri);
 			}
 		} catch (error) {
+			console.error("画像選択エラー:", error);
 			setError("画像の選択に失敗しました");
 		}
 	};

@@ -64,6 +64,7 @@ export default function ReminderSettingsScreen() {
 					setSelectedTime(safeInitial);
 				}
 			} catch (e) {
+				console.log("リマインド設定画面 初期化エラー:", e);
 			} finally {
 				if (mounted) setLoading(false);
 			}
@@ -94,6 +95,7 @@ export default function ReminderSettingsScreen() {
 			await setTodoReminder(todo.id, combined);
 			router.back();
 		} catch (e) {
+			console.log("リマインド保存エラー:", e);
 			alert("リマインドの設定に失敗しました");
 		} finally {
 			setSaving(false);
@@ -107,6 +109,7 @@ export default function ReminderSettingsScreen() {
 			await removeTodoReminder(todo.id);
 			router.back();
 		} catch (e) {
+			console.log("リマインド削除エラー:", e);
 			alert("リマインドの削除に失敗しました");
 		} finally {
 			setSaving(false);

@@ -59,6 +59,7 @@ export default function ForgotPasswordScreen() {
 				router.back();
 			}, 2000);
 		} catch (error) {
+			console.error("パスワードリセットエラー:", error);
 			let errorMessage = "パスワードリセットメールの送信に失敗しました";
 
 			if (error && typeof error === "object" && "code" in error) {

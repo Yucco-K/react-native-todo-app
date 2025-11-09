@@ -28,7 +28,9 @@ export const savePraiseFeedback = async (
 			createdAt: new Date(),
 		});
 
+		console.log(`👍 フィードバック保存: ${feedbackType} (カテゴリ: ${category})`);
 	} catch (error) {
+		console.error("Error saving praise feedback:", error);
 		throw error;
 	}
 };
@@ -62,9 +64,11 @@ export const getMessageScores = async (): Promise<Record<string, number>> => {
 			messageScores[message] += feedbackType === "like" ? 1 : -1;
 		});
 
+		console.log(`📊 メッセージスコア: ${Object.keys(messageScores).length}件のメッセージ`);
 
 		return messageScores;
 	} catch (error) {
+		console.error("Error getting message scores:", error);
 		return {};
 	}
 };
@@ -124,6 +128,7 @@ export const getUserPraiseStats = async (): Promise<{
 			}
 		});
 
+		console.log(`📊 フィードバック統計: Like ${totalLikes}件, Dislike ${totalDislikes}件`);
 
 		return {
 			totalLikes,
@@ -134,6 +139,7 @@ export const getUserPraiseStats = async (): Promise<{
 			dislikedMessages,
 		};
 	} catch (error) {
+		console.error("Error getting user praise stats:", error);
 		throw error;
 	}
 };

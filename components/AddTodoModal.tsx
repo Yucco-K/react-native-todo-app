@@ -80,6 +80,7 @@ export default function AddTodoModal({
 				...newTitles,
 			];
 		} catch (error) {
+			console.error("おすすめTODO取得エラー:", error);
 			setRecommendations([]);
 		} finally {
 			setIsLoadingRecommendations(false);
@@ -121,6 +122,7 @@ export default function AddTodoModal({
 			// 	text2: `カテゴリ: ${CATEGORY_OPTIONS.find((c) => c.value === predicted)?.label || "その他"}`,
 			// });
 		} catch (error) {
+			console.error("カテゴリ推測エラー:", error);
 
 			// カスタムエラーの場合、ユーザーフレンドリーなメッセージを表示
 			if (error instanceof AICategoryError) {
@@ -173,6 +175,7 @@ export default function AddTodoModal({
 				try {
 					await notifyTodoAdded(title);
 				} catch (error) {
+					console.error("通知送信エラー:", error);
 				}
 			}
 
@@ -192,6 +195,7 @@ export default function AddTodoModal({
 			onSave?.();
 			onClose();
 		} catch (error) {
+			console.error(error);
 			// エラートーストを表示
 			Toast.show({
 				type: "error",
@@ -216,8 +220,10 @@ export default function AddTodoModal({
 		title: string;
 		category: TodoCategory;
 	}) => {
+		console.log("🎯 おすすめTODOをタップ:", recommendation.title);
 		try {
 			// ワンタップで即座に保存
+			console.log("💾 TODOを保存中...", {
 				title: recommendation.title,
 				category: recommendation.category,
 				organizationId,
@@ -230,21 +236,26 @@ export default function AddTodoModal({
 				organizationId
 			);
 
+			console.log("✅ TODO保存成功");
 
 			// 組織のTodoの場合は通知を送信
 			if (organizationId) {
 				try {
 					await notifyTodoAdded(recommendation.title);
 				} catch (error) {
+					console.error("通知送信エラー:", error);
 				}
 			}
 
 			// 保存後のコールバックを呼び出す
+			console.log("🔄 リスト更新をトリガー");
 			onSave?.();
 
 			// おすすめを再取得（常に3件表示されるように）
+			console.log("🔄 おすすめを再取得");
 			fetchRecommendations();
 		} catch (error) {
+			console.error("おすすめTODO追加エラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "保存失敗",

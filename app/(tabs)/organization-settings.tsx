@@ -65,6 +65,7 @@ export default function OrganizationSettingsScreen() {
 			const memberList = await getOrganizationMembers(organization.id);
 			setMembers(memberList);
 		} catch (error) {
+			console.error("Error fetching members:", error);
 			Toast.show({
 				type: "error",
 				text1: "取得失敗",
@@ -158,6 +159,7 @@ export default function OrganizationSettingsScreen() {
 							await removeMember(organization.id, member.userId);
 							await fetchMembers();
 						} catch (error) {
+							console.error("Error removing member:", error);
 							Toast.show({
 								type: "error",
 								text1: "削除失敗",
@@ -189,6 +191,7 @@ export default function OrganizationSettingsScreen() {
 
 							router.back();
 						} catch (error) {
+							console.error("Error leaving organization:", error);
 							const errorMessage =
 								error &&
 								typeof error === "object" &&
@@ -227,6 +230,7 @@ export default function OrganizationSettingsScreen() {
 
 							router.back();
 						} catch (error) {
+							console.error("Error deleting organization:", error);
 							Toast.show({
 								type: "error",
 								text1: "削除失敗",
@@ -264,6 +268,7 @@ export default function OrganizationSettingsScreen() {
 				text2: "グループ名を更新しました",
 			});
 		} catch (error) {
+			console.error("Error updating organization name:", error);
 			setEditNameError("グループ名の更新に失敗しました");
 		}
 	};

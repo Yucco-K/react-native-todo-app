@@ -256,6 +256,7 @@ export async function generatePraiseMessage(
 	if (keywordPraises.length > 0) {
 		// キーワードに該当する褒め言葉が見つかった場合、それを優先的に候補に追加
 		candidateMessages.push(...keywordPraises);
+		console.log(`📝 キーワードマッチ: ${keywordPraises.length}件 (タイトル: "${todo.title}")`);
 	}
 
 	// 3. 放置されていたタスク
@@ -302,6 +303,7 @@ export async function generatePraiseMessage(
 
 	if (filteredMessages.length === 0) {
 		// すべてのメッセージが除外された場合は、候補から選択
+		console.log("⚠️ すべてのメッセージが除外されたため、候補から選択");
 		return getRandomMessage(candidateMessages);
 	}
 
@@ -317,18 +319,21 @@ export async function generatePraiseMessage(
 			for (let i = 0; i < weight; i++) {
 				weightedMessages.push(msg);
 			}
+			console.log(`👍👍 大人気メッセージ: "${msg}" (スコア: ${score}, 重み: ${weight})`);
 		} else if (score === 2) {
 			// スコア+2: × 1.8倍（約2回）
 			weightedMessages.push(msg);
 			if (Math.random() < 0.8) {
 				weightedMessages.push(msg);
 			}
+			console.log(`👍 人気メッセージ: "${msg}" (スコア: ${score}, 重み: ~1.8)`);
 		} else if (score === 1) {
 			// スコア+1: × 1.5倍（約1.5回）
 			weightedMessages.push(msg);
 			if (Math.random() < 0.5) {
 				weightedMessages.push(msg);
 			}
+			console.log(`👍 好評メッセージ: "${msg}" (スコア: ${score}, 重み: ~1.5)`);
 		} else if (score === 0) {
 			// 無反応: 1回（基準）
 			weightedMessages.push(msg);
@@ -337,11 +342,13 @@ export async function generatePraiseMessage(
 			if (Math.random() < 0.8) {
 				weightedMessages.push(msg);
 			}
+			console.log(`👎 やや低評価: "${msg}" (スコア: ${score}, 重み: ~0.8)`);
 		} else if (score === -2) {
 			// スコア-2: × 0.5倍（50%の確率）
 			if (Math.random() < 0.5) {
 				weightedMessages.push(msg);
 			}
+			console.log(`👎👎 低評価: "${msg}" (スコア: ${score}, 重み: ~0.5)`);
 		}
 	});
 
@@ -352,6 +359,7 @@ export async function generatePraiseMessage(
 			: getRandomMessage(filteredMessages);
 
 	const score = messageScores[selectedMessage] || 0;
+	console.log(`💬 選択された褒め言葉: "${selectedMessage}" (スコア: ${score})`);
 
 	return selectedMessage;
 }

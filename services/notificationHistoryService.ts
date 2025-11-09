@@ -29,6 +29,7 @@ export async function saveNotificationHistory(
 	data?: Record<string, unknown>
 ): Promise<void> {
 	try {
+		console.log("💾 通知履歴を保存中:", {
 			userId,
 			title,
 			"data.type": data?.type,
@@ -42,7 +43,9 @@ export async function saveNotificationHistory(
 			data: data || {},
 			createdAt: new Date(),
 		});
+		console.log("✅ 通知履歴を保存しました");
 	} catch (error) {
+		console.error("通知履歴の保存エラー:", error);
 		throw error;
 	}
 }
@@ -56,6 +59,7 @@ export async function getNotificationHistory(
 ): Promise<NotificationHistory[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
+		console.log("📥 通知履歴を取得中:", {
 			userId,
 			currentUserId,
 		});
@@ -71,6 +75,7 @@ export async function getNotificationHistory(
 		);
 
 		const snapshot = await getDocs(q);
+		console.log(`📥 Firestoreから取得: ${snapshot.docs.length}件`);
 
 		const history: NotificationHistory[] = [];
 		let filteredCount = 0;
@@ -95,6 +100,7 @@ export async function getNotificationHistory(
 				].includes(notificationData.type as string) &&
 				notificationData.actionUserId
 			) {
+				console.log("🔍 通知履歴フィルタリング判定:", {
 					title: data.title,
 					type: notificationData.type,
 					actionUserId: notificationData.actionUserId,
@@ -104,6 +110,7 @@ export async function getNotificationHistory(
 
 				// 自分が行った操作による通知は除外
 				if (notificationData.actionUserId === currentUserId) {
+					console.log(`❌ 自分の操作なので除外: ${data.title}`);
 					filteredCount++;
 					continue;
 				}
@@ -119,10 +126,12 @@ export async function getNotificationHistory(
 			});
 		}
 
+		console.log(
 			`✅ 通知履歴を取得しました: Firestore=${snapshot.docs.length}件 → フィルタリング後=${history.length}件（除外=${filteredCount}件）`
 		);
 		return history;
 	} catch (error) {
+		console.error("通知履歴の取得エラー:", error);
 		throw error;
 	}
 }
@@ -135,7 +144,9 @@ export async function deleteNotificationHistory(
 ): Promise<void> {
 	try {
 		await deleteDoc(doc(db, "notificationHistory", notificationId));
+		console.log("✅ 通知履歴を削除しました");
 	} catch (error) {
+		console.error("通知履歴の削除エラー:", error);
 		throw error;
 	}
 }

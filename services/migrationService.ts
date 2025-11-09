@@ -16,6 +16,7 @@ export const migrateTodosAddSharedField = async (): Promise<{
 			throw new Error("ユーザーがログインしていません");
 		}
 
+		console.log("🔄 マイグレーション開始: sharedフィールドを追加");
 
 		// すべてのTodoを取得（フィルタなし）
 		const querySnapshot = await getDocs(collection(db, "todos"));
@@ -39,11 +40,13 @@ export const migrateTodosAddSharedField = async (): Promise<{
 					shared: false, // デフォルトで個人用に設定
 				});
 				updated++;
+				console.log(`✅ 更新: ${docSnapshot.id}`);
 			} else {
 				skipped++;
 			}
 		}
 
+		console.log(`✅ マイグレーション完了: ${updated}件更新, ${skipped}件スキップ`);
 
 		return {
 			success: true,
@@ -51,6 +54,7 @@ export const migrateTodosAddSharedField = async (): Promise<{
 			skipped,
 		};
 	} catch (error) {
+		console.error("❌ マイグレーションエラー:", error);
 		return {
 			success: false,
 			updated: 0,

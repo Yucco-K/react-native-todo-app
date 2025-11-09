@@ -60,7 +60,9 @@ export async function registerForPushNotificationsAsync(): Promise<
 
 		try {
 			token = (await Notifications.getExpoPushTokenAsync()).data;
+			console.log("Push token:", token);
 		} catch (e) {
+			console.error("Error getting push token:", e);
 		}
 	} else {
 		alert("物理デバイスでのみプッシュ通知が機能します");
@@ -100,6 +102,7 @@ export async function savePushToken(token: string): Promise<void> {
 			const deletePromises: Promise<void>[] = [];
 			querySnapshot.forEach((docSnap) => {
 				if (docSnap.id !== userId) {
+					console.log(
 						`⚠️ 重複トークンを検出: ユーザー ${docSnap.id} から削除します`
 					);
 					deletePromises.push(
@@ -118,10 +121,12 @@ export async function savePushToken(token: string): Promise<void> {
 			// 重複トークンを削除
 			if (deletePromises.length > 0) {
 				await Promise.all(deletePromises);
+				console.log(
 					`✅ ${deletePromises.length}名のユーザーから重複トークンを削除しました`
 				);
 			}
 		} else {
+			console.log("🔧 開発モード: 重複トークンを許可します");
 		}
 
 		// 3. 現在のユーザーにトークンを保存
@@ -133,7 +138,9 @@ export async function savePushToken(token: string): Promise<void> {
 			},
 			{ merge: true }
 		);
+		console.log("✅ プッシュトークンを保存しました");
 	} catch (error) {
+		console.error("Error saving push token:", error);
 		throw error;
 	}
 }
@@ -174,6 +181,7 @@ async function getAllNotificationTargetUserIds(
 			userIds.push(doc.id);
 		});
 
+		console.log("👥 通知履歴保存対象ユーザー取得:", {
 			総ユーザー数: querySnapshot.size,
 			対象ユーザー数: userIds.length,
 			通知OFF除外: excludedByNotificationOff,
@@ -183,6 +191,7 @@ async function getAllNotificationTargetUserIds(
 
 		return userIds;
 	} catch (error) {
+		console.error("Error getting notification target users:", error);
 		return [];
 	}
 }
@@ -214,6 +223,7 @@ async function getAllPushTokensWithUserId(
 			const notificationEnabled = data.notificationEnabled !== false;
 
 			// デバッグログ: 各ユーザーの通知設定を出力
+			console.log(`🔔 ユーザー通知設定チェック:`, {
 				userId: doc.id,
 				email: data.email || "不明",
 				notificationEnabled: data.notificationEnabled,
@@ -246,6 +256,7 @@ async function getAllPushTokensWithUserId(
 			([_, userIds]) => userIds.length > 1
 		);
 
+		console.log("📱 プッシュトークン取得:", {
 			総ユーザー数: querySnapshot.size,
 			取得トークン数: tokens.length,
 			通知OFF除外: excludedByNotificationOff,
@@ -269,6 +280,7 @@ async function getAllPushTokensWithUserId(
 
 		return tokens;
 	} catch (error) {
+		console.error("Error getting push tokens:", error);
 		return [];
 	}
 }
@@ -317,6 +329,7 @@ export async function sendPushNotification(
 					members.includes(item.userId)
 				);
 
+				console.log("👥 グループ通知: メンバーのみに送信", {
 					organizationId,
 					totalMembers: members.length,
 					tokensFound: tokensWithUserId.length,
@@ -328,9 +341,11 @@ export async function sendPushNotification(
 		}
 
 		if (tokensWithUserId.length === 0) {
+			console.log("送信先のプッシュトークンがありません");
 			return;
 		}
 
+		console.log("🔍 プッシュ通知フィルタリング:", {
 			actionUserId,
 			notificationType,
 			organizationId,
@@ -340,6 +355,7 @@ export async function sendPushNotification(
 
 		// フィルタリング: 操作者には通知しない（ただしリマインドは除く）
 		const filteredTokens = tokensWithUserId.filter((item) => {
+			console.log(`🔍 フィルタリング判定:`, {
 				"item.userId": item.userId,
 				"item.userId型": typeof item.userId,
 				actionUserId: actionUserId,
@@ -351,14 +367,17 @@ export async function sendPushNotification(
 
 			// リマインド通知の場合は全員に送信
 			if (notificationType === "reminder") {
+				console.log(`✅ リマインド通知: ${item.userId}に送信`);
 				return true;
 			}
 			// 操作者が設定されている場合、その操作者には通知しない
 			if (actionUserId && item.userId === actionUserId) {
+				console.log(
 					`❌ 操作者を除外: ${item.userId} (actionUserId: ${actionUserId})`
 				);
 				return false;
 			}
+			console.log(`✅ 通知送信対象: ${item.userId}`);
 			return true;
 		});
 
@@ -370,6 +389,7 @@ export async function sendPushNotification(
 		);
 
 		if (uniqueTokens.length < filteredTokens.length) {
+			console.log(
 				`⚠️ 重複トークンを除去: ${filteredTokens.length}件 → ${uniqueTokens.length}件`
 			);
 		}
@@ -382,6 +402,7 @@ export async function sendPushNotification(
 			data,
 		}));
 
+		console.log(
 			`📤 プッシュ通知送信: ${uniqueTokens.length}件（操作者除外済み、除外数: ${tokensWithUserId.length - filteredTokens.length}）`
 		);
 
@@ -398,10 +419,13 @@ export async function sendPushNotification(
 				});
 
 				const result = await response.json();
+				console.log("Push notification sent:", result);
 			} catch (error) {
+				console.error("Error sending push notification:", error);
 			}
 		}
 	} else {
+		console.log("⚠️ プッシュ通知の送信先がありません（通知履歴は保存します）");
 	}
 
 	// 通知履歴を保存（プッシュトークンの有無に関係なく、操作者以外の全ユーザーに）
@@ -447,6 +471,7 @@ export async function sendPushNotification(
 					return false;
 				});
 
+				console.log(
 					`💾 グループ通知履歴を一括保存: ${allTargetUserIds.length}名のメンバー（操作者除外）`
 				);
 			}
@@ -454,6 +479,7 @@ export async function sendPushNotification(
 			// 通常の通知: 操作者以外の全ユーザー（通知設定ONのみ）を取得
 			allTargetUserIds = await getAllNotificationTargetUserIds(actionUserId);
 
+			console.log(
 				`💾 通知履歴を一括保存: ${allTargetUserIds.length}名のユーザー（操作者除外）`
 			);
 		}
@@ -462,9 +488,11 @@ export async function sendPushNotification(
 		try {
 			await saveNotificationHistory(userId, title, body, data);
 		} catch (error) {
+			console.error(`通知履歴の保存エラー (userId: ${userId}):`, error);
 		}
 	}
 	} catch (error) {
+		console.error("Error in sendPushNotification:", error);
 	}
 }
 
@@ -492,6 +520,7 @@ export async function getCurrentUserDisplayName(): Promise<string> {
 		// ニックネームがない場合はメールアドレスを使用
 		return auth.currentUser?.email || "不明なユーザー";
 	} catch (error) {
+		console.error("Error getting user display name:", error);
 		return auth.currentUser?.email || "不明なユーザー";
 	}
 }
@@ -503,6 +532,7 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
 
+	console.log("➕ notifyTodoAdded呼び出し:", {
 		title,
 		displayName,
 		userId,
@@ -512,6 +542,7 @@ export async function notifyTodoAdded(title: string): Promise<void> {
 	});
 
 	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
 	}
 
 	await sendPushNotification(
@@ -529,6 +560,7 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
 
+	console.log("✏️ notifyTodoUpdated呼び出し:", {
 		title,
 		displayName,
 		userId,
@@ -538,6 +570,7 @@ export async function notifyTodoUpdated(title: string): Promise<void> {
 	});
 
 	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
 	}
 
 	await sendPushNotification(
@@ -555,6 +588,7 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 	const displayName = await getCurrentUserDisplayName();
 	const userId = auth.currentUser?.uid;
 
+	console.log("🗑️ notifyTodoDeleted呼び出し:", {
 		title,
 		displayName,
 		userId,
@@ -564,6 +598,7 @@ export async function notifyTodoDeleted(title: string): Promise<void> {
 	});
 
 	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
 	}
 
 	await sendPushNotification(
@@ -593,6 +628,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 	const completedTime = formatDateTime(new Date());
 	const userId = auth.currentUser?.uid;
 
+	console.log("🔔 notifyTodoCompleted呼び出し:", {
 		title,
 		displayName,
 		userId,
@@ -602,6 +638,7 @@ export async function notifyTodoCompleted(title: string): Promise<void> {
 	});
 
 	if (!userId) {
+		console.error("⚠️ 警告: userIdがnullまたはundefinedです！");
 	}
 
 	await sendPushNotification(
@@ -623,12 +660,14 @@ export async function notifyInvitation(
 	// 自分自身には通知を送らない
 	const currentUserId = auth.currentUser?.uid;
 	if (currentUserId === invitedUserId) {
+		console.log("招待通知: 自分自身には通知を送りません");
 		return;
 	}
 
 	// 招待されたユーザーのプッシュトークンを取得
 	const userDoc = await getDoc(doc(db, "users", invitedUserId));
 	if (!userDoc.exists()) {
+		console.error("User not found:", invitedUserId);
 		return;
 	}
 
@@ -636,6 +675,7 @@ export async function notifyInvitation(
 	const pushToken = userData.pushToken;
 
 	if (!pushToken) {
+		console.log("User has no push token:", invitedUserId);
 		return;
 	}
 
@@ -669,7 +709,9 @@ export async function notifyInvitation(
 			);
 		}
 
+		console.log("Invitation notification sent");
 	} catch (error) {
+		console.error("Error sending invitation notification:", error);
 		throw error;
 	}
 }
@@ -686,6 +728,7 @@ export async function notifyReminder(todo: {
 	try {
 		const currentUserId = auth.currentUser?.uid;
 		if (!currentUserId) {
+			console.log("リマインド通知: ユーザーが未ログイン");
 			return;
 		}
 
@@ -706,6 +749,7 @@ export async function notifyReminder(todo: {
 			// 個人Todoの場合は本人のみに通知
 			const userDoc = await getDoc(doc(db, "users", currentUserId));
 			if (!userDoc.exists()) {
+				console.log("リマインド通知: ユーザーが見つかりません");
 				return;
 			}
 
@@ -713,6 +757,7 @@ export async function notifyReminder(todo: {
 			const pushToken = userData.pushToken;
 
 			if (!pushToken) {
+				console.log("リマインド通知: プッシュトークンがありません");
 				return;
 			}
 
@@ -746,7 +791,9 @@ export async function notifyReminder(todo: {
 			}
 		}
 
+		console.log(`⏰ リマインド通知送信: ${todo.title}`);
 	} catch (error) {
+		console.error("Error sending reminder notification:", error);
 		throw error;
 	}
 }
