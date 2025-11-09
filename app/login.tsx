@@ -423,21 +423,34 @@ export default function LoginScreen() {
 						</View>
 					)}
 
-					<TouchableHighlight
-						onPress={handleLogin}
-						disabled={isLoading || isLockedOut}
-						activeOpacity={0.7}
-						className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
-						underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
+				<TouchableHighlight
+					onPress={handleLogin}
+					disabled={isLoading || isLockedOut}
+					activeOpacity={0.7}
+					className={`rounded-md p-4 mb-4 ${isLockedOut ? "bg-gray-400" : "bg-blue-500"}`}
+					underlayColor={isLockedOut ? "#9ca3af" : "#3b82f6"}
+				>
+					{isLoading ? (
+						<ActivityIndicator color="white" />
+					) : (
+						<Text className="text-white text-center font-noto-bold text-xl">
+							ログイン
+						</Text>
+					)}
+				</TouchableHighlight>
+
+				{/* パスワードを忘れた場合 */}
+				<TouchableOpacity
+					onPress={() => router.push("/forgot-password")}
+					className="mb-4"
+				>
+					<Text
+						className="text-center font-noto-regular text-base"
+						style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
 					>
-						{isLoading ? (
-							<ActivityIndicator color="white" />
-						) : (
-							<Text className="text-white text-center font-noto-bold text-xl">
-								ログイン
-							</Text>
-						)}
-					</TouchableHighlight>
+						パスワードを忘れた場合
+					</Text>
+				</TouchableOpacity>
 
 					{/* 区切り線 */}
 					<View className="flex-row items-center my-4">
