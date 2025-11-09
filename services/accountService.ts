@@ -9,6 +9,7 @@ import {
 	doc,
 	getDocs,
 	query,
+	setDoc,
 	where,
 	writeBatch,
 } from "firebase/firestore";
