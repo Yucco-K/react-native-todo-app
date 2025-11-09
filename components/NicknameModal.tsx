@@ -15,6 +15,7 @@ import {
 	View,
 } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { deleteOldAvatarImage, uploadAvatarImage } from "../services/userService";
 import { Avatar } from "./ui/Avatar";
 
 type NicknameModalProps = {
@@ -63,7 +64,24 @@ export default function NicknameModal({
 
 		setIsLoading(true);
 		try {
-			await onSave(trimmedNickname, avatarUrl.trim() || null);
+			let finalAvatarUrl = avatarUrl;
+
+			// 新しい画像が選択されている場合、Firebase Storageにアップロード
+			if (avatarUrl && avatarUrl.startsWith("file://")) {
+				console.log("📤 ローカル画像をFirebase Storageにアップロード中...");
+
+				// 古い画像を削除（Firebase Storage上の画像の場合）
+				if (currentAvatarUrl) {
+					await deleteOldAvatarImage(currentAvatarUrl);
+				}
+
+				// 新しい画像をアップロード
+				finalAvatarUrl = await uploadAvatarImage(avatarUrl);
+				console.log("✅ アップロード完了:", finalAvatarUrl);
+			}
+
+			// Firestoreに保存
+			await onSave(trimmedNickname, finalAvatarUrl.trim() || null);
 			setIsLoading(false);
 			Alert.alert("成功", "プロフィールが保存されました", [{ text: "OK", onPress: onClose }]);
 		} catch (error) {

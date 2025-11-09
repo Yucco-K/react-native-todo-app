@@ -1,5 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db, storage } from "../config/firebase";
 
 /**
  * ユーザーのニックネームを取得
@@ -210,5 +211,75 @@ export async function getUserAvatarUrlById(userId: string): Promise<string | nul
 	} catch (error) {
 		console.error("Error getting user avatar URL by ID:", error);
 		return null;
+	}
+}
+
+/**
+ * アバター画像をFirebase Storageにアップロード
+ */
+export async function uploadAvatarImage(imageUri: string): Promise<string> {
+	try {
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			throw new Error("ユーザーがログインしていません");
+		}
+
+		console.log("📤 アバター画像をアップロード中...", imageUri);
+
+		// 画像をBlobに変換
+		const response = await fetch(imageUri);
+		const blob = await response.blob();
+
+		// Firebase Storageのパスを作成
+		const filename = `avatar_${userId}_${Date.now()}.jpg`;
+		const storageRef = ref(storage, `avatars/${userId}/${filename}`);
+
+		// アップロード
+		await uploadBytes(storageRef, blob);
+
+		// ダウンロードURLを取得
+		const downloadURL = await getDownloadURL(storageRef);
+		console.log("✅ アバター画像のアップロード完了:", downloadURL);
+
+		return downloadURL;
+	} catch (error) {
+		console.error("❌ アバター画像のアップロードエラー:", error);
+		throw error;
+	}
+}
+
+/**
+ * 古いアバター画像をFirebase Storageから削除
+ */
+export async function deleteOldAvatarImage(avatarUrl: string): Promise<void> {
+	try {
+		// Firebase StorageのURLかチェック
+		if (!avatarUrl.includes("firebasestorage.googleapis.com")) {
+			console.log("🔍 ローカルURIまたは外部URL - 削除スキップ");
+			return; // ローカルURIや外部URLは削除しない
+		}
+
+		const userId = auth.currentUser?.uid;
+		if (!userId) {
+			return;
+		}
+
+		// URLからパスを抽出
+		const urlObj = new URL(avatarUrl);
+		const pathMatch = urlObj.pathname.match(/\/o\/(.+)\?/);
+		if (!pathMatch) {
+			console.log("⚠️ パスの抽出に失敗 - 削除スキップ");
+			return;
+		}
+
+		const filePath = decodeURIComponent(pathMatch[1]);
+		const storageRef = ref(storage, filePath);
+
+		// 削除
+		await deleteObject(storageRef);
+		console.log("🗑️ 古いアバター画像を削除しました:", filePath);
+	} catch (error) {
+		console.error("古いアバター画像の削除エラー:", error);
+		// エラーが発生しても続行（画像が既に削除されている可能性がある）
 	}
 }
