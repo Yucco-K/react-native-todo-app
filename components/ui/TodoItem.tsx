@@ -155,7 +155,25 @@ export default function TodoItem({
 					</View>
 				</TouchableOpacity>
 
-				{/* 右側: 3点メニューボタン */}
+			{/* 右側: 完了済みは削除ボタン、未完了は3点メニューボタン */}
+			{completed && isOwner ? (
+				<TouchableOpacity
+					onPress={(e: GestureResponderEvent) => {
+						e.stopPropagation();
+						Alert.alert("TODO削除", `「${title}」を削除しますか？`, [
+							{ text: "キャンセル", style: "cancel" },
+							{
+								text: "削除",
+								style: "destructive",
+								onPress: () => onDelete?.(id),
+							},
+						]);
+					}}
+					className="p-2"
+				>
+					<Ionicons name="trash-outline" size={20} color="#ef4444" />
+				</TouchableOpacity>
+			) : (
 				<TouchableOpacity
 					onPress={(e: GestureResponderEvent) => {
 						e.stopPropagation();
@@ -165,6 +183,7 @@ export default function TodoItem({
 				>
 					<Ionicons name="ellipsis-vertical" size={20} color="#6b7280" />
 				</TouchableOpacity>
+			)}
 			</View>
 
 			{/* メニューモーダル */}
