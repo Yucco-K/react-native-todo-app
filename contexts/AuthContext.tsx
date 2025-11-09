@@ -108,6 +108,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		});
 
 		console.log("✅ ユーザー情報をFirestoreに保存:", { userId, email });
+		
+		// メール認証が完了するまでログアウト
+		await signOut(auth);
+		console.log("✅ メール認証待ちのためログアウトしました");
 	};
 
 	const signIn = async (email: string, password: string) => {

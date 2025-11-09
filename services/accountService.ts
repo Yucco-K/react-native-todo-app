@@ -97,20 +97,23 @@ async function deleteUserData(userId: string): Promise<void> {
 	// 7. ユーザーがメンバーとして参加している組織から削除
 	const memberOrgsQuery = query(
 		collection(db, "organizations"),
-		where("members", "array-contains", userId)
+		where("memberIds", "array-contains", userId)
 	);
 	const memberOrgsSnapshot = await getDocs(memberOrgsQuery);
 
 	for (const orgDoc of memberOrgsSnapshot.docs) {
 		const orgData = orgDoc.data();
-		const updatedMembers = orgData.members.filter(
-			(memberId: string) => memberId !== userId
-		);
-
-		await deleteDoc(doc(db, "organizations", orgDoc.id));
-		// メンバーリストから削除（オーナーでない場合のみ）
+		
+		// オーナーでない場合のみメンバーリストから削除
 		if (orgData.ownerId !== userId) {
-			await deleteDoc(doc(db, "organizations", orgDoc.id));
+			const updatedMembers = (orgData.memberIds as string[]).filter(
+				(memberId: string) => memberId !== userId
+			);
+			await setDoc(
+				doc(db, "organizations", orgDoc.id),
+				{ memberIds: updatedMembers },
+				{ merge: true }
+			);
 		}
 	}
 
