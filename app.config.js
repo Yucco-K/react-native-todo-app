@@ -33,7 +33,6 @@ module.exports = {
 			bundleIdentifier: "com.yuccok.reactnativetodoapp",
 			buildNumber: "7",
 			googleServicesFile: googleServicesFileRelativePath,
-			associatedDomains: ["applinks:reactnativetodoapp.page.link"],
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 				UISupportedInterfaceOrientations: ["UIInterfaceOrientationPortrait"],
@@ -49,20 +48,6 @@ module.exports = {
 				backgroundColor: "#ffffff",
 			},
 			package: "com.yuccok.reactnativetodoapp",
-			intentFilters: [
-				{
-					action: "VIEW",
-					autoVerify: true,
-					data: [
-						{
-							scheme: "https",
-							host: "reactnativetodoapp.page.link",
-							pathPrefix: "/",
-						},
-					],
-					category: ["BROWSABLE", "DEFAULT"],
-				},
-			],
 		},
 		web: {
 			bundler: "metro",
