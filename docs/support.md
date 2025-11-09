@@ -40,7 +40,7 @@ A: You can sign up using:
 - Apple Sign-In
 
 **Q: I forgot my password. How do I reset it?**
-A: Currently, password reset is not available in the app. Please contact support at yukig0527@icloud.com with your registered email address.
+A: On the login screen, tap "Forgot Password?" link (if available), or contact support at yukig0527@icloud.com with your registered email address for assistance.
 
 **Q: How do I delete my account?**
 A: 
@@ -102,7 +102,7 @@ A:
 1. Check that notifications are enabled in the app (toggle in the header)
 2. Go to iOS Settings → Notifications → Todo App
 3. Ensure "Allow Notifications" is turned ON
-4. Check that "Do Not Disturb" is not enabled
+4. Check that "Focus" or "Do Not Disturb" mode is not enabled in iOS Settings
 
 **Q: How do I disable notifications?**
 A: Tap the notification toggle in the app header (top-right) to turn notifications ON/OFF.
@@ -197,7 +197,7 @@ A: 以下の方法でサインアップできます：
 - Apple Sign-In
 
 **Q: パスワードを忘れました。リセットするにはどうすればよいですか？**
-A: 現在、アプリ内でのパスワードリセット機能はありません。登録メールアドレスを添えて yukig0527@icloud.com までお問い合わせください。
+A: ログイン画面の「パスワードを忘れた場合」リンクをタップ（実装されている場合）、または登録メールアドレスを添えて yukig0527@icloud.com までお問い合わせください。
 
 **Q: アカウントを削除するにはどうすればよいですか？**
 A: 
@@ -259,7 +259,7 @@ A:
 1. アプリで通知が有効になっているか確認（ヘッダーのトグル）
 2. iOS設定 → 通知 → Todo App に移動
 3. 「通知を許可」がオンになっていることを確認
-4. 「おやすみモード」が有効になっていないか確認
+4. iOS設定で「集中モード」または「おやすみモード」が有効になっていないか確認
 
 **Q: 通知を無効にするにはどうすればよいですか？**
 A: アプリヘッダー（右上）の通知トグルをタップして、通知のオン/オフを切り替えます。
