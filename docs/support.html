@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support - Todo App</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
@@ -19,7 +18,7 @@
             background: #f8fafc;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -28,7 +27,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 40px;
         }
-        
+
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -36,68 +35,68 @@
             text-decoration: none;
             font-weight: 600;
         }
-        
+
         .back-link:hover {
             text-decoration: underline;
         }
-        
-        #content h1 {
+
+        .content h1 {
             color: #1e40af;
             border-bottom: 3px solid #3b82f6;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-        
-        #content h2 {
+
+        .content h2 {
             color: #2563eb;
             margin-top: 30px;
             margin-bottom: 15px;
         }
-        
-        #content h3 {
+
+        .content h3 {
             color: #3b82f6;
             margin-top: 20px;
             margin-bottom: 10px;
         }
-        
-        #content h4 {
+
+        .content h4 {
             color: #60a5fa;
             margin-top: 15px;
             margin-bottom: 10px;
         }
-        
-        #content p {
+
+        .content p {
             margin-bottom: 15px;
         }
-        
-        #content ul, #content ol {
+
+        .content ul, .content ol {
             margin-left: 30px;
             margin-bottom: 15px;
         }
-        
-        #content li {
+
+        .content li {
             margin-bottom: 8px;
         }
-        
-        #content a {
+
+        .content a {
             color: #3b82f6;
             text-decoration: none;
         }
-        
-        #content a:hover {
+
+        .content a:hover {
             text-decoration: underline;
         }
-        
-        #content strong {
+
+        .content strong {
             color: #1e40af;
         }
-        
-        #content hr {
+
+        .content hr {
             border: none;
             border-top: 2px solid #e2e8f0;
             margin: 30px 0;
         }
-        
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -108,26 +107,377 @@
 <body>
     <div class="container">
         <a href="index.html" class="back-link">← Back to Documentation</a>
-        <div id="content">Loading...</div>
-    </div>
-    
-    <script>
-        // marked.js の設定
-        marked.setOptions({
-            breaks: true,
-            gfm: true
-        });
+        <div class="content">
+            <h1>Support / サポート</h1>
+            <p><strong>Last Updated / 最終更新日: 2025-01-09</strong></p>
+            <hr>
 
-        fetch('support.md')
-            .then(response => response.text())
-            .then(text => {
-                document.getElementById('content').innerHTML = marked.parse(text);
-            })
-            .catch(error => {
-                document.getElementById('content').innerHTML = '<h1>Error loading content</h1><p>Please try again later.</p>';
-                console.error('Error:', error);
-            });
-    </script>
+            <h2>English</h2>
+
+            <h3>How to Get Support</h3>
+            <p>If you encounter any issues or have questions about Todo App, please use one of the following methods:</p>
+
+            <h4>1. GitHub Issues (Recommended)</h4>
+            <p>For bug reports, feature requests, or technical questions:</p>
+            <ul>
+                <li>Visit: <a href="https://github.com/Yucco-K/react-native-todo-app/issues">https://github.com/Yucco-K/react-native-todo-app/issues</a></li>
+                <li>Click "New Issue"</li>
+                <li>Provide detailed information about your issue</li>
+            </ul>
+
+            <p><strong>Please include:</strong></p>
+            <ul>
+                <li>App version (found in Settings)</li>
+                <li>Device model and iOS version</li>
+                <li>Steps to reproduce the issue</li>
+                <li>Screenshots (if applicable)</li>
+            </ul>
+
+            <h4>2. Email Support</h4>
+            <p>For privacy concerns or account-related issues:</p>
+            <ul>
+                <li><strong>Email</strong>: yukig0527@icloud.com</li>
+                <li><strong>Response Time</strong>: Within 24-48 hours (Japan Standard Time, 9:00-21:00)</li>
+            </ul>
+
+            <hr>
+
+            <h3>Frequently Asked Questions (FAQ)</h3>
+
+            <h4>Account & Authentication</h4>
+
+            <p><strong>Q: How do I create an account?</strong><br>
+            A: You can sign up using:</p>
+            <ul>
+                <li>Email and password</li>
+                <li>Google Sign-In</li>
+                <li>Apple Sign-In</li>
+            </ul>
+
+            <p><strong>Q: I forgot my password. How do I reset it?</strong><br>
+            A: On the login screen, tap "Forgot Password?" link, or contact support at yukig0527@icloud.com with your registered email address for assistance.</p>
+
+            <p><strong>Q: How do I delete my account?</strong><br>
+            A:</p>
+            <ol>
+                <li>Open the app and tap the menu icon (top-left)</li>
+                <li>Scroll to the bottom and tap "アカウント削除" (Delete Account)</li>
+                <li>Confirm the deletion and enter your password</li>
+                <li>All your data will be permanently deleted</li>
+            </ol>
+            <p><strong>⚠️ Warning</strong>: This action cannot be undone. All your TODOs, groups, and settings will be permanently deleted.</p>
+
+            <h4>TODO Management</h4>
+
+            <p><strong>Q: How do I create a TODO?</strong><br>
+            A: Tap the "+" button at the bottom-right of the screen, fill in the details, and tap "作成" (Create).</p>
+
+            <p><strong>Q: How do I set a reminder?</strong><br>
+            A:</p>
+            <ol>
+                <li>Tap on a TODO item to expand it</li>
+                <li>Tap the three-dot menu (⋮)</li>
+                <li>Select "リマインド設定" (Set Reminder)</li>
+                <li>Choose the date and time</li>
+                <li>Tap "保存" (Save)</li>
+            </ol>
+
+            <p><strong>Q: Can I share TODOs with others?</strong><br>
+            A: Yes! Use the Group feature:</p>
+            <ol>
+                <li>Tap the menu icon (top-left)</li>
+                <li>Tap "グループを作成" (Create Group)</li>
+                <li>Share the invitation code with others</li>
+                <li>Group members can view and manage shared TODOs</li>
+            </ol>
+
+            <h4>Groups & Collaboration</h4>
+
+            <p><strong>Q: How do I join a group?</strong><br>
+            A:</p>
+            <ol>
+                <li>Tap the menu icon (top-left)</li>
+                <li>Tap "グループに参加" (Join Group)</li>
+                <li>Enter the invitation code provided by the group owner</li>
+                <li>Tap "参加" (Join)</li>
+            </ol>
+
+            <p><strong>Q: How do I leave a group?</strong><br>
+            A:</p>
+            <ol>
+                <li>Tap the menu icon (top-left)</li>
+                <li>Select the group you want to leave</li>
+                <li>Tap the settings icon (⚙️) next to the group name</li>
+                <li>Tap "グループから退出" (Leave Group)</li>
+                <li>Confirm the action</li>
+            </ol>
+
+            <p><strong>Q: Can I delete a group?</strong><br>
+            A: Only the group owner can delete a group:</p>
+            <ol>
+                <li>Select the group</li>
+                <li>Tap the settings icon (⚙️)</li>
+                <li>Tap "グループを削除" (Delete Group)</li>
+                <li>Confirm the deletion</li>
+            </ol>
+
+            <h4>Notifications</h4>
+
+            <p><strong>Q: I'm not receiving reminder notifications. What should I do?</strong><br>
+            A:</p>
+            <ol>
+                <li>Check that notifications are enabled in the app (toggle in the header)</li>
+                <li>Go to iOS Settings → Notifications → Todo App</li>
+                <li>Ensure "Allow Notifications" is turned ON</li>
+                <li>Check that "Focus" or "Do Not Disturb" mode is not enabled in iOS Settings</li>
+            </ol>
+
+            <p><strong>Q: How do I disable notifications?</strong><br>
+            A: Tap the notification toggle in the app header (top-right) to turn notifications ON/OFF.</p>
+
+            <h4>AI Features</h4>
+
+            <p><strong>Q: How does the AI category prediction work?</strong><br>
+            A: When you create a TODO, the app uses OpenAI's GPT-3.5 to suggest a category based on your TODO title and description. This feature helps you organize your tasks automatically.</p>
+
+            <p><strong>Q: What data is sent to OpenAI?</strong><br>
+            A: Only your TODO title and description are sent (anonymized, without personal identifiers). Your email, name, and other personal information are NOT shared with OpenAI.</p>
+
+            <h4>Technical Issues</h4>
+
+            <p><strong>Q: The app crashes when I try to log in. What should I do?</strong><br>
+            A:</p>
+            <ol>
+                <li>Force close the app and restart it</li>
+                <li>Check your internet connection</li>
+                <li>Update to the latest version from the App Store</li>
+                <li>If the issue persists, contact support with details</li>
+            </ol>
+
+            <p><strong>Q: My data is not syncing across devices. Why?</strong><br>
+            A: Ensure you are logged in with the same account on all devices. Data is automatically synced via Firebase when you have an internet connection.</p>
+
+            <p><strong>Q: Can I use the app offline?</strong><br>
+            A: No, Todo App requires an internet connection to function. All data is stored in the cloud for real-time synchronization.</p>
+
+            <hr>
+
+            <h3>Privacy & Security</h3>
+
+            <p><strong>Q: Is my data secure?</strong><br>
+            A: Yes. We use:</p>
+            <ul>
+                <li>HTTPS encryption for all data transmission</li>
+                <li>Firebase Authentication for secure login</li>
+                <li>Cloud Firestore with access control rules</li>
+                <li>No data is shared with third parties except for app functionality (Firebase, OpenAI for AI features)</li>
+            </ul>
+
+            <p><strong>Q: Who can see my TODOs?</strong><br>
+            A:</p>
+            <ul>
+                <li><strong>Personal TODOs (My List)</strong>: Only you</li>
+                <li><strong>Group TODOs</strong>: All members of the group</li>
+            </ul>
+
+            <p><strong>Q: Where is my data stored?</strong><br>
+            A: Your data is stored on Firebase Cloud Firestore servers (Google Cloud Platform) with encryption.</p>
+
+            <p>For more information, please read our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+
+            <hr>
+
+            <h3>Contact Information</h3>
+            <ul>
+                <li><strong>Email</strong>: yukig0527@icloud.com</li>
+                <li><strong>GitHub</strong>: <a href="https://github.com/Yucco-K/react-native-todo-app">https://github.com/Yucco-K/react-native-todo-app</a></li>
+                <li><strong>Issues</strong>: <a href="https://github.com/Yucco-K/react-native-todo-app/issues">https://github.com/Yucco-K/react-native-todo-app/issues</a></li>
+            </ul>
+
+            <hr>
+
+            <h2>日本語</h2>
+
+            <h3>サポートを受ける方法</h3>
+            <p>Todo Appに関する問題や質問がある場合は、以下のいずれかの方法をご利用ください：</p>
+
+            <h4>1. GitHub Issues（推奨）</h4>
+            <p>バグレポート、機能リクエスト、技術的な質問：</p>
+            <ul>
+                <li>アクセス: <a href="https://github.com/Yucco-K/react-native-todo-app/issues">https://github.com/Yucco-K/react-native-todo-app/issues</a></li>
+                <li>「New Issue」をクリック</li>
+                <li>問題の詳細情報を提供</li>
+            </ul>
+
+            <p><strong>以下の情報を含めてください：</strong></p>
+            <ul>
+                <li>アプリバージョン（設定画面で確認可能）</li>
+                <li>デバイスモデルとiOSバージョン</li>
+                <li>問題を再現する手順</li>
+                <li>スクリーンショット（該当する場合）</li>
+            </ul>
+
+            <h4>2. メールサポート</h4>
+            <p>プライバシーに関する懸念やアカウント関連の問題：</p>
+            <ul>
+                <li><strong>メール</strong>: yukig0527@icloud.com</li>
+                <li><strong>応答時間</strong>: 24-48時間以内（日本時間 9:00-21:00）</li>
+            </ul>
+
+            <hr>
+
+            <h3>よくある質問（FAQ）</h3>
+
+            <h4>アカウントと認証</h4>
+
+            <p><strong>Q: アカウントを作成するにはどうすればよいですか？</strong><br>
+            A: 以下の方法でサインアップできます：</p>
+            <ul>
+                <li>メールアドレスとパスワード</li>
+                <li>Google Sign-In</li>
+                <li>Apple Sign-In</li>
+            </ul>
+
+            <p><strong>Q: パスワードを忘れました。リセットするにはどうすればよいですか？</strong><br>
+            A: ログイン画面の「パスワードを忘れた場合」リンクをタップ、または登録メールアドレスを添えて yukig0527@icloud.com までお問い合わせください。</p>
+
+            <p><strong>Q: アカウントを削除するにはどうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>アプリを開き、メニューアイコン（左上）をタップ</li>
+                <li>最下部までスクロールし、「アカウント削除」をタップ</li>
+                <li>削除を確認し、パスワードを入力</li>
+                <li>すべてのデータが完全に削除されます</li>
+            </ol>
+            <p><strong>⚠️ 警告</strong>: この操作は取り消せません。すべてのTODO、グループ、設定が完全に削除されます。</p>
+
+            <h4>TODO管理</h4>
+
+            <p><strong>Q: TODOを作成するにはどうすればよいですか？</strong><br>
+            A: 画面右下の「+」ボタンをタップし、詳細を入力して「作成」をタップします。</p>
+
+            <p><strong>Q: リマインダーを設定するにはどうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>TODOアイテムをタップして展開</li>
+                <li>三点メニュー（⋮）をタップ</li>
+                <li>「リマインド設定」を選択</li>
+                <li>日時を選択</li>
+                <li>「保存」をタップ</li>
+            </ol>
+
+            <p><strong>Q: TODOを他の人と共有できますか？</strong><br>
+            A: はい！グループ機能を使用してください：</p>
+            <ol>
+                <li>メニューアイコン（左上）をタップ</li>
+                <li>「グループを作成」をタップ</li>
+                <li>招待コードを他の人と共有</li>
+                <li>グループメンバーは共有TODOを閲覧・管理できます</li>
+            </ol>
+
+            <h4>グループとコラボレーション</h4>
+
+            <p><strong>Q: グループに参加するにはどうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>メニューアイコン（左上）をタップ</li>
+                <li>「グループに参加」をタップ</li>
+                <li>グループオーナーから提供された招待コードを入力</li>
+                <li>「参加」をタップ</li>
+            </ol>
+
+            <p><strong>Q: グループから退出するにはどうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>メニューアイコン（左上）をタップ</li>
+                <li>退出したいグループを選択</li>
+                <li>グループ名の横の設定アイコン（⚙️）をタップ</li>
+                <li>「グループから退出」をタップ</li>
+                <li>操作を確認</li>
+            </ol>
+
+            <p><strong>Q: グループを削除できますか？</strong><br>
+            A: グループオーナーのみがグループを削除できます：</p>
+            <ol>
+                <li>グループを選択</li>
+                <li>設定アイコン（⚙️）をタップ</li>
+                <li>「グループを削除」をタップ</li>
+                <li>削除を確認</li>
+            </ol>
+
+            <h4>通知</h4>
+
+            <p><strong>Q: リマインド通知が届きません。どうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>アプリで通知が有効になっているか確認（ヘッダーのトグル）</li>
+                <li>iOS設定 → 通知 → Todo App に移動</li>
+                <li>「通知を許可」がオンになっていることを確認</li>
+                <li>iOS設定で「集中モード」または「おやすみモード」が有効になっていないか確認</li>
+            </ol>
+
+            <p><strong>Q: 通知を無効にするにはどうすればよいですか？</strong><br>
+            A: アプリヘッダー（右上）の通知トグルをタップして、通知のオン/オフを切り替えます。</p>
+
+            <h4>AI機能</h4>
+
+            <p><strong>Q: AIカテゴリ予測はどのように機能しますか？</strong><br>
+            A: TODOを作成すると、アプリはOpenAIのGPT-3.5を使用して、TODOのタイトルと説明に基づいてカテゴリを提案します。この機能により、タスクを自動的に整理できます。</p>
+
+            <p><strong>Q: OpenAIに送信されるデータは何ですか？</strong><br>
+            A: TODOのタイトルと説明のみが送信されます（匿名化、個人識別情報なし）。メールアドレス、名前、その他の個人情報はOpenAIと共有されません。</p>
+
+            <h4>技術的な問題</h4>
+
+            <p><strong>Q: ログインしようとするとアプリがクラッシュします。どうすればよいですか？</strong><br>
+            A:</p>
+            <ol>
+                <li>アプリを強制終了して再起動</li>
+                <li>インターネット接続を確認</li>
+                <li>App Storeから最新バージョンに更新</li>
+                <li>問題が解決しない場合は、詳細を添えてサポートにお問い合わせください</li>
+            </ol>
+
+            <p><strong>Q: データがデバイス間で同期されません。なぜですか？</strong><br>
+            A: すべてのデバイスで同じアカウントでログインしていることを確認してください。インターネット接続がある場合、データはFirebase経由で自動的に同期されます。</p>
+
+            <p><strong>Q: オフラインでアプリを使用できますか？</strong><br>
+            A: いいえ、Todo Appは機能するためにインターネット接続が必要です。すべてのデータはリアルタイム同期のためにクラウドに保存されます。</p>
+
+            <hr>
+
+            <h3>プライバシーとセキュリティ</h3>
+
+            <p><strong>Q: データは安全ですか？</strong><br>
+            A: はい。以下を使用しています：</p>
+            <ul>
+                <li>すべてのデータ送信にHTTPS暗号化</li>
+                <li>安全なログインのためのFirebase Authentication</li>
+                <li>アクセス制御ルールを持つCloud Firestore</li>
+                <li>アプリ機能（Firebase、AI機能のためのOpenAI）を除き、第三者とデータを共有しません</li>
+            </ul>
+
+            <p><strong>Q: 誰が私のTODOを見ることができますか？</strong><br>
+            A:</p>
+            <ul>
+                <li><strong>個人TODO（My List）</strong>: あなたのみ</li>
+                <li><strong>グループTODO</strong>: グループのすべてのメンバー</li>
+            </ul>
+
+            <p><strong>Q: データはどこに保存されますか？</strong><br>
+            A: データは暗号化されたFirebase Cloud Firestoreサーバー（Google Cloud Platform）に保存されます。</p>
+
+            <p>詳細については、<a href="privacy-policy.html">プライバシーポリシー</a>をお読みください。</p>
+
+            <hr>
+
+            <h3>お問い合わせ先</h3>
+            <ul>
+                <li><strong>メール</strong>: yukig0527@icloud.com</li>
+                <li><strong>GitHub</strong>: <a href="https://github.com/Yucco-K/react-native-todo-app">https://github.com/Yucco-K/react-native-todo-app</a></li>
+                <li><strong>Issues</strong>: <a href="https://github.com/Yucco-K/react-native-todo-app/issues">https://github.com/Yucco-K/react-native-todo-app/issues</a></li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
-
