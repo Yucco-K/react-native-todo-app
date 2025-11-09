@@ -116,20 +116,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			email,
 			password
 		);
-
+		
+		const userId = userCredential.user.uid;
+		const userEmail = userCredential.user.email;
+		
 		// メール認証チェック（メール/パスワード認証の場合のみ）
 		const isEmailPasswordUser = userCredential.user.providerData.some(
 			(provider) => provider.providerId === "password"
 		);
-
+		
 		if (isEmailPasswordUser && !userCredential.user.emailVerified) {
-			// 未認証の場合はログアウトしてエラーを投げる
-			await signOut(auth);
-			throw new Error("EMAIL_NOT_VERIFIED");
+			// 既存ユーザーかどうかをチェック（2025-01-10以前に作成されたアカウント）
+			const userDocRef = doc(db, "users", userId);
+			const userDocSnap = await getDoc(userDocRef);
+			
+			if (userDocSnap.exists()) {
+				const userData = userDocSnap.data();
+				const createdAt = userData?.createdAt?.toDate();
+				const cutoffDate = new Date("2025-01-10T00:00:00Z");
+				
+				// 既存ユーザー（カットオフ日より前に作成）の場合はログインを許可
+				const isExistingUser = createdAt && createdAt < cutoffDate;
+				
+				if (!isExistingUser) {
+					// 新規ユーザーの場合のみログインを拒否
+					await signOut(auth);
+					throw new Error("EMAIL_NOT_VERIFIED");
+				} else {
+					console.log("⚠️ 既存ユーザー（メール未認証）のログインを許可:", email);
+				}
+			} else {
+				// ユーザードキュメントが存在しない場合は新規ユーザーとみなす
+				await signOut(auth);
+				throw new Error("EMAIL_NOT_VERIFIED");
+			}
 		}
-
-		const userId = userCredential.user.uid;
-		const userEmail = userCredential.user.email;
 
 		// 既存ユーザーの場合、usersコレクションにドキュメントがなければ作成、あれば更新
 		if (userEmail) {
