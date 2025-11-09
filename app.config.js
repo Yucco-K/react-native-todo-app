@@ -34,15 +34,22 @@ module.exports = {
 			resizeMode: "contain",
 			backgroundColor: "#ffffff",
 		},
-		ios: {
-			supportsTablet: true,
-			bundleIdentifier: "com.yuccok.reactnativetodoapp",
-			buildNumber: "3",
-			googleServicesFile: googleServicesFileRelativePath,
-			infoPlist: {
-				ITSAppUsesNonExemptEncryption: false,
-			},
+	ios: {
+		supportsTablet: true,
+		bundleIdentifier: "com.yuccok.reactnativetodoapp",
+		buildNumber: "3",
+		googleServicesFile: googleServicesFileRelativePath,
+		infoPlist: {
+			ITSAppUsesNonExemptEncryption: false,
+			UISupportedInterfaceOrientations: [
+				"UIInterfaceOrientationPortrait",
+			],
+			UISupportedInterfaceOrientations_iPad: [
+				"UIInterfaceOrientationPortrait",
+				"UIInterfaceOrientationPortraitUpsideDown",
+			],
 		},
+	},
 		android: {
 			adaptiveIcon: {
 				foregroundImage: "./assets/images/adaptive-icon.png",
