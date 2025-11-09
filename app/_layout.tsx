@@ -33,6 +33,14 @@ function RootLayoutNav() {
 	const responseListener = useRef<ReturnType<
 		typeof Notifications.addNotificationResponseReceivedListener
 	> | null>(null);
+	const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const clearRedirectTimeout = () => {
+		if (redirectTimeoutRef.current) {
+			clearTimeout(redirectTimeoutRef.current);
+			redirectTimeoutRef.current = null;
+		}
+	};
 
 	// 通知リスナーを設定
 	useEffect(() => {
@@ -82,6 +90,12 @@ function RootLayoutNav() {
 	}, [user, triggerRefresh]);
 
 	useEffect(() => {
+		return () => {
+			clearRedirectTimeout();
+		};
+	}, []);
+
+	useEffect(() => {
 		if (loading) {
 			console.log("🔄 Router: 認証状態を読み込み中...");
 			return;
@@ -98,6 +112,7 @@ function RootLayoutNav() {
 		console.log("========================================");
 
 		if (!user) {
+			clearRedirectTimeout();
 			// ユーザーが未ログインで、認証画面にいない場合、ログイン画面へ
 			if (!inAuthScreen) {
 				console.log("========================================");
@@ -105,21 +120,40 @@ function RootLayoutNav() {
 				console.log("========================================");
 				router.replace("/login");
 			}
-		} else {
-			// ユーザーがログイン済みで、認証画面にいる場合、ホーム画面へ
-			if (inAuthScreen) {
+			return;
+		}
+
+		const isEmailPasswordUser = user.providerData?.some(
+			(provider) => provider?.providerId === "password",
+		);
+		const isVerified = !isEmailPasswordUser || user.emailVerified;
+
+		if (!isVerified) {
+			console.log("========================================");
+			console.log("⛔ Router: メール未認証のためトップページへ遷移しません");
+			console.log("========================================");
+			clearRedirectTimeout();
+
+			if (!inAuthScreen) {
+				router.replace("/login");
+			}
+			return;
+		}
+
+		// ユーザーがログイン済みで、認証画面にいる場合のみホーム画面へ遷移
+		if (inAuthScreen) {
+			clearRedirectTimeout();
+			redirectTimeoutRef.current = setTimeout(() => {
 				console.log("========================================");
 				console.log("➡️ Router: ログイン成功 - ホームページにリダイレクト");
 				console.log("========================================");
-				// 少し遅延を入れて確実にリダイレクト
-				setTimeout(() => {
-					router.replace("/");
-				}, 100);
-			} else {
-				console.log("========================================");
-				console.log("✅ Router: ユーザーはログイン済み - リダイレクトなし");
-				console.log("========================================");
-			}
+				router.replace("/");
+			}, 100);
+		} else {
+			clearRedirectTimeout();
+			console.log("========================================");
+			console.log("✅ Router: ユーザーはログイン済み - リダイレクトなし");
+			console.log("========================================");
 		}
 	}, [user, loading, segments, router]);
 
