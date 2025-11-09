@@ -93,14 +93,17 @@ export default function SignupScreen() {
 		try {
 			await signUp(email, password);
 
-			// メール認証の案内を表示
+			// アカウント作成成功（メール認証スキップ版）
 			Alert.alert(
-				"認証メールを送信しました",
-				`${email} に認証メールを送信しました。\n\nメール内のリンクをクリックしてアカウントを有効化してください。\n\n認証後、ログイン画面からログインできます。`,
+				"アカウント作成成功",
+				`${email} でアカウントを作成しました。\n\nそのままログインできます。`,
 				[
 					{
 						text: "OK",
-						onPress: () => router.replace("/login"),
+						onPress: () => {
+							// ログイン画面に戻らず、そのままホーム画面に遷移
+							// AuthContextのonAuthStateChangedが自動的にリダイレクトする
+						},
 					},
 				],
 			);
@@ -129,6 +132,11 @@ export default function SignupScreen() {
 							break;
 						case "auth/network-request-failed":
 							errorMessage = "ネットワークエラー: インターネット接続を確認してください";
+							break;
+						case "auth/unauthorized-continue-url":
+							errorTitle = "設定エラー";
+							errorMessage =
+								"Firebase Consoleの設定に問題があります。開発者に連絡してください。";
 							break;
 						default:
 							errorMessage = `登録エラー: ${error.code}`;
