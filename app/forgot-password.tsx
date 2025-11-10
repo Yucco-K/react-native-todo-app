@@ -76,19 +76,25 @@ export default function ForgotPasswordScreen() {
 						errorMessage = "このメールアドレスは登録されていません";
 						break;
 					case "auth/invalid-email":
-						errorMessage = "無効なメールアドレスです";
+						errorMessage = "有効なメールアドレスを入力してください";
 						break;
 					case "auth/too-many-requests":
-						errorMessage = "リクエストが多すぎます。しばらく待ってから再試行してください";
+						errorMessage = "リクエストが多すぎます。しばらく時間をおいてから再度お試しください";
+						break;
+					case "auth/network-request-failed":
+						errorMessage = "ネットワーク接続を確認してください";
+						break;
+					case "auth/unauthorized-continue-url":
+						errorMessage = "メール送信の設定に問題があります。しばらく時間をおいてから再度お試しください";
 						break;
 					default:
-						errorMessage = `エラーが発生しました: ${error.code || "不明なエラー"}`;
+						errorMessage = "エラーが発生しました。しばらく時間をおいてから再度お試しください";
 				}
 			}
 
 			Toast.show({
 				type: "error",
-				text1: "エラー",
+				text1: "送信エラー",
 				text2: errorMessage,
 				visibilityTime: 6000,
 			});
@@ -166,16 +172,40 @@ export default function ForgotPasswordScreen() {
 
 					{/* 説明 */}
 					<View
-						className="p-4 rounded-lg"
+						className="p-4 rounded-lg mb-4"
 						style={{
 							backgroundColor: isDark ? "#374151" : "#f3f4f6",
 						}}
 					>
 						<Text
-							className="text-sm font-noto-regular"
+							className="text-sm font-noto-regular mb-2"
 							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
 						>
 							💡 メールが届かない場合は、迷惑メールフォルダをご確認ください。
+						</Text>
+					</View>
+
+					{/* パスワード要件の説明 */}
+					<View
+						className="p-4 rounded-lg border"
+						style={{
+							backgroundColor: isDark ? "#1f2937" : "#ffffff",
+							borderColor: isDark ? "#4b5563" : "#d1d5db",
+						}}
+					>
+						<Text
+							className="text-sm font-noto-bold mb-2"
+							style={{ color: isDark ? "#f3f4f6" : "#1f2937" }}
+						>
+							新しいパスワードの要件
+						</Text>
+						<Text
+							className="text-sm font-noto-regular"
+							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+						>
+							• 8文字以上{"\n"}
+							• 文字（a-z、A-Z）を含む{"\n"}
+							• 数字（0-9）を含む
 						</Text>
 					</View>
 				</View>
