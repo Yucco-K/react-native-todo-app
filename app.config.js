@@ -28,11 +28,11 @@ module.exports = {
 			resizeMode: "contain",
 			backgroundColor: "#ffffff",
 		},
-	ios: {
-		supportsTablet: true,
-		bundleIdentifier: "com.yuccok.reactnativetodoapp",
-		buildNumber: "9",
-		googleServicesFile: googleServicesFileRelativePath,
+		ios: {
+			supportsTablet: true,
+			bundleIdentifier: "com.yuccok.reactnativetodoapp",
+			buildNumber: "10",
+			googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 				UISupportedInterfaceOrientations: ["UIInterfaceOrientationPortrait"],
