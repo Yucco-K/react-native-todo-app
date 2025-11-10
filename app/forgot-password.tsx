@@ -203,9 +203,7 @@ export default function ForgotPasswordScreen() {
 							className="text-sm font-noto-regular"
 							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
 						>
-							• 8文字以上{"\n"}
-							• 文字（a-z、A-Z）を含む{"\n"}
-							• 数字（0-9）を含む
+							• 8文字以上
 						</Text>
 					</View>
 				</View>

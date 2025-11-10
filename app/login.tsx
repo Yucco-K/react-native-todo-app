@@ -25,11 +25,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 // バリデーションスキーマ
 const loginSchema = z.object({
 	email: z.string().email("有効なメールアドレスを入力してください"),
-	password: z
-		.string()
-		.min(8, "パスワードは8文字以上で入力してください")
-		.regex(/[a-zA-Z]/, "パスワードには文字を含める必要があります")
-		.regex(/[0-9]/, "パスワードには数字を含める必要があります"),
+	password: z.string().min(8, "パスワードは8文字以上で入力してください"),
 });
 
 const STORAGE_KEY_FAILED_ATTEMPTS = "login_failed_attempts";
