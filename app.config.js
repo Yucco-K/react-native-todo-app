@@ -31,7 +31,7 @@ module.exports = {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: "com.yuccok.reactnativetodoapp",
-			buildNumber: "7",
+			buildNumber: "8",
 			googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
