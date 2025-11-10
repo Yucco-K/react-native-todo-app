@@ -101,7 +101,7 @@ function RootLayoutNav() {
 			return;
 		}
 
-		const inAuthScreen = segments[0] === "login" || segments[0] === "signup";
+		const inAuthScreen = segments[0] === "login" || segments[0] === "signup" || segments[0] === "forgot-password";
 		console.log("========================================");
 		console.log("🔄 Router: 現在の状態");
 		console.log("📋 isLoggedIn:", !!user);
@@ -167,6 +167,7 @@ function RootLayoutNav() {
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 			<Stack.Screen name="login" options={{ headerShown: false }} />
 			<Stack.Screen name="signup" options={{ headerShown: false }} />
+			<Stack.Screen name="forgot-password" options={{ headerShown: false }} />
 		</Stack>
 	);
 }
