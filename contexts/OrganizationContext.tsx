@@ -42,11 +42,6 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 	}, [user, selectedOrganization]);
 
 	const selectOrganization = (org: Organization | null) => {
-		console.log("🔄 OrganizationContext: 選択変更", {
-			from: selectedOrganization?.name || "My List",
-			to: org?.name || "My List",
-			organizationId: org?.id || null,
-		});
 		setSelectedOrganization(org);
 	};
 

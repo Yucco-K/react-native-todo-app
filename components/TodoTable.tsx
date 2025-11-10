@@ -48,7 +48,6 @@ export default function TodoTable({
 
 			// 削除があった場合はログ出力（本番環境ではトーストを表示しない）
 			if (deletedCount > 0 && __DEV__) {
-				console.log(`🗑️ ${deletedCount}件の完了済みTodoを自動削除しました`);
 			}
 		} catch (error) {
 			console.error("Todo取得エラー:", error);
@@ -141,14 +140,6 @@ export default function TodoTable({
 				];
 				const randomTitle = titleMessages[Math.floor(Math.random() * titleMessages.length)];
 
-				console.log(
-					"🎨 新しいテーマ:",
-					randomThemeIndex,
-					"タイトル:",
-					randomTitle,
-					"褒め言葉:",
-					praiseMessage,
-				);
 
 				// 前のトーストを確実に消してから新しいトーストを表示
 				Toast.hide();
@@ -228,10 +219,6 @@ export default function TodoTable({
 	};
 
 	const handleSetReminder = (todo: Todo) => {
-		console.log("➡️ リマインド設定へ遷移", {
-			id: todo.id,
-			organizationId: todo.organizationId ?? null,
-		});
 		router.push({
 			pathname: "/(tabs)/reminder-settings",
 			params: { id: todo.id, organizationId: todo.organizationId ?? undefined },

@@ -47,12 +47,10 @@ export default function ForgotPasswordScreen() {
 		setIsLoading(true);
 
 		try {
-			console.log("📧 パスワードリセットメールを送信中...", email);
 			
 			// パスワードリセットメールを送信
 			await sendPasswordResetEmail(auth, email);
 			
-			console.log("✅ パスワードリセットメールを送信しました:", email);
 
 			Toast.show({
 				type: "success",

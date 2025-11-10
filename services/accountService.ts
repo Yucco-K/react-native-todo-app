@@ -143,7 +143,6 @@ export async function deleteAccount(password: string): Promise<void> {
 		// 3. Firebase Authenticationのユーザーを削除
 		await deleteUser(user);
 
-		console.log("✅ アカウントを完全に削除しました");
 	} catch (error) {
 		console.error("❌ アカウント削除エラー:", error);
 		throw error;

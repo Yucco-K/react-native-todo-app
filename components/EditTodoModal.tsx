@@ -101,11 +101,6 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 	const handleSave = async () => {
 		if (!todo) return;
 
-		console.log("💾 Todo編集を保存:", {
-			title: todo.title,
-			organizationId: todo.organizationId,
-			shared: todo.shared,
-		});
 
 		// バリデーション
 		const result = todoSchema.safeParse({ title, content });
@@ -140,13 +135,8 @@ export default function EditTodoModal({ visible, todo, onClose, onSave }: EditTo
 
 			// 組織のTodoの場合は通知を送信
 			if (todo.organizationId) {
-				console.log("📢 グループTodo編集通知を送信:", {
-					title,
-					organizationId: todo.organizationId,
-				});
 				try {
 					await notifyTodoUpdated(title);
-					console.log("✅ 編集通知の送信完了");
 				} catch (error) {
 					console.error("通知送信エラー:", error);
 				}

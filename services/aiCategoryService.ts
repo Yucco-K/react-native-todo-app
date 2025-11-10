@@ -39,7 +39,6 @@ export async function predictCategory(title: string, content: string): Promise<T
 			{ category: TodoCategory }
 		>(functions, "predictCategory");
 
-		console.log(`🤖 AIカテゴリ推測を開始: "${title}"`);
 
 		// タイムアウト処理（7秒）
 		const timeoutPromise = new Promise<{ data: { category: TodoCategory } }>((_, reject) => {
@@ -52,7 +51,6 @@ export async function predictCategory(title: string, content: string): Promise<T
 		const result = await Promise.race([predictCategoryFn({ title, content }), timeoutPromise]);
 
 		const category = result.data.category;
-		console.log(`✅ AIカテゴリ推測成功: "${title}" → ${category}`);
 
 		return category;
 	} catch (error: unknown) {
@@ -62,7 +60,6 @@ export async function predictCategory(title: string, content: string): Promise<T
 
 		// タイムアウトエラーの場合は"other"を返す
 		if (errorMessage?.includes("タイムアウト")) {
-			console.warn("⏱️ AI推測がタイムアウトしました（7秒） → カテゴリを「その他」に設定");
 			return "other";
 		}
 
@@ -74,7 +71,6 @@ export async function predictCategory(title: string, content: string): Promise<T
 				errorCode,
 			);
 		} else if (errorCode === "functions/resource-exhausted") {
-			console.warn("⚠️ レート制限: 1日の上限に達しました");
 			throw new AICategoryError(
 				"レート制限",
 				"AI推測の1日の上限（100回）に達しました。明日再度お試しください。",

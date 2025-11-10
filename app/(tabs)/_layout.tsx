@@ -109,11 +109,6 @@ export default function TabLayout() {
 		try {
 			const invitations = await getMyInvitations();
 			if (invitations.length > 0) {
-				console.log(
-					"📬 未読招待があります:",
-					invitations.length,
-					"件 - モーダルを自動的に開きます",
-				);
 				setInvitationsVisible(true);
 			}
 		} catch (error) {
@@ -126,7 +121,6 @@ export default function TabLayout() {
 		try {
 			const reminders = await getDueReminders();
 			if (reminders.length > 0) {
-				console.log("⏰ リマインドが", reminders.length, "件あります - モーダルを自動的に開きます");
 				setDueReminders(reminders);
 				setRemindersVisible(true);
 
@@ -159,7 +153,6 @@ export default function TabLayout() {
 	useEffect(() => {
 		if (!hasCheckedInitialInvitations.current) {
 			hasCheckedInitialInvitations.current = true;
-			console.log("🚀 アプリ起動: 未読招待をチェック中...");
 			checkForPendingInvitations();
 		}
 	}, [checkForPendingInvitations]);
@@ -168,7 +161,6 @@ export default function TabLayout() {
 	useEffect(() => {
 		if (!hasCheckedInitialReminders.current) {
 			hasCheckedInitialReminders.current = true;
-			console.log("🚀 アプリ起動: リマインドをチェック中...");
 			checkForDueReminders();
 		}
 	}, [checkForDueReminders]);
@@ -180,7 +172,6 @@ export default function TabLayout() {
 
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
 			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-				console.log("🔄 アプリがフォアグラウンドに戻りました: 未読招待とリマインドをチェック中...");
 				checkForPendingInvitations();
 				checkForDueReminders();
 			}

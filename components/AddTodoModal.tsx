@@ -208,14 +208,8 @@ export default function AddTodoModal({
 		title: string;
 		category: TodoCategory;
 	}) => {
-		console.log("🎯 おすすめTODOをタップ:", recommendation.title);
 		try {
 			// ワンタップで即座に保存
-			console.log("💾 TODOを保存中...", {
-				title: recommendation.title,
-				category: recommendation.category,
-				organizationId,
-			});
 
 			await createTodo(
 				recommendation.title,
@@ -224,7 +218,6 @@ export default function AddTodoModal({
 				organizationId,
 			);
 
-			console.log("✅ TODO保存成功");
 
 			// 組織のTodoの場合は通知を送信
 			if (organizationId) {
@@ -236,11 +229,9 @@ export default function AddTodoModal({
 			}
 
 			// 保存後のコールバックを呼び出す
-			console.log("🔄 リスト更新をトリガー");
 			onSave?.();
 
 			// おすすめを再取得（常に3件表示されるように）
-			console.log("🔄 おすすめを再取得");
 			fetchRecommendations();
 		} catch (error) {
 			console.error("おすすめTODO追加エラー:", error);

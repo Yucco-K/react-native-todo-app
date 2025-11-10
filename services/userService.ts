@@ -120,7 +120,6 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				},
 				{ merge: true },
 			);
-			console.log(`✅ 通知設定をOFFにし、プッシュトークンを削除しました`);
 		} else {
 			// 通知をONにする場合は、notificationEnabledのみ更新
 			// （プッシュトークンは次回アプリ起動時に再登録される）
@@ -132,7 +131,6 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 				},
 				{ merge: true },
 			);
-			console.log(`✅ 通知設定をONにしました（プッシュトークンは次回起動時に再登録されます）`);
 		}
 	} catch (error) {
 		console.error("Error setting notification enabled:", error);
@@ -195,18 +193,14 @@ export async function saveUserAvatarUrl(avatarUrl: string): Promise<void> {
  */
 export async function getUserAvatarUrlById(userId: string): Promise<string | null> {
 	try {
-		console.log(`🔍 getUserAvatarUrlById: ユーザーID ${userId} のアバターを取得中...`);
 		const userRef = doc(db, "users", userId);
 		const userDoc = await getDoc(userRef);
 
 		if (userDoc.exists()) {
 			const data = userDoc.data();
-			console.log(`✅ ユーザー ${userId} のデータ:`, data);
-			console.log(`📸 アバターURL:`, data.avatarUrl || "なし");
 			return data.avatarUrl || null;
 		}
 
-		console.log(`❌ ユーザー ${userId} のドキュメントが存在しません`);
 		return null;
 	} catch (error) {
 		console.error("Error getting user avatar URL by ID:", error);
@@ -224,7 +218,6 @@ export async function uploadAvatarImage(imageUri: string): Promise<string> {
 			throw new Error("ユーザーがログインしていません");
 		}
 
-		console.log("📤 アバター画像をアップロード中...", imageUri);
 
 		// 画像をBlobに変換
 		const response = await fetch(imageUri);
@@ -239,7 +232,6 @@ export async function uploadAvatarImage(imageUri: string): Promise<string> {
 
 		// ダウンロードURLを取得
 		const downloadURL = await getDownloadURL(storageRef);
-		console.log("✅ アバター画像のアップロード完了:", downloadURL);
 
 		return downloadURL;
 	} catch (error) {
@@ -255,7 +247,6 @@ export async function deleteOldAvatarImage(avatarUrl: string): Promise<void> {
 	try {
 		// Firebase StorageのURLかチェック
 		if (!avatarUrl.includes("firebasestorage.googleapis.com")) {
-			console.log("🔍 ローカルURIまたは外部URL - 削除スキップ");
 			return; // ローカルURIや外部URLは削除しない
 		}
 
@@ -268,7 +259,6 @@ export async function deleteOldAvatarImage(avatarUrl: string): Promise<void> {
 		const urlObj = new URL(avatarUrl);
 		const pathMatch = urlObj.pathname.match(/\/o\/(.+)\?/);
 		if (!pathMatch) {
-			console.log("⚠️ パスの抽出に失敗 - 削除スキップ");
 			return;
 		}
 
@@ -277,7 +267,6 @@ export async function deleteOldAvatarImage(avatarUrl: string): Promise<void> {
 
 		// 削除
 		await deleteObject(storageRef);
-		console.log("🗑️ 古いアバター画像を削除しました:", filePath);
 	} catch (error) {
 		console.error("古いアバター画像の削除エラー:", error);
 		// エラーが発生しても続行（画像が既に削除されている可能性がある）

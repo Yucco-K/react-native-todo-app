@@ -57,10 +57,6 @@ export default function MyListScreen() {
 		Array<{ userId: string; avatarUrl: string | null; timestamp: number }>
 	>([]);
 
-	console.log("📱 MyListScreen: レンダリング", {
-		selectedOrganization: selectedOrganization?.name || "My List",
-		organizationId: selectedOrganization?.id || null,
-	});
 
 	// 通知設定を読み込み
 	useEffect(() => {
@@ -88,15 +84,12 @@ export default function MyListScreen() {
 		}
 
 		try {
-			console.log("👥 グループメンバーのアバターを読み込み中...", selectedOrganization.id);
 			const members = await getOrganizationMembers(selectedOrganization.id);
-			console.log("👥 取得したメンバー:", members);
 
 			const timestamp = Date.now(); // 現在のタイムスタンプを取得
 			const avatars = await Promise.all(
 				members.map(async (member) => {
 					const baseAvatarUrl = await getUserAvatarUrlById(member.userId);
-					console.log(`👤 メンバー ${member.userId} のアバター:`, baseAvatarUrl);
 
 					// avatarUrlにタイムスタンプを付与してキャッシュを回避
 					let avatarUrl = baseAvatarUrl;
@@ -112,7 +105,6 @@ export default function MyListScreen() {
 					};
 				}),
 			);
-			console.log("👥 最終的なアバター配列:", avatars);
 			setMemberAvatars(avatars);
 		} catch (error) {
 			console.error("メンバーアバター読み込みエラー:", error);
@@ -129,7 +121,6 @@ export default function MyListScreen() {
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (nextAppState: AppStateStatus) => {
 			if (nextAppState === "active") {
-				console.log("📱 アプリがフォアグラウンドに戻りました → Todoリストを更新");
 				triggerRefresh();
 			}
 		});
@@ -234,19 +225,15 @@ export default function MyListScreen() {
 
 	const handleToggleNotification = async (value: boolean) => {
 		try {
-			console.log(`🔔 通知設定変更開始: ${value ? "ON" : "OFF"}`);
 			setNotificationEnabledState(value);
 			await setNotificationEnabled(value);
 
 			// 通知をONにした場合、プッシュトークンを即座に再登録
 			if (value) {
-				console.log("📱 プッシュトークン再登録を開始...");
 				try {
 					const token = await registerForPushNotificationsAsync();
-					console.log("📱 取得したトークン:", token ? "存在" : "null");
 					if (token) {
 						await savePushToken(token);
-						console.log("✅ プッシュトークンを再登録しました:", token);
 					} else {
 						console.error("⚠️ プッシュトークンの取得に失敗しました");
 						throw new Error("プッシュトークンの取得に失敗しました");
@@ -260,7 +247,6 @@ export default function MyListScreen() {
 				}
 			}
 
-			console.log(`✅ 通知設定変更完了: ${value ? "ON" : "OFF"}`);
 			Toast.show({
 				type: "success",
 				text1: "設定変更",

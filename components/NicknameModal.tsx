@@ -68,7 +68,6 @@ export default function NicknameModal({
 
 			// 新しい画像が選択されている場合、Firebase Storageにアップロード
 			if (avatarUrl && avatarUrl.startsWith("file://")) {
-				console.log("📤 ローカル画像をFirebase Storageにアップロード中...");
 
 				// 古い画像を削除（Firebase Storage上の画像の場合）
 				if (currentAvatarUrl) {
@@ -77,7 +76,6 @@ export default function NicknameModal({
 
 				// 新しい画像をアップロード
 				finalAvatarUrl = await uploadAvatarImage(avatarUrl);
-				console.log("✅ アップロード完了:", finalAvatarUrl);
 			}
 
 			// Firestoreに保存

@@ -52,7 +52,6 @@ export default function SignupScreen() {
 	// Apple/Google Sign-In成功後、userが更新されたらローディングを解除
 	useEffect(() => {
 		if (user) {
-			console.log("✅ 認証状態が更新されました - ローディング解除");
 			setIsLoading(false);
 		}
 	}, [user]);
@@ -105,7 +104,6 @@ export default function SignupScreen() {
 				],
 			);
 		} catch (error) {
-			console.log("サインアップエラー:", error);
 			let errorTitle = "登録失敗";
 			let errorMessage = "登録に失敗しました";
 
@@ -142,7 +140,6 @@ export default function SignupScreen() {
 
 				// エラーメッセージがある場合（ターミナルログに出力）
 				if ("message" in error && typeof error.message === "string") {
-					console.log("詳細:", error.message);
 				}
 			}
 
@@ -161,11 +158,9 @@ export default function SignupScreen() {
 		setIsLoading(true);
 		try {
 			await signInWithGoogle();
-			console.log("✅ Google Sign-In成功 - 認証状態の更新を待機中...");
 			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
-			console.log("Google サインアップエラー:", error);
 			Toast.show({
 				type: "error",
 				text1: "Google サインアップ失敗",
@@ -180,11 +175,9 @@ export default function SignupScreen() {
 		setIsLoading(true);
 		try {
 			await signInWithApple();
-			console.log("✅ Apple Sign-In成功 - 認証状態の更新を待機中...");
 			// router.replace("/")を削除 - AuthContextのonAuthStateChangedが自動的にリダイレクトする
 			// setIsLoadingはonAuthStateChangedでuserが更新されるまで維持
 		} catch (error) {
-			console.log("Apple サインアップエラー:", error);
 
 			// ユーザーがキャンセルした場合は何も表示しない
 			if (
@@ -193,7 +186,6 @@ export default function SignupScreen() {
 				"message" in error &&
 				error.message === "USER_CANCELED"
 			) {
-				console.log("ユーザーがApple Sign-Inをキャンセルしました");
 			} else {
 				Toast.show({
 					type: "error",

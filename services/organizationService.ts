@@ -73,7 +73,6 @@ async function notifyOrganizationMembers(
 			actionUserId: excludeUserId,
 		});
 
-		console.log(`✅ グループ通知送信完了: ${title} (操作者: ${excludeUserId || "なし"})`);
 	} catch (error) {
 		console.error("Error notifying organization members:", error);
 	}
@@ -309,33 +308,17 @@ export async function inviteByEmail(orgId: string, email: string): Promise<strin
 
 	// デバッグ: users コレクション全体を確認
 	const allUsersSnapshot = await getDocs(collection(db, "users"));
-	console.log("👥 全ユーザー一覧:", {
-		件数: allUsersSnapshot.size,
-		ユーザー: allUsersSnapshot.docs.map((doc) => ({
-			id: doc.id,
-			email: doc.data().email,
-		})),
-	});
 
 	// 招待されるユーザーを検索
-	console.log("🔍 ユーザーを検索中:", { email });
 	const usersQuery = query(collection(db, "users"), where("email", "==", email));
 	const usersSnapshot = await getDocs(usersQuery);
 
-	console.log("📊 検索結果:", {
-		件数: usersSnapshot.size,
-		見つかったユーザー: usersSnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data(),
-		})),
-	});
 
 	if (usersSnapshot.empty) {
 		throw new Error("指定されたメールアドレスのユーザーが見つかりません");
 	}
 
 	const invitedUserId = usersSnapshot.docs[0].id;
-	console.log("✅ 招待対象ユーザー:", { invitedUserId, email });
 
 	// 既にメンバーかチェック
 	if (orgData.members.includes(invitedUserId)) {

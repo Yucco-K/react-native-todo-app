@@ -29,12 +29,6 @@ export async function saveNotificationHistory(
 	data?: Record<string, unknown>,
 ): Promise<void> {
 	try {
-		console.log("💾 通知履歴を保存中:", {
-			userId,
-			title,
-			"data.type": data?.type,
-			"data.actionUserId": data?.actionUserId,
-		});
 
 		await addDoc(collection(db, "notificationHistory"), {
 			userId,
@@ -43,7 +37,6 @@ export async function saveNotificationHistory(
 			data: data || {},
 			createdAt: new Date(),
 		});
-		console.log("✅ 通知履歴を保存しました");
 	} catch (error) {
 		console.error("通知履歴の保存エラー:", error);
 		throw error;
@@ -57,10 +50,6 @@ export async function saveNotificationHistory(
 export async function getNotificationHistory(userId: string): Promise<NotificationHistory[]> {
 	try {
 		const currentUserId = auth.currentUser?.uid;
-		console.log("📥 通知履歴を取得中:", {
-			userId,
-			currentUserId,
-		});
 
 		if (!currentUserId) {
 			return [];
@@ -73,7 +62,6 @@ export async function getNotificationHistory(userId: string): Promise<Notificati
 		);
 
 		const snapshot = await getDocs(q);
-		console.log(`📥 Firestoreから取得: ${snapshot.docs.length}件`);
 
 		const history: NotificationHistory[] = [];
 		let filteredCount = 0;
@@ -98,17 +86,9 @@ export async function getNotificationHistory(userId: string): Promise<Notificati
 				].includes(notificationData.type as string) &&
 				notificationData.actionUserId
 			) {
-				console.log("🔍 通知履歴フィルタリング判定:", {
-					title: data.title,
-					type: notificationData.type,
-					actionUserId: notificationData.actionUserId,
-					currentUserId: currentUserId,
-					一致: notificationData.actionUserId === currentUserId,
-				});
 
 				// 自分が行った操作による通知は除外
 				if (notificationData.actionUserId === currentUserId) {
-					console.log(`❌ 自分の操作なので除外: ${data.title}`);
 					filteredCount++;
 					continue;
 				}
@@ -124,9 +104,6 @@ export async function getNotificationHistory(userId: string): Promise<Notificati
 			});
 		}
 
-		console.log(
-			`✅ 通知履歴を取得しました: Firestore=${snapshot.docs.length}件 → フィルタリング後=${history.length}件（除外=${filteredCount}件）`,
-		);
 		return history;
 	} catch (error) {
 		console.error("通知履歴の取得エラー:", error);
@@ -140,7 +117,6 @@ export async function getNotificationHistory(userId: string): Promise<Notificati
 export async function deleteNotificationHistory(notificationId: string): Promise<void> {
 	try {
 		await deleteDoc(doc(db, "notificationHistory", notificationId));
-		console.log("✅ 通知履歴を削除しました");
 	} catch (error) {
 		console.error("通知履歴の削除エラー:", error);
 		throw error;

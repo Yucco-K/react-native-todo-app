@@ -43,16 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
 			iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 		});
-		console.log("✅ Google Sign-In configured");
 	}, []);
 
 	useEffect(() => {
-		console.log("🔐 AuthContext: 認証状態の監視を開始");
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			console.log("🔐 AuthContext: 認証状態変更", {
-				isLoggedIn: !!user,
-				email: user?.email,
-			});
 
 			setUser(user);
 			setLoading(false);
@@ -70,7 +64,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						if (user.emailVerified && userData?.emailVerified === false) {
 							// Firestoreを更新
 							await setDoc(userDocRef, { emailVerified: true }, { merge: true });
-							console.log("✅ メール認証完了をFirestoreに反映しました");
 						}
 					}
 				} catch (error) {
@@ -81,7 +74,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 					const token = await registerForPushNotificationsAsync();
 					if (token) {
 						await savePushToken(token);
-						console.log("✅ プッシュ通知トークンを登録しました");
 					}
 				} catch (error) {
 					console.error("❌ プッシュ通知の登録に失敗:", error);
@@ -91,7 +83,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				try {
 					const userNickname = await getUserNickname();
 					setNickname(userNickname);
-					console.log("✅ ニックネームを取得しました:", userNickname);
 				} catch (error) {
 					console.error("❌ ニックネームの取得に失敗:", error);
 				}
@@ -108,7 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 			const userId = userCredential.user.uid;
 
-			console.log("✅ ユーザー作成成功:", { userId, email });
 
 			// Firestoreのusersコレクションにユーザー情報を保存
 			await setDoc(doc(db, "users", userId), {
@@ -116,15 +106,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				createdAt: new Date(),
 				emailVerified: false,
 			});
-			console.log("✅ ユーザー情報をFirestoreに保存しました");
 
 			// メール認証を送信
 			await sendEmailVerification(userCredential.user);
-			console.log("✅ 認証メールを送信しました:", email);
 
 			// メール認証が完了するまでログアウト
 			await signOut(auth);
-			console.log("✅ メール認証待ちのためログアウトしました");
 		} catch (error) {
 			console.error("❌ サインアップエラー:", error);
 			throw error;
@@ -169,10 +156,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 					email: userEmail,
 					createdAt: new Date(),
 				});
-				console.log("✅ ユーザー情報を新規作成:", {
-					userId,
-					email: userEmail,
-				});
 			} else {
 				// 既存ドキュメントのemailフィールドがundefinedの場合は更新
 				const existingEmail = userDocSnap.data()?.email;
@@ -184,17 +167,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						},
 						{ merge: true },
 					);
-					console.log("✅ ユーザー情報を更新（email追加）:", {
-						userId,
-						email: userEmail,
-					});
 				}
 			}
 		}
 	};
 
 	const logout = async () => {
-		console.log("🚪 ログアウト（プッシュトークンは保持）");
 		await signOut(auth);
 	};
 
@@ -228,14 +206,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						email: userEmail,
 						createdAt: new Date(),
 					});
-					console.log("✅ Google認証: ユーザー情報を新規作成:", {
-						userId,
-						email: userEmail,
-					});
 				}
 			}
 
-			console.log("✅ Google Sign-In successful");
 		} catch (error) {
 			console.error("❌ Google Sign-In error:", error);
 			throw error;
@@ -255,35 +228,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				throw new Error("Apple Sign-In is not available on this device");
 			}
 
-			console.log("🍎 Apple Sign-In開始...");
 			const credential = await AppleAuthentication.signInAsync({
 				requestedScopes: [
 					AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
 					AppleAuthentication.AppleAuthenticationScope.EMAIL,
 				],
 			});
-			console.log("🍎 Apple認証情報を取得しました");
 
 			// IDトークンを取得
 			const { identityToken } = credential;
 			if (!identityToken) {
 				throw new Error("Apple Sign-In failed: No identity token");
 			}
-			console.log("🍎 IDトークンを取得しました");
 
 			// Firebaseの認証情報を作成
 			const provider = new OAuthProvider("apple.com");
 			const appleCredential = provider.credential({
 				idToken: identityToken,
 			});
-			console.log("🍎 Firebase認証情報を作成しました");
 
 			// Firebaseにサインイン
-			console.log("🍎 Firebaseにサインイン中...");
 			const userCredential = await signInWithCredential(auth, appleCredential);
 			const userId = userCredential.user.uid;
 			const userEmail = userCredential.user.email;
-			console.log("🍎 Firebaseサインイン成功:", { userId, userEmail });
 
 			// Firestoreにユーザー情報を保存
 			if (userEmail) {
@@ -295,19 +262,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						email: userEmail,
 						createdAt: new Date(),
 					});
-					console.log("✅ Apple認証: ユーザー情報を新規作成:", {
-						userId,
-						email: userEmail,
-					});
 				}
 			}
 
-			console.log("✅ Apple Sign-In successful");
 		} catch (error) {
 			if (error && typeof error === "object" && "code" in error) {
 				if (error.code === "ERR_REQUEST_CANCELED") {
 					// ユーザーがキャンセルした場合
-					console.log("Apple Sign-In canceled by user");
 					throw new Error("USER_CANCELED");
 				}
 			}

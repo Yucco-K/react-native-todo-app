@@ -124,7 +124,6 @@ async function analyzeUserTodoPatterns(): Promise<{
 			allTodos.push({ title, category, createdAt });
 		});
 	} catch (error) {
-		console.log("履歴の分析をスキップ:", error);
 	}
 
 	// タイムパターンの分析
@@ -353,7 +352,6 @@ export async function generateTodoRecommendations(
 				}
 			}
 
-			console.log(`💡 初回ユーザー向けおすすめ: ${result.length}件`);
 			return result.slice(0, 3);
 		}
 
@@ -628,13 +626,9 @@ export async function generateTodoRecommendations(
 			}
 		}
 
-		console.log(
-			`💡 おすすめTODO生成: ${recommendations.length}件（時間: ${currentHour}時, 曜日: ${currentDayOfWeek}）`,
-		);
 
 		// 常に3件を保証（万が一に備えて）
 		if (recommendations.length < 3) {
-			console.warn(`⚠️ おすすめが${recommendations.length}件しか生成できませんでした`);
 		}
 
 		return recommendations.slice(0, 3);
