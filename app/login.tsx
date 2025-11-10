@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { ReCaptcha } from "@/components/ReCaptcha";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -32,6 +33,7 @@ const STORAGE_KEY_FAILED_ATTEMPTS = "login_failed_attempts";
 const STORAGE_KEY_LOCKOUT_TIME = "login_lockout_time";
 const MAX_ATTEMPTS = 7;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000; // 10分
+const RECAPTCHA_THRESHOLD = 3; // 3回失敗でreCAPTCHA表示
 
 export default function LoginScreen() {
 	const [email, setEmail] = useState("");
@@ -41,10 +43,15 @@ export default function LoginScreen() {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [isLockedOut, setIsLockedOut] = useState(false);
 	const [remainingTime, setRemainingTime] = useState(0); // 秒単位
+	const [showRecaptcha, setShowRecaptcha] = useState(false);
+	const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+	const [failedAttempts, setFailedAttempts] = useState(0);
 
 	const { signIn, signInWithGoogle, signInWithApple, user } = useAuth();
 	const { isDark } = useTheme();
 	const router = useRouter();
+
+	const recaptchaSiteKey = process.env.EXPO_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
 	// Apple/Google Sign-In成功後、userが更新されたらローディングを解除
 	useEffect(() => {
@@ -76,6 +83,11 @@ export default function LoginScreen() {
 	// ロックアウト状態を確認
 	useEffect(() => {
 		checkLockoutStatus();
+		// 失敗回数を取得
+		AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS).then((attemptsStr) => {
+			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
+			setFailedAttempts(attempts);
+		});
 	}, [checkLockoutStatus]);
 
 	// カウントダウンタイマー
@@ -101,6 +113,7 @@ export default function LoginScreen() {
 			const attemptsStr = await AsyncStorage.getItem(STORAGE_KEY_FAILED_ATTEMPTS);
 			const attempts = attemptsStr ? Number.parseInt(attemptsStr, 10) : 0;
 			const newAttempts = attempts + 1;
+			setFailedAttempts(newAttempts);
 
 			if (newAttempts >= MAX_ATTEMPTS) {
 				// 7回目の失敗でロックアウト
@@ -109,6 +122,7 @@ export default function LoginScreen() {
 				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, "0");
 				setIsLockedOut(true);
 				setRemainingTime(Math.ceil(LOCKOUT_DURATION_MS / 1000));
+				setRecaptchaToken(null);
 
 				Toast.show({
 					type: "error",
@@ -119,6 +133,12 @@ export default function LoginScreen() {
 			} else {
 				await AsyncStorage.setItem(STORAGE_KEY_FAILED_ATTEMPTS, newAttempts.toString());
 				const remainingAttempts = MAX_ATTEMPTS - newAttempts;
+				
+				// 3回以上失敗したらreCAPTCHAを表示
+				if (newAttempts >= RECAPTCHA_THRESHOLD && recaptchaSiteKey) {
+					setRecaptchaToken(null); // トークンをリセット
+				}
+				
 				if (remainingAttempts <= 3) {
 					Toast.show({
 						type: "error",
@@ -173,13 +193,21 @@ export default function LoginScreen() {
 			return;
 		}
 
+		// reCAPTCHAチェック（3回以上失敗している場合）
+		if (failedAttempts >= RECAPTCHA_THRESHOLD && recaptchaSiteKey && !recaptchaToken) {
+			setShowRecaptcha(true);
+			return;
+		}
+
 		setErrors({});
 		setIsLoading(true);
 
 		try {
 			await signIn(email, password);
-			// ログイン成功時、失敗回数をリセット
+			// ログイン成功時、失敗回数とreCAPTCHAトークンをリセット
 			await resetFailedAttempts();
+			setRecaptchaToken(null);
+			setFailedAttempts(0);
 			router.replace("/");
 		} catch (error) {
 			const errorTitle = "ログイン失敗";
@@ -503,6 +531,32 @@ export default function LoginScreen() {
 					</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
+			
+			{/* reCAPTCHA Modal */}
+			{recaptchaSiteKey && (
+				<ReCaptcha
+					siteKey={recaptchaSiteKey}
+					visible={showRecaptcha}
+					onVerify={(token) => {
+						setRecaptchaToken(token);
+						setShowRecaptcha(false);
+						// reCAPTCHA検証後、自動的にログイン処理を実行
+						setTimeout(() => {
+							handleLogin();
+						}, 100);
+					}}
+					onError={(error) => {
+						Toast.show({
+							type: "error",
+							text1: "reCAPTCHA エラー",
+							text2: error || "認証に失敗しました",
+							visibilityTime: 4000,
+						});
+						setShowRecaptcha(false);
+					}}
+					onClose={() => setShowRecaptcha(false)}
+				/>
+			)}
 		</SafeAreaView>
 	);
 }

@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
+import { ReCaptcha } from "@/components/ReCaptcha";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -45,9 +46,13 @@ export default function SignupScreen() {
 	}>({});
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+	const [showRecaptcha, setShowRecaptcha] = useState(false);
+	const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 	const { signUp, signInWithGoogle, signInWithApple, user } = useAuth();
 	const { isDark } = useTheme();
 	const router = useRouter();
+
+	const recaptchaSiteKey = process.env.EXPO_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
 	// Apple/Google Sign-In成功後、userが更新されたらローディングを解除
 	useEffect(() => {
@@ -83,6 +88,12 @@ export default function SignupScreen() {
 				text1: "入力エラー",
 				text2: "入力内容を確認してください",
 			});
+			return;
+		}
+
+		// reCAPTCHAチェック（サインアップ時は常に必要）
+		if (recaptchaSiteKey && !recaptchaToken) {
+			setShowRecaptcha(true);
 			return;
 		}
 
@@ -398,6 +409,32 @@ export default function SignupScreen() {
 					</View>
 				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
+			
+			{/* reCAPTCHA Modal */}
+			{recaptchaSiteKey && (
+				<ReCaptcha
+					siteKey={recaptchaSiteKey}
+					visible={showRecaptcha}
+					onVerify={(token) => {
+						setRecaptchaToken(token);
+						setShowRecaptcha(false);
+						// reCAPTCHA検証後、自動的にサインアップ処理を実行
+						setTimeout(() => {
+							handleSignup();
+						}, 100);
+					}}
+					onError={(error) => {
+						Toast.show({
+							type: "error",
+							text1: "reCAPTCHA エラー",
+							text2: error || "認証に失敗しました",
+							visibilityTime: 4000,
+						});
+						setShowRecaptcha(false);
+					}}
+					onClose={() => setShowRecaptcha(false)}
+				/>
+			)}
 		</SafeAreaView>
 	);
 }
