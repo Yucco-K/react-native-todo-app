@@ -325,7 +325,7 @@ export default function LoginScreen() {
 							className="text-4xl font-noto-bold text-center mb-10"
 							style={{ color: isDark ? "#d1d5db" : "#000000" }}
 						>
-							Todo App
+							Re:Mind
 						</Text>
 						<Text
 							className="text-2xl font-noto-bold mb-6"

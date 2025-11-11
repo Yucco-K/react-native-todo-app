@@ -15,7 +15,7 @@ if (googleServicesEnvPath) {
 
 module.exports = {
 	expo: {
-		name: "react-native-todo-app",
+		name: "Re:Mind",
 		slug: "react-native-todo-app",
 		owner: "yucco-k",
 		version: "1.2.0",
@@ -31,7 +31,7 @@ module.exports = {
 	ios: {
 		supportsTablet: true,
 		bundleIdentifier: "com.yuccok.reactnativetodoapp",
-		buildNumber: "9",
+		buildNumber: "22",
 		googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
