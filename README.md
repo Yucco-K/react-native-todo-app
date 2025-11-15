@@ -99,6 +99,8 @@ React Native + Expo で構築したRe:Mind。Firebase認証とFirestoreでデー
 
 アプリの使い方や機能の詳細は[こちらのデモ動画](https://youtu.be/q3WSqAdRkvo)をご覧ください。
 
+> ※ 継続的にアップデートを行っているため、動画と現在のバージョンでは一部機能が異なる場合があります。
+
 ## 動作確認環境
 
 - **iOS**: iOS 18.6.2（iPhone実機、Expo Go）
