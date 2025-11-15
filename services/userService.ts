@@ -111,11 +111,16 @@ export async function setNotificationEnabled(enabled: boolean): Promise<void> {
 
 		// 通知をOFFにする場合、プッシュトークンも削除
 		if (!enabled) {
+			// 既存のデータを取得してから更新（avatarUrlを保持）
+			const userDoc = await getDoc(userRef);
+			const currentData = userDoc.data();
+
 			await setDoc(
 				userRef,
 				{
 					notificationEnabled: enabled,
 					pushToken: null, // プッシュトークンを削除
+					avatarUrl: currentData?.avatarUrl || null, // 明示的にavatarUrlを保持
 					updatedAt: new Date(),
 				},
 				{ merge: true },

@@ -247,6 +247,11 @@ export default function MyListScreen() {
 				}
 			}
 
+			// アバター再読み込みを明示的に実行（Firestoreの更新完了を待つ）
+			setTimeout(() => {
+				loadMemberAvatars();
+			}, 500);
+
 			Toast.show({
 				type: "success",
 				text1: "設定変更",
