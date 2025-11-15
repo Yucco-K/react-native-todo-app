@@ -12,9 +12,9 @@ React Native + Expo で構築したRe:Mind。Firebase認証とFirestoreでデー
 
 ## 🎨 アプリ紹介
 
-[![Re:Mind アプリ紹介](https://jolt-crisp-98516425.figma.site/)](https://jolt-crisp-98516425.figma.site/)
+![Re:Mind アプリ紹介](./assets/images/app-preview.png)
 
-[Re:Mindの詳細を見る](https://jolt-crisp-98516425.figma.site/)
+[詳細はこちら](https://jolt-crisp-98516425.figma.site/)
 
 ## 📚 ドキュメント
 
