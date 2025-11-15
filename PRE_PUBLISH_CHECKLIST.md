@@ -1,6 +1,6 @@
 # GitHubへの公開前チェックリスト
 
-このドキュメントでは、コードをGitHubに公開する前に確認すべき項目をまとめています。
+このドキュメントでは、Re:MindのコードをGitHubに公開する前に確認すべき項目をまとめています。
 
 ## ✅ セキュリティチェック
 
@@ -27,11 +27,11 @@ grep -r "sk-" . --exclude-dir=node_modules --exclude-dir=.git
 grep -r "AIza" . --exclude-dir=node_modules --exclude-dir=.git
 ```
 
-### 3. AI機能の無効化
+### 3. AI機能のセキュリティ
 
-- [x] `services/aiCategoryService.ts`でOpenAI API呼び出しを無効化
-- [x] `package.json`から`openai`パッケージを削除
-- [x] ドキュメントに無効化の理由を記載
+- [x] `services/aiCategoryService.ts`がCloud Functions経由で呼び出し
+- [x] OpenAI APIキーはCloud Functions環境変数で管理
+- [x] レート制限実装済み（1ユーザー100回/日、本番では10回/日推奨）
 
 ### 4. コミット履歴の確認
 
@@ -59,10 +59,10 @@ git log -S "OPENAI_API_KEY" --all
 
 ### ドキュメント内容の確認
 
-- [x] AI機能が一時的に無効化されていることを明記
-- [x] セットアップ手順にOpenAI APIキーの記述を削除/コメントアウト
+- [x] AI機能がCloud Functions経由で実装されていることを明記
+- [x] セットアップ手順にOpenAI APIキーの設定方法を記載（環境変数）
 - [x] セキュリティ対応について説明
-- [x] 将来の実装方針（Firebase Cloud Functions）を記載
+- [x] Firebase Cloud Functions実装完了
 
 ---
 

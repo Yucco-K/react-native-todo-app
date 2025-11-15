@@ -1,6 +1,6 @@
 # Google認証セットアップガイド
 
-このガイドでは、React Native Todo AppにGoogle Sign-In機能を追加するための手順を説明します。
+このガイドでは、Re:MindにGoogle Sign-In機能を追加するための手順を説明します。
 
 ## 前提条件
 
@@ -19,7 +19,7 @@
 #### Web クライアント ID の作成
 
 1. アプリケーションの種類: **ウェブ アプリケーション**
-2. 名前: `Todo App (Web Client for Firebase)`
+2. 名前: `Re:Mind (Web Client for Firebase)`
 3. 承認済みの JavaScript 生成元:
    - `http://localhost`
    - `https://your-domain.com` (本番環境のドメイン)
@@ -32,7 +32,7 @@
 #### iOS クライアント ID の作成
 
 1. アプリケーションの種類: **iOS**
-2. 名前: `Todo App (iOS)`
+2. 名前: `Re:Mind (iOS)`
 3. バンドル ID: `com.yuccok.reactnativetodoapp` (app.config.jsと一致させる)
 4. 「作成」をクリック
 5. **クライアント ID** をコピーして保存

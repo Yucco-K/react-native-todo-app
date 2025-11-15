@@ -1,6 +1,6 @@
 # Apple Sign-In セットアップガイド
 
-このガイドでは、React Native Todo AppにApple Sign-In機能を追加するための手順を説明します。
+このガイドでは、Re:MindにApple Sign-In機能を追加するための手順を説明します。
 
 ## 前提条件
 
@@ -24,7 +24,7 @@
 
 1. 「Identifiers」→「+」ボタンをクリック
 2. 「Services IDs」を選択
-3. Description: `Todo App Sign In`
+3. Description: `Re:Mind Sign In`
 4. Identifier: `com.yuccok.reactnativetodoapp.signin`
 5. 「Continue」→「Register」
 

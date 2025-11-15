@@ -19,7 +19,7 @@ Firebase Cloud Functionsをデプロイして、AI機能を有効化する手順
 #### 1. Cloud Functions API
 
 ```
-https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 **「Enable」(有効にする)** ボタンをクリック
@@ -27,7 +27,7 @@ https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?proj
 #### 2. Cloud Build API
 
 ```
-https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 **「Enable」(有効にする)** ボタンをクリック
@@ -35,10 +35,12 @@ https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=
 #### 3. Cloud Resource Manager API
 
 ```
-https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 **「Enable」(有効にする)** ボタンをクリック
+
+> **注意**: `YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDに置き換えてください。
 
 ---
 
@@ -47,7 +49,7 @@ https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.co
 ターミナルで以下のコマンドを実行：
 
 ```bash
-cd /Users/yukig/dev/react-native-todo-app
+cd /path/to/your/react-native-todo-app
 firebase deploy --only functions
 ```
 
@@ -57,8 +59,10 @@ firebase deploy --only functions
 
 ```
 ✔  functions[predictCategory(asia-northeast1)]: Successful create operation.
-Function URL (predictCategory(asia-northeast1)): https://asia-northeast1-react-native-todo-app-prod.cloudfunctions.net/predictCategory
+Function URL (predictCategory(asia-northeast1)): https://asia-northeast1-YOUR_PROJECT_ID.cloudfunctions.net/predictCategory
 ```
+
+> **注意**: URLに含まれる`YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDになります。
 
 ---
 
@@ -71,8 +75,10 @@ Function URL (predictCategory(asia-northeast1)): https://asia-northeast1-react-n
 1. 以下のURLにアクセス：
 
    ```
-   https://console.cloud.google.com/functions/list?project=react-native-todo-app-prod
+   https://console.cloud.google.com/functions/list?project=YOUR_PROJECT_ID
    ```
+
+   > **注意**: `YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDに置き換えてください。
 
 2. `predictCategory` 関数をクリック
 
@@ -84,7 +90,7 @@ Function URL (predictCategory(asia-northeast1)): https://asia-northeast1-react-n
 
 6. 以下を入力：
    - **名前**: `OPENAI_API_KEY`
-   - **値**: `<your-openai-api-key>` （実際のキーは記載しないでください）
+   - **値**: あなたのOpenAI APIキー
 
 7. **「次へ」** → **「デプロイ」** をクリック
 
@@ -93,8 +99,10 @@ Function URL (predictCategory(asia-northeast1)): https://asia-northeast1-react-n
 ```bash
 gcloud functions deploy predictCategory \
   --region=asia-northeast1 \
-  --set-env-vars OPENAI_API_KEY="<your-openai-api-key>"
+  --set-env-vars OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
 ```
+
+> **重要**: `YOUR_OPENAI_API_KEY`は自分のOpenAI APIキーに置き換えてください。実際のAPIキーをこのドキュメントには記載しないでください。
 
 ---
 
@@ -151,7 +159,7 @@ Expo開発サーバーのログに以下が表示されれば成功：
 ### 4. Firebase Consoleでログを確認
 
 ```
-https://console.cloud.google.com/functions/details/asia-northeast1/predictCategory?project=react-native-todo-app-prod&tab=logs
+https://console.cloud.google.com/functions/details/asia-northeast1/predictCategory?project=YOUR_PROJECT_ID&tab=logs
 ```
 
 ---
@@ -211,8 +219,10 @@ https://console.cloud.google.com/functions/details/asia-northeast1/predictCatego
 ### Firebase Console
 
 ```
-https://console.firebase.google.com/project/react-native-todo-app-prod/usage
+https://console.firebase.google.com/project/YOUR_PROJECT_ID/usage
 ```
+
+> **注意**: `YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDに置き換えてください。
 
 ### OpenAI Dashboard
 
@@ -253,5 +263,5 @@ https://platform.openai.com/usage
 
 ---
 
-**作成日**: 2025-10-22  
+**作成日**: 2025-10-22
 **最終更新**: 2025-10-22

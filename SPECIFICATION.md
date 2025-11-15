@@ -1,4 +1,4 @@
-# Todo アプリ 仕様書
+# Re:Mind 仕様書
 
 ## 📚 関連ドキュメント
 
@@ -9,7 +9,7 @@
 
 ## プロジェクト概要
 
-React Native + Expo で構築したTodoアプリケーション。個人用のMy Listと、グループで共有できるTodoリストを管理でき、リアルタイムでのプッシュ通知機能を備えています。
+React Native + Expo で構築した次世代TODO管理アプリ「Re:Mind」。個人用のMy Listと、グループで共有できるTodoリストを管理でき、リアルタイムでのプッシュ通知機能、AI機能、リマインダー機能などを備えています。
 
 ### 主な特徴
 
@@ -708,7 +708,7 @@ FirebaseError: Missing or insufficient permissions.
 - ✅ テスト環境整備済み（Jest + React Native Testing Library）
 - ✅ コスト監視設定済み（OpenAI、Firebase）
 - ✅ 環境変数の分離設定済み（開発/本番環境）
-- ✅ 本番用Firebase環境構築済み（`react-native-todo-app-prod`プロジェクト）
+- ✅ 本番用Firebase環境構築済み
 - ✅ Firebase Analytics 導入済み（ユーザー行動分析）
 - ✅ スタンドアロンビルド設定完了（Bundle Identifier、EASプロファイル）
 - ⚠️ Expo Go による開発環境（スタンドアロンビルドも可能）
@@ -751,7 +751,7 @@ FirebaseError: Missing or insufficient permissions.
 
 6. **環境設定** ✅
    - ✅ 環境変数の分離（開発/本番環境）
-   - ✅ 本番用Firebaseプロジェクト設定（`react-native-todo-app-prod`）
+   - ✅ 本番用Firebaseプロジェクト設定
    - ✅ Cloud Functions環境変数管理（OpenAI APIキー）
 
 7. **分析・監視** ✅
@@ -794,7 +794,7 @@ FirebaseError: Missing or insufficient permissions.
      - 💰 コスト抑制のため、本番公開時には10回/日への変更を推奨
    - ❌ バックアップ・リカバリ戦略の策定
    - ✅ 環境変数の分離（開発/本番環境）設定済み
-   - ✅ 本番用Firebaseプロジェクト設定済み（`react-native-todo-app-prod`）
+   - ✅ 本番用Firebaseプロジェクト設定済み
 
 ### 今後の推奨アクション
 

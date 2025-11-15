@@ -5,11 +5,17 @@ const googleServicesFileRelativePath = "./GoogleService-Info.plist";
 const googleServicesEnvPath = process.env.GOOGLE_SERVICE_INFO;
 
 if (googleServicesEnvPath) {
-	const destinationPath = path.resolve(__dirname, googleServicesFileRelativePath);
+	const destinationPath = path.resolve(
+		__dirname,
+		googleServicesFileRelativePath
+	);
 	try {
 		fs.copyFileSync(googleServicesEnvPath, destinationPath);
 	} catch (error) {
-		console.warn("Failed to copy GoogleService-Info.plist from environment variable:", error);
+		console.warn(
+			"Failed to copy GoogleService-Info.plist from environment variable:",
+			error
+		);
 	}
 }
 
@@ -28,11 +34,11 @@ module.exports = {
 			resizeMode: "contain",
 			backgroundColor: "#ffffff",
 		},
-	ios: {
-		supportsTablet: true,
-		bundleIdentifier: "com.yuccok.reactnativetodoapp",
-		buildNumber: "22",
-		googleServicesFile: googleServicesFileRelativePath,
+		ios: {
+			supportsTablet: true,
+			bundleIdentifier: "com.yuccok.reactnativetodoapp",
+			buildNumber: "22",
+			googleServicesFile: googleServicesFileRelativePath,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 				UISupportedInterfaceOrientations: ["UIInterfaceOrientationPortrait"],

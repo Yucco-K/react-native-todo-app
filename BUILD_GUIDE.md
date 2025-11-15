@@ -1,6 +1,6 @@
 # スタンドアロンビルドガイド
 
-このガイドでは、React Native Todo AppのスタンドアロンビルドとApp Store/Google Playへの配信方法を説明します。
+このガイドでは、Re:MindのスタンドアロンビルドとApp Store/Google Playへの配信方法を説明します。
 
 ## 📋 前提条件
 

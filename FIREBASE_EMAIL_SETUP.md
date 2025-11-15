@@ -25,7 +25,7 @@
 
 #### 件名（Subject）
 ```
-【Todo App】メールアドレスの確認
+【Re:Mind】メールアドレスの確認
 ```
 
 #### メール本文（Email body）
@@ -44,7 +44,7 @@
       padding: 20px;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
       color: white;
       padding: 30px;
       text-align: center;
@@ -57,7 +57,7 @@
     }
     .button {
       display: inline-block;
-      background: #3b82f6;
+      background: #06b6d4;
       color: white;
       padding: 14px 28px;
       text-decoration: none;
@@ -74,31 +74,31 @@
     }
     .link {
       word-break: break-all;
-      color: #3b82f6;
+      color: #06b6d4;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>📝 Todo App</h1>
+    <h1>📝 Re:Mind</h1>
   </div>
   <div class="content">
     <h2>メールアドレスの確認</h2>
-    <p>Todo App のご登録ありがとうございます。</p>
+    <p>Re:Mind のご登録ありがとうございます。</p>
     <p>下のボタンをクリックして、メールアドレスの確認を完了してください。</p>
-    
+
     <div style="text-align: center;">
       <a href="%LINK%" class="button">メールアドレスを確認</a>
     </div>
-    
+
     <p style="margin-top: 20px;">※ボタンが機能しない場合は、以下のリンクをブラウザに貼り付けてください：</p>
     <p class="link">%LINK%</p>
-    
+
     <div class="footer">
       <p>⏱️ このリンクは30分間有効です。</p>
       <p>💡 このメールに心当たりがない場合は、破棄してください。</p>
       <p>📧 サポート: <a href="https://yucco-k.github.io/react-native-todo-app/support.html">https://yucco-k.github.io/react-native-todo-app/support.html</a></p>
-      <p style="margin-top: 20px;">— Todo App チーム</p>
+      <p style="margin-top: 20px;">— Re:Mind チーム</p>
     </div>
   </div>
 </body>
@@ -119,7 +119,7 @@
 
 #### 件名（Subject）
 ```
-【Todo App】パスワードリセットのご案内
+【Re:Mind】パスワードリセットのご案内
 ```
 
 #### メール本文（Email body）
@@ -138,7 +138,7 @@
       padding: 20px;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
       color: white;
       padding: 30px;
       text-align: center;
@@ -168,7 +168,7 @@
     }
     .link {
       word-break: break-all;
-      color: #3b82f6;
+      color: #06b6d4;
     }
     .warning {
       background: #fef2f2;
@@ -180,30 +180,30 @@
 </head>
 <body>
   <div class="header">
-    <h1>📝 Todo App</h1>
+    <h1>📝 Re:Mind</h1>
   </div>
   <div class="content">
     <h2>パスワードリセットのご案内</h2>
-    <p>Todo App のパスワードリセットをリクエストされました。</p>
+    <p>Re:Mind のパスワードリセットをリクエストされました。</p>
     <p>下のボタンをクリックして、新しいパスワードを設定してください。</p>
-    
+
     <div style="text-align: center;">
       <a href="%LINK%" class="button">パスワードをリセット</a>
     </div>
-    
+
     <p style="margin-top: 20px;">※ボタンが機能しない場合は、以下のリンクをブラウザに貼り付けてください：</p>
     <p class="link">%LINK%</p>
-    
+
     <div class="warning">
       <p><strong>⚠️ 重要な注意事項</strong></p>
       <p>• このリクエストに心当たりがない場合は、このメールを無視してください。</p>
       <p>• パスワードは変更されません。</p>
     </div>
-    
+
     <div class="footer">
       <p>⏱️ このリンクは1時間有効です。</p>
       <p>📧 サポート: <a href="https://yucco-k.github.io/react-native-todo-app/support.html">https://yucco-k.github.io/react-native-todo-app/support.html</a></p>
-      <p style="margin-top: 20px;">— Todo App チーム</p>
+      <p style="margin-top: 20px;">— Re:Mind チーム</p>
     </div>
   </div>
 </body>
@@ -321,4 +321,3 @@ android: {
 ---
 
 **最終更新日**: 2025-01-09
-

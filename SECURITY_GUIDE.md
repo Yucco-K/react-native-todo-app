@@ -1,76 +1,55 @@
 # セキュリティガイド
 
-このドキュメントでは、アプリのセキュリティに関する重要な情報と、将来的な改善方法について説明します。
+このドキュメントでは、Re:Mindのセキュリティに関する重要な情報と実装状況について説明します。
 
 ## 🔒 現在のセキュリティ状態
 
-### ✅ 安全な部分
+### ✅ 実装済みのセキュリティ対策
 
 1. **Firebase認証・Firestore**
    - ✅ 認証情報は環境変数で管理（`.env`）
    - ✅ `.gitignore`で`.env`ファイルを除外済み
    - ✅ セキュリティルールで適切なアクセス制御
+   - ✅ メール認証による本人確認
+   - ✅ ログイン制限機能（7回失敗で10分間ロック）
 
 2. **API キー管理**
    - ✅ すべての機密情報は`.env`ファイルに保存
    - ✅ GitHubリポジトリにコミットされていない
+   - ✅ Firebase Cloud FunctionsでOpenAI APIキーを安全に管理
 
-### ⚠️ 改善が必要な部分
-
-#### 1. OpenAI API（現在：一時的に無効化済み）
-
-**問題点**:
-
-- クライアントサイドからOpenAI APIを直接呼び出すと、APIキーが漏洩するリスクがあります
-- `EXPO_PUBLIC_*`環境変数はアプリバンドルに含まれるため、デコンパイル可能
-
-**現在の対応**:
-
-- `services/aiCategoryService.ts`で機能を無効化
-- ユーザーは手動でカテゴリを選択
-
-**将来の実装**:
-
-- Firebase Cloud Functionsでバックエンド実装（下記参照）
+3. **AI機能のセキュリティ**
+   - ✅ OpenAI APIキーはCloud Functions環境変数で管理（クライアント側に露出なし）
+   - ✅ レート制限実装済み（1ユーザー100回/日、本番では10回/日推奨）
+   - ✅ 認証済みユーザーのみアクセス可能
 
 ---
 
-## 🚀 Firebase Cloud Functions実装ガイド
+## 🚀 Firebase Cloud Functions実装状況
 
-### なぜFirebase Cloud Functionsが必要か
+### 実装済みの構成
 
 ```
-❌ 現在（危険）:
-React Native App → OpenAI API（APIキーが漏洩）
-
-✅ 将来（安全）:
-React Native App → Firebase Functions → OpenAI API（APIキーは安全）
+✅ 現在（安全）:
+Re:Mind App → Firebase Cloud Functions → OpenAI API（APIキーは安全に管理）
 ```
 
-### 実装手順
+### セキュリティ上の利点
 
-#### Step 1: Firebase CLIのインストール
+- APIキーはCloud Functions環境変数で管理（クライアント側に露出なし）
+- レート制限をサーバーサイドで実装
+- 認証チェックをサーバーサイドで実施
 
-```bash
-npm install -g firebase-tools
-firebase login
-```
+### 実装詳細
 
-#### Step 2: Firebase Functionsの初期化
+Re:Mindでは既にFirebase Cloud Functionsが実装されています：
 
-```bash
-cd /Users/yukig/dev/react-native-todo-app
-firebase init functions
+#### 実装済みのCloud Functions
 
-# 質問に答える:
-# - TypeScriptを選択
-# - ESLintを有効化
-# - 依存関係をインストール
-```
+1. **predictCategory** - AIカテゴリ推測
+2. **sendDueReminders** - リマインダー通知の自動送信
 
-#### Step 3: Cloud Functionの作成
-
-`functions/src/index.ts`を作成:
+#### `functions/src/index.ts`の実装例（predictCategory）:
 
 ```typescript
 import * as functions from "firebase-functions";
@@ -165,28 +144,30 @@ export const predictCategory = functions
 	});
 ```
 
-#### Step 4: 環境変数の設定
+#### 環境変数の設定
 
 ```bash
-# OpenAI APIキーを設定（ローカルでは実行しない）
+# OpenAI APIキーを設定
 firebase functions:config:set openai.key="YOUR_OPENAI_API_KEY"
 
 # 確認
 firebase functions:config:get
 ```
 
-#### Step 5: デプロイ
+> **注意**: 上記のAPIキーは例です。実際の値は`.env`ファイルや環境変数に保存し、Gitにコミットしないでください。
+
+#### デプロイ
 
 ```bash
 cd functions
-npm install openai
+npm install
 cd ..
 firebase deploy --only functions
 ```
 
-#### Step 6: クライアントサイドの実装
+#### クライアントサイドの実装
 
-`services/aiCategoryService.ts`を以下のように変更:
+`services/aiCategoryService.ts`の実装例:
 
 ```typescript
 import { httpsCallable } from "firebase/functions";
@@ -229,17 +210,17 @@ export async function predictCategory(
 }
 ```
 
-#### Step 7: Firebase設定の更新
+#### Firebase設定
 
-`config/firebase.ts`に`functions`をエクスポート:
+`config/firebase.ts`で`functions`を初期化:
 
 ```typescript
 import { getFunctions } from "firebase/functions";
 
-// 既存のコード...
-
 export const functions = getFunctions(app, "asia-northeast1");
 ```
+
+> **実装済み**: Re:Mindでは既にこの設定が完了しています。
 
 ---
 
@@ -249,7 +230,14 @@ export const functions = getFunctions(app, "asia-northeast1");
 
 - **1リクエストあたり**: 約$0.0002（`gpt-3.5-turbo`, max_tokens=10）
 - **1日10回 × 30日 × 10ユーザー**: 3,000リクエスト ≈ **$0.60/月**
-- **レート制限**: 1ユーザー1日10回まで
+- **現在のレート制限**: 1ユーザー100回/日（開発環境）
+- **本番推奨**: 1ユーザー10回/日
+
+### コスト監視設定
+
+- ✅ OpenAI 月次予算: $10
+- ✅ 80%使用アラート設定済み
+- ✅ 100%使用アラート設定済み
 
 ### Firebase Cloud Functions無料枠
 
@@ -265,16 +253,24 @@ export const functions = getFunctions(app, "asia-northeast1");
 
 ### 1. 環境変数の管理
 
+✅ **実装済み**
+
 ```bash
 # .env（ローカル開発用）
 EXPO_PUBLIC_FIREBASE_API_KEY=...
-# OpenAI APIキーは含めない！
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=...
+# OpenAI APIキーはここに含めない！
 
 # Firebase Functions（本番環境）
-firebase functions:config:set openai.key="..."
+firebase functions:config:set openai.key="YOUR_OPENAI_API_KEY"
 ```
 
+> **重要**: 環境変数に実際のAPIキーや機密情報を記載しないこと。これは設定例です。
+
 ### 2. Firestore セキュリティルール
+
+✅ **実装済み**
 
 `firestore.rules`で適切なアクセス制御を実装済み:
 
@@ -284,18 +280,43 @@ match /rateLimits/{document} {
   allow read, write: if request.auth != null &&
                         request.auth.uid == document.split('_')[0];
 }
+
+// ユーザーコレクション
+match /users/{userId} {
+  allow read: if request.auth != null;
+  allow write: if request.auth.uid == userId;
+}
+
+// Todoコレクション
+match /todos/{todoId} {
+  allow read, write: if request.auth != null;
+}
 ```
+
+詳細は`FIRESTORE_RULES.md`を参照してください。
 
 ### 3. プッシュ通知トークン
 
-- ✅ Firestoreに保存（認証済みユーザーのみアクセス可能）
-- ✅ トークンは暗号化された状態で送信
+✅ **実装済み**
 
-### 4. 定期的なセキュリティレビュー
+- Firestoreに保存（認証済みユーザーのみアクセス可能）
+- トークンは暗号化された状態で送信
+- 通知ON/OFF設定機能実装済み
 
-- [ ] 月1回：Firebase Console でAPI使用量を確認
-- [ ] 月1回：OpenAI Dashboard で使用量と請求額を確認
-- [ ] 四半期：依存関係の脆弱性チェック（`npm audit`）
+### 4. 認証セキュリティ
+
+✅ **実装済み**
+
+- メール認証による本人確認
+- ログイン制限機能（7回失敗で10分間ロック）
+- パスワード要件（8文字以上）
+- Google Sign-In、Apple Sign-In対応
+
+### 5. 定期的なセキュリティレビュー
+
+- 月1回：Firebase Console でAPI使用量を確認
+- 月1回：OpenAI Dashboard で使用量と請求額を確認
+- 四半期：依存関係の脆弱性チェック（`npm audit`）
 
 ---
 
@@ -305,15 +326,18 @@ match /rateLimits/{document} {
 
 - [x] `.gitignore`に`.env*`を追加済み
 - [x] GitHubに機密情報がコミットされていないことを確認
-- [x] OpenAI API直接呼び出しを無効化
-- [ ] Firebase Cloud Functionsをデプロイ（将来）
-- [x] Firestoreセキュリティルールを設定
+- [x] Firebase Cloud Functionsをデプロイ済み
+- [x] Firestoreセキュリティルールを設定済み
+- [x] レート制限実装済み
+- [x] メール認証実装済み
+- [x] ログイン制限実装済み
 
-### デプロイ後
+### 運用中
 
-- [ ] OpenAI API使用量を監視
-- [ ] Firebase請求アラートを設定
-- [ ] 異常なアクセスパターンを監視
+- [x] OpenAI API使用量を監視（月次予算$10、アラート設定済み）
+- [x] Firebase請求アラートを設定済み
+- 異常なアクセスパターンの監視（推奨）
+- 定期的な脆弱性チェック（`npm audit`）
 
 ---
 
@@ -364,4 +388,7 @@ gcloud projects get-iam-policy PROJECT_ID
 ## 🔄 更新履歴
 
 - **2025-01-21**: ドキュメント作成、OpenAI API機能を一時的に無効化
-- **TODO**: Firebase Cloud Functions実装
+- **2025-01-22**: Firebase Cloud Functions実装完了
+- **2025-10-25**: ログイン制限機能実装
+- **2025-10-26**: 通知ON/OFF設定機能実装
+- **2025-11-15**: Re:Mindへのリブランディング、ドキュメント全体更新

@@ -208,7 +208,7 @@ export default function SignupScreen() {
 					<View className="flex-1 justify-center px-8">
 						<Text
 							className="text-4xl font-noto-bold text-center mb-8"
-							style={{ color: isDark ? "#d1d5db" : "#000000" }}
+							style={{ color: isDark ? "#a5f3fc" : "#06b6d4" }}
 						>
 							Re:Mind
 						</Text>
@@ -378,7 +378,7 @@ export default function SignupScreen() {
 						)}
 
 					<View className="flex-row items-center justify-center mt-4">
-						<Text 
+						<Text
 							className="font-noto-regular text-base"
 							style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
 						>
@@ -386,7 +386,7 @@ export default function SignupScreen() {
 						</Text>
 						<Link href="/login" asChild>
 							<TouchableOpacity className="ml-2">
-								<Text 
+								<Text
 									className="font-noto-bold text-base"
 									style={{ color: isDark ? "#60a5fa" : "#3b82f6" }}
 								>

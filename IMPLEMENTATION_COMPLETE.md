@@ -1,4 +1,4 @@
-# 🎉 Firebase Cloud Functions 実装完了！
+# 🎉 Re:Mind - Firebase Cloud Functions 実装完了！
 
 ## ✅ 完了したこと
 
@@ -34,7 +34,7 @@
 #### 1. Cloud Functions API
 
 ```
-https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 → 「Enable」をクリック
@@ -42,7 +42,7 @@ https://console.cloud.google.com/apis/library/cloudfunctions.googleapis.com?proj
 #### 2. Cloud Build API
 
 ```
-https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 → 「Enable」をクリック
@@ -50,10 +50,12 @@ https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com?project=
 #### 3. Cloud Resource Manager API
 
 ```
-https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?project=react-native-todo-app-prod
+https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?project=YOUR_PROJECT_ID
 ```
 
 → 「Enable」をクリック
+
+> **注意**: `YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDに置き換えてください。
 
 ---
 
@@ -62,7 +64,7 @@ https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.co
 ターミナルで以下を実行：
 
 ```bash
-cd /Users/yukig/dev/react-native-todo-app
+cd /path/to/your/react-native-todo-app
 firebase deploy --only functions
 ```
 
@@ -74,23 +76,27 @@ firebase deploy --only functions
 
 #### 方法A: Google Cloud Console（推奨）
 
-1. https://console.cloud.google.com/functions/list?project=react-native-todo-app-prod にアクセス
+1. `https://console.cloud.google.com/functions/list?project=YOUR_PROJECT_ID` にアクセス
 2. `predictCategory` 関数をクリック
 3. 「編集」タブをクリック
 4. 「ランタイム、ビルド、接続、セキュリティの設定」を展開
 5. 「ランタイム環境変数」で「変数を追加」をクリック
 6. 以下を入力：
    - **名前**: `OPENAI_API_KEY`
-   - **値**: `<your-openai-api-key>` （実際のキーは記載しないでください）
+   - **値**: あなたのOpenAI APIキー
 7. 「次へ」→「デプロイ」をクリック
+
+> **重要**: 実際のAPIキーをこのドキュメントには記載しないでください。
 
 #### 方法B: コマンドライン
 
 ```bash
 gcloud functions deploy predictCategory \
   --region=asia-northeast1 \
-  --set-env-vars OPENAI_API_KEY="<your-openai-api-key>"
+  --set-env-vars OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
 ```
+
+> **重要**: `YOUR_OPENAI_API_KEY`は自分のOpenAI APIキーに置き換えてください。
 
 ---
 
@@ -113,7 +119,7 @@ match /rateLimits/{document} {
 ### Step 5: 動作確認
 
 ```bash
-cd /Users/yukig/dev/react-native-todo-app
+cd /path/to/your/react-native-todo-app
 npx expo start --clear
 ```
 
@@ -158,9 +164,9 @@ React Native App → OpenAI API
 ### After（安全）✅
 
 ```
-React Native App → Firebase Cloud Functions → OpenAI API
-                           ↑
-                   APIキーは安全に管理
+Re:Mind App → Firebase Cloud Functions → OpenAI API
+                      ↑
+              APIキーは安全に管理
 ```
 
 ---
@@ -215,8 +221,10 @@ React Native App → Firebase Cloud Functions → OpenAI API
 1. **Step 3のOpenAI APIキー設定を確認**してください
 2. Cloud Functionsのログを確認：
    ```
-   https://console.cloud.google.com/functions/details/asia-northeast1/predictCategory?project=react-native-todo-app-prod&tab=logs
+   https://console.cloud.google.com/functions/details/asia-northeast1/predictCategory?project=YOUR_PROJECT_ID&tab=logs
    ```
+
+   > **注意**: `YOUR_PROJECT_ID`は自分のFirebaseプロジェクトIDに置き換えてください。
 
 ### レート制限エラー
 
@@ -237,6 +245,6 @@ React Native App → Firebase Cloud Functions → OpenAI API
 
 ---
 
-**作成日**: 2025-10-22  
-**推定作業時間**: 約2時間  
+**作成日**: 2025-10-22
+**推定作業時間**: 約2時間
 **実際の作業時間**: 完了！✨
