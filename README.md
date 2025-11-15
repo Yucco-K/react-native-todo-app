@@ -8,6 +8,14 @@
 
 React Native + Expo で構築したRe:Mind。Firebase認証とFirestoreでデータ管理し、グループでのタスク共有、リマインダー機能、AI機能など豊富な機能を搭載した次世代のTODO管理アプリです。
 
+> 📱 **現在、App Store審査準備中です。まもなくリリース予定！**
+
+## 🎨 アプリ紹介
+
+[![Re:Mind アプリ紹介](https://jolt-crisp-98516425.figma.site/)](https://jolt-crisp-98516425.figma.site/)
+
+[Re:Mindの詳細を見る](https://jolt-crisp-98516425.figma.site/)
+
 ## 📚 ドキュメント
 
 - [プライバシーポリシー](https://yucco-k.github.io/react-native-todo-app/privacy-policy.html)
