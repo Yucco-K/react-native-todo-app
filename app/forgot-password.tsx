@@ -64,14 +64,12 @@ export default function ForgotPasswordScreen() {
 				router.back();
 			}, 2000);
 		} catch (error) {
-			console.error("❌ パスワードリセットエラー:", error);
 			let errorMessage = "パスワードリセットメールの送信に失敗しました";
 
 			if (error && typeof error === "object" && "code" in error) {
-				console.error("エラーコード:", error.code);
 				switch (error.code) {
 					case "auth/user-not-found":
-						errorMessage = "このメールアドレスは登録されていません";
+						errorMessage = "まだ登録されていないメールアドレスです。\n新規登録画面からアカウントを作成してください。";
 						break;
 					case "auth/invalid-email":
 						errorMessage = "有効なメールアドレスを入力してください";
