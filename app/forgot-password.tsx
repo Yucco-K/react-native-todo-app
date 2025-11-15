@@ -47,10 +47,10 @@ export default function ForgotPasswordScreen() {
 		setIsLoading(true);
 
 		try {
-			
+
 			// パスワードリセットメールを送信
 			await sendPasswordResetEmail(auth, email);
-			
+
 
 			Toast.show({
 				type: "success",
@@ -58,7 +58,7 @@ export default function ForgotPasswordScreen() {
 				text2: `${email} にパスワードリセットメールを送信しました`,
 				visibilityTime: 6000,
 			});
-			
+
 			// 2秒後にログイン画面に戻る
 			setTimeout(() => {
 				router.back();
@@ -137,7 +137,7 @@ export default function ForgotPasswordScreen() {
 							メールアドレス
 						</Text>
 						<TextInput
-							className="border-2 rounded-md px-4 py-3 font-noto-regular text-base"
+							className="border-2 rounded-md px-4 py-3 font-noto-regular"
 							style={{
 								borderColor: isDark ? "#4b5563" : "#d1d5db",
 								backgroundColor: isDark ? "#374151" : "#ffffff",
