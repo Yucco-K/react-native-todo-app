@@ -403,7 +403,7 @@ export default function MyListScreen() {
 					{/* アイコン・ボタンエリア */}
 					<View className="flex-row justify-between items-center mb-4">
 						<View className="flex-1" />
-						<View className="flex-row items-center gap-2">
+						<View className="flex-row items-center gap-4">
 							{/* 通知ON/OFFトグル */}
 							<View className="flex-row items-center">
 								<Switch
