@@ -8,7 +8,7 @@
 
 ### 1. Introduction
 
-This Privacy Policy explains how Todo App ("we", "our", or "the App") collects, uses, and protects your personal information when you use our mobile application.
+This Privacy Policy explains how Re:Mind ("we", "our", or "the App") collects, uses, and protects your personal information when you use our mobile application.
 
 ### 2. Information We Collect
 
@@ -112,7 +112,7 @@ If you have any questions about this Privacy Policy, please contact us:
 
 ### 1. はじめに
 
-本プライバシーポリシーは、Todo App（以下「本アプリ」）が、ユーザーの個人情報をどのように収集、使用、保護するかを説明するものです。
+本プライバシーポリシーは、Re:Mind（以下「本アプリ」）が、ユーザーの個人情報をどのように収集、使用、保護するかを説明するものです。
 
 ### 2. 収集する情報
 

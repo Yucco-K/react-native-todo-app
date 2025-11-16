@@ -8,7 +8,7 @@
 
 ### How to Get Support
 
-If you encounter any issues or have questions about Todo App, please use one of the following methods:
+If you encounter any issues or have questions about Re:Mind, please use one of the following methods:
 
 #### 1. GitHub Issues (Recommended)
 For bug reports, feature requests, or technical questions:
@@ -100,7 +100,7 @@ A: Only the group owner can delete a group:
 **Q: I'm not receiving reminder notifications. What should I do?**
 A:
 1. Check that notifications are enabled in the app (toggle in the header)
-2. Go to iOS Settings → Notifications → Todo App
+2. Go to iOS Settings → Notifications → Re:Mind
 3. Ensure "Allow Notifications" is turned ON
 4. Check that "Focus" or "Do Not Disturb" mode is not enabled in iOS Settings
 
@@ -128,7 +128,7 @@ A:
 A: Ensure you are logged in with the same account on all devices. Data is automatically synced via Firebase when you have an internet connection.
 
 **Q: Can I use the app offline?**
-A: No, Todo App requires an internet connection to function. All data is stored in the cloud for real-time synchronization.
+A: No, Re:Mind requires an internet connection to function. All data is stored in the cloud for real-time synchronization.
 
 ---
 
@@ -165,7 +165,7 @@ For more information, please read our [Privacy Policy](privacy-policy.md).
 
 ### サポートを受ける方法
 
-Todo Appに関する問題や質問がある場合は、以下のいずれかの方法をご利用ください：
+Re:Mindに関する問題や質問がある場合は、以下のいずれかの方法をご利用ください：
 
 #### 1. GitHub Issues（推奨）
 バグレポート、機能リクエスト、技術的な質問：
@@ -257,7 +257,7 @@ A: グループオーナーのみがグループを削除できます：
 **Q: リマインド通知が届きません。どうすればよいですか？**
 A:
 1. アプリで通知が有効になっているか確認（ヘッダーのトグル）
-2. iOS設定 → 通知 → Todo App に移動
+2. iOS設定 → 通知 → Re:Mind に移動
 3. 「通知を許可」がオンになっていることを確認
 4. iOS設定で「集中モード」または「おやすみモード」が有効になっていないか確認
 
@@ -285,7 +285,7 @@ A:
 A: すべてのデバイスで同じアカウントでログインしていることを確認してください。インターネット接続がある場合、データはFirebase経由で自動的に同期されます。
 
 **Q: オフラインでアプリを使用できますか？**
-A: いいえ、Todo Appは機能するためにインターネット接続が必要です。すべてのデータはリアルタイム同期のためにクラウドに保存されます。
+A: いいえ、Re:Mindは機能するためにインターネット接続が必要です。すべてのデータはリアルタイム同期のためにクラウドに保存されます。
 
 ---
 
